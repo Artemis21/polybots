@@ -116,6 +116,18 @@ class Tourney(commands.Cog):
             return await ctx.send('You\'re not even in the tourney!')
         return await self.handle_sm(ctx, *self.data.give_loss(game.team_id))
 
+    @commands.command(brief='Edit extra info.')
+    async def set_extra(self, ctx, *, info):
+        '''Set your team's extra info. This should include timezones and ELO
+        ratings.
+        '''
+        game = self.data.find_by_member(ctx.author)
+        if not game:
+            return await ctx.send('You\'re not even in the tourney!')
+        return await self.handle_sm(
+            ctx, *self.data.set_extra(game.team_id, info)
+        )
+
     @commands.command(brief='Open the tourney.')
     async def open_signups(self, ctx):
         '''Open signups for the tourney. This may only be done by a tourney \

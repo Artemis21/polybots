@@ -12,26 +12,29 @@ class Team:
         for pid in data['players']:
             players.append(bot.get_user(pid))
         lives = data['lives']
+        extra = data.get('extra', '')
         return cls(name, players, lives, tid)
 
     @classmethod
-    def new(cls, name, players):
+    def new(cls, name, players, extra):
         random.seed(name)
         lets = string.ascii_uppercase + string.digits
         team_id = ''.join(random.choices(lets, k=5))
-        return cls(name, players, 3, team_id)
+        return cls(name, players, 3, team_id, extra)
 
-    def __init__(self, name, players, lives, team_id):
+    def __init__(self, name, players, lives, team_id, extra):
         self.name = name
         self.players = players
         self.lives = lives
         self.team_id = team_id
+        self.extra = extra
 
     def dump(self):
         return {
             'name': self.name,
             'players': [i.id for i in self.players],
-            'lives': self.lives
+            'lives': self.lives,
+            'extra': self.extra,
         }
 
     def loose(self):
@@ -45,6 +48,7 @@ class Team:
         )
         e.add_field(name='Team ID', value=self.team_id)
         e.add_field(name='Lives Remaining', value=self.lives)
+        e.add_field(name='Extra', value=self.extra)
         return e
 
 
@@ -123,6 +127,19 @@ class Teams:
                 return True, f'Team {team.name} eliminated!'
             else:
                 return True, f'Team {team.name} is on {team.lives} life/lives.'
+        else:
+            return False, 'That team doesn\'t exist :/'
+
+    @classmethod
+    def set_extra(cls, team_id, extra):
+        if cls.stage == 'not started':
+            return False, 'The game hasn\'t even started yet!'
+        if cls.stage == 'ended':
+            return False, 'The tourney is over for this year!'
+        if team_id in cls.teams:
+            team = cls.teams[team_id]
+            team.extra = extra
+            return True, f'Extra info for team {team.name} set to `{extra}`.'
         else:
             return False, 'That team doesn\'t exist :/'
 
