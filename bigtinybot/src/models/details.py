@@ -97,14 +97,21 @@ class Teams:
     @classmethod
     def find_by_member(cls, user):
         for i in cls.teams:
-            if user in i.players:
-                return i
+            if user in cls.teams[i].players:
+                return cls.teams[i]
         return None
 
     @classmethod
     def give_loss(cls, team_id):
+        if cls.stage == 'not started':
+            return False, 'The game hasn\'t even started yet!'
+        if cls.stage == 'signup':
+            return False, 'Game still on signups.'
+        if cls.stage == 'ended':
+            return False, 'The tourney is over for this year!'
         if team_id in cls.teams:
-            dead = cls.teams[team_id].loose()
+            team = cls.teams[team_id]
+            dead = team.loose()
             if len(cls.teams) == 1:
                 cls.winner = cls.teams[[*cls.teams.keys()][0]]
                 cls.stage = 'ended'

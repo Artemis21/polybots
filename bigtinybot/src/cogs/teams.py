@@ -10,12 +10,12 @@ class Tourney(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.data = details.Teams
-        self.data.load(bot)
         self.ready = False
 
     @commands.Cog.listener()
     async def on_ready(self):
         if not self.ready:
+            self.data.load(self.bot)
             self.save.start()
             self.ready = True
 
@@ -25,7 +25,7 @@ class Tourney(commands.Cog):
 
     async def handle_sm(self, ctx, s, m):
         if type(m) == discord.Embed:
-            return await ctx.send(embed=e)
+            return await ctx.send(embed=m)
         if s:
             await ctx.send(f'Success: {m}')
         else:
