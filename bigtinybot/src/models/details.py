@@ -173,5 +173,5 @@ class Teams:
             'teams': teams,
             'winner': getattr(cls.winner, 'team_id', cls.winner),
         }
-        with open('data/teams.json') as f:
-            json.dump(f, data)
+        with open('data/teams.json', 'w') as f:
+            json.dump(data, f)

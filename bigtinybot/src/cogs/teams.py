@@ -11,6 +11,17 @@ class Tourney(commands.Cog):
         self.bot = bot
         self.data = details.Teams
         self.data.load(bot)
+        self.ready = False
+
+    @commands.Cog.listener()
+    async def on_ready(self):
+        if not self.ready:
+            self.save.start()
+            self.ready = True
+
+    @tasks.loop(minutes=1)
+    async def save(self):
+        self.data.save()
 
     async def handle_sm(self, ctx, s, m):
         if type(m) == discord.Embed:
@@ -55,7 +66,7 @@ class Tourney(commands.Cog):
             return
         if checks.admin(ctx.author) and team_id:
             return await self.handle_sm(ctx, *self.data.remove_team(team_id))
-        game = self.data.get_by_member(ctx.author)
+        game = self.data.find_by_member(ctx.author)
         if not game:
             return await ctx.send('You\'re not even in the tourney!')
         return await self.handle_sm(ctx, *self.data.remove_team(game.team_id))
@@ -67,7 +78,7 @@ class Tourney(commands.Cog):
         are in.
         '''
         if not team_id:
-            game = self.data.get_by_member(ctx.author)
+            game = self.data.find_by_member(ctx.author)
             if not game:
                 return await ctx.send('No game found...')
             team_id = game.team_id
@@ -81,7 +92,7 @@ class Tourney(commands.Cog):
         lines = ['```']
         for i in self.data.teams.values():
             lines.append(
-                f'{i.name:>10} (ID {i.team_id}): {i.lives} lives remaining'
+                f'{i.name:>20} (ID {i.team_id}): {i.lives} lives remaining'
             )
         await ctx.send('\n'.join(lines) + '```')
 
@@ -89,7 +100,7 @@ class Tourney(commands.Cog):
     async def tourney(self, ctx):
         '''View the current state of the tournament.
         '''
-        await ctx.send(self.data.details())
+        await ctx.send(embed=self.data.details())
 
     @commands.command(brief='Record a loss.')
     async def loss(self, ctx, team_id=None):
@@ -100,7 +111,7 @@ class Tourney(commands.Cog):
             return
         if checks.admin(ctx.author) and team_id:
             return await self.handle_sm(ctx, *self.data.give_loss(team_id))
-        game = self.data.get_by_member(ctx.author)
+        game = self.data.find_by_member(ctx.author)
         if not game:
             return await ctx.send('You\'re not even in the tourney!')
         return await self.handle_sm(ctx, *self.data.give_loss(game.team_id))
