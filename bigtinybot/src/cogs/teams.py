@@ -54,11 +54,11 @@ class Tourney(commands.Cog):
         if not await self.caution(ctx):
             return
         if checks.admin(ctx.author) and team_id:
-            return await self.handle_sm(*self.data.remove_team(team_id))
+            return await self.handle_sm(ctx, *self.data.remove_team(team_id))
         game = self.data.get_by_member(ctx.author)
         if not game:
             return await ctx.send('You\'re not even in the tourney!')
-        return await self.handle_sm(*self.data.remove_team(game.team_id))
+        return await self.handle_sm(ctx, *self.data.remove_team(game.team_id))
 
     @commands.command(brief='View a team.')
     async def team(self, ctx, team_id=None):
@@ -71,7 +71,7 @@ class Tourney(commands.Cog):
             if not game:
                 return await ctx.send('No game found...')
             team_id = game.team_id
-        await self.handle_sm(*self.data.team_details(team_id))
+        await self.handle_sm(ctx, *self.data.team_details(team_id))
 
     @commands.command(brief='View all teams.')
     async def teams(self, ctx):
@@ -79,9 +79,9 @@ class Tourney(commands.Cog):
         team ID.
         '''
         lines = ['```']
-        for i in self.data.teams:
+        for i in self.data.teams.values():
             lines.append(
-                f'**{i.name:>10}** (ID {i.team_id}): {i.lives} lives remaining'
+                f'{i.name:>10} (ID {i.team_id}): {i.lives} lives remaining'
             )
         await ctx.send('\n'.join(lines) + '```')
 
@@ -89,7 +89,7 @@ class Tourney(commands.Cog):
     async def tourney(self, ctx):
         '''View the current state of the tournament.
         '''
-        await ctx.send(self.details())
+        await ctx.send(self.data.details())
 
     @commands.command(brief='Record a loss.')
     async def loss(self, ctx, team_id=None):
@@ -99,11 +99,11 @@ class Tourney(commands.Cog):
         if not await self.caution(ctx):
             return
         if checks.admin(ctx.author) and team_id:
-            return await self.handle_sm(*self.data.give_loss(team_id))
+            return await self.handle_sm(ctx, *self.data.give_loss(team_id))
         game = self.data.get_by_member(ctx.author)
         if not game:
             return await ctx.send('You\'re not even in the tourney!')
-        return await self.handle_sm(*self.data.give_loss(game.team_id))
+        return await self.handle_sm(ctx, *self.data.give_loss(game.team_id))
 
     @commands.command(brief='Open the tourney.')
     async def open_signups(self, ctx):
@@ -114,7 +114,7 @@ class Tourney(commands.Cog):
             return await ctx.send('You must be an admin to run this command!')
         if not await self.caution(ctx):
             return
-        await self.handle_sm(*self.data.open())
+        await self.handle_sm(ctx, *self.data.open())
 
     @commands.command(brief='Start the tourney.')
     async def start_tourney(self, ctx):
@@ -125,7 +125,7 @@ class Tourney(commands.Cog):
             return await ctx.send('You must be an admin to run this command!')
         if not await self.caution(ctx):
             return
-        await self.handle_sm(*self.data.start())
+        await self.handle_sm(ctx, *self.data.start())
 
     @commands.command(brief='Reset the tourney.')
     async def reset(self, ctx):
