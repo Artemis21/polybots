@@ -64,7 +64,7 @@ class Teams:
             raw['winner'] = None
         cls.teams = {}
         for i in raw['teams']:
-            cls.teams[i] = Team.load(raw[i]['teams'], i, bot)
+            cls.teams[i] = Team.load(raw['teams'][i], i, bot)
         cls.stage = raw['stage']    # not started/signup/in progress/ended
         cls.winner = cls.teams.get(raw['winner'], None)
 
