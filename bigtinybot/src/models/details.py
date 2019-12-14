@@ -13,14 +13,14 @@ class Team:
             players.append(bot.get_user(pid))
         lives = data['lives']
         extra = data.get('extra', '')
-        return cls(name, players, lives, tid)
+        return cls(name, players, lives, tid, extra)
 
     @classmethod
-    def new(cls, name, players, extra):
+    def new(cls, name, players):
         random.seed(name)
         lets = string.ascii_uppercase + string.digits
         team_id = ''.join(random.choices(lets, k=5))
-        return cls(name, players, 3, team_id, extra)
+        return cls(name, players, 3, team_id, '')
 
     def __init__(self, name, players, lives, team_id, extra):
         self.name = name
@@ -48,7 +48,7 @@ class Team:
         )
         e.add_field(name='Team ID', value=self.team_id)
         e.add_field(name='Lives Remaining', value=self.lives)
-        e.add_field(name='Extra', value=self.extra)
+        e.add_field(name='Extra', value=self.extra or '<not given>')
         return e
 
 
@@ -124,6 +124,7 @@ class Teams:
                     f'The tourney is over with {cls.winner.name} victorious!'
                 )
             if dead:
+                del cls.teams[team_id]
                 return True, f'Team {team.name} eliminated!'
             else:
                 return True, f'Team {team.name} is on {team.lives} life/lives.'
