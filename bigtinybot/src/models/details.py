@@ -62,55 +62,55 @@ class Teams:
             raw['stage'] = 'not started'
         if 'winner' not in raw:
             raw['winner'] = None
-        self.teams = {}
+        cls.teams = {}
         for i in raw['teams']:
-            self.teams[i] = Team.load(raw[i]['teams'], i, bot)
-        self.stage = raw['stage']    # not started/signup/in progress/ended
-        self.winner = self.teams.get(raw['winner'], None)
+            cls.teams[i] = Team.load(raw[i]['teams'], i, bot)
+        cls.stage = raw['stage']    # not started/signup/in progress/ended
+        cls.winner = cls.teams.get(raw['winner'], None)
 
     @classmethod
     def add_team(cls, name, members, bot):
-        if self.stage == 'not started':
+        if cls.stage == 'not started':
             return False, 'Signups aren\'t open yet!'
-        if self.stage == 'in progress':
+        if cls.stage == 'in progress':
             return False, 'Signups have closed :('
-        if self.stage == 'ended':
+        if cls.stage == 'ended':
             return False, 'The tourney is over for this year!'
         new = Team.new(name, members)
-        self.teams[new.team_id] = new
+        cls.teams[new.team_id] = new
         return True, 'Team created!'
 
     @classmethod
     def remove_team(cls, team_id):
-        if team_id in self.teams:
-            del self.teams[team_id]
+        if team_id in cls.teams:
+            del cls.teams[team_id]
             return True, 'Team removed...'
         else:
             return False, 'That team doesn\'t exist :/'
 
     @classmethod
     def convert(cls, raw_arg):
-        if raw_arg in self.teams:
-            return self.teams[raw_arg]
+        if raw_arg in cls.teams:
+            return cls.teams[raw_arg]
         raise ValueError('Team doesn\'t exist')
 
     @classmethod
     def find_by_member(cls, user):
-        for i in self.teams:
+        for i in cls.teams:
             if user in i.players:
                 return i
         return None
 
     @classmethod
     def give_loss(cls, team_id):
-        if team_id in self.teams:
-            dead = self.teams[team_id].loose()
-            if len(self.teams) == 1:
-                self.winner = self.teams[[*self.teams.keys()][0]]
-                self.stage = 'ended'
+        if team_id in cls.teams:
+            dead = cls.teams[team_id].loose()
+            if len(cls.teams) == 1:
+                cls.winner = cls.teams[[*cls.teams.keys()][0]]
+                cls.stage = 'ended'
                 return (
                     True,
-                    f'The tourney is over with {self.winner.name} victorious!'
+                    f'The tourney is over with {cls.winner.name} victorious!'
                 )
             if dead:
                 return True, f'Team {team.name} eliminated!'
@@ -122,56 +122,56 @@ class Teams:
     @classmethod
     def details(cls):
         e = discord.Embed(title='TinyTourny')
-        e.add_field(name='Status', value=self.stage.title())
-        e.add_field(name='Teams', value=len(self.teams))
-        if self.winner:
-            e.add_field(name='Winner', value=self.winner.name)
+        e.add_field(name='Status', value=cls.stage.title())
+        e.add_field(name='Teams', value=len(cls.teams))
+        if cls.winner:
+            e.add_field(name='Winner', value=cls.winner.name)
         return e
 
     @classmethod
     def team_details(cls, team_id):
-        if team_id in self.teams:
-            return True, self.teams[team_id].display()
+        if team_id in cls.teams:
+            return True, cls.teams[team_id].display()
         else:
             return False, 'That team doesn\'t exist :/'
 
     @classmethod
     def open(cls):
-        if self.stage == 'signup':
+        if cls.stage == 'signup':
             return False, 'Signups already opened!'
-        if self.stage == 'in progress':
+        if cls.stage == 'in progress':
             return False, 'Game already in progress...'
-        if self.stage == 'ended':
+        if cls.stage == 'ended':
             return False, 'The tourney is over for this year!'
-        self.stage = 'signup'
+        cls.stage = 'signup'
         return True, 'Signups opened!'
 
     @classmethod
     def start(cls):
-        if self.stage == 'not started':
+        if cls.stage == 'not started':
             return False, 'Signups haven\'t even opened yet!'
-        if self.stage == 'in progress':
+        if cls.stage == 'in progress':
             return False, 'Game already in progress...'
-        if self.stage == 'ended':
+        if cls.stage == 'ended':
             return False, 'The tourney is over for this year!'
-        self.stage = 'in progress'
+        cls.stage = 'in progress'
         return True, 'Tourney begun!'
 
     @classmethod
     def reset(cls):
-        self.teams = {}
-        self.stage = 'not started'
-        self.winner = None
+        cls.teams = {}
+        cls.stage = 'not started'
+        cls.winner = None
 
     @classmethod
     def save(cls):
         teams = {}
-        for i in self.teams:
-            teams[i] = self.teams[i].dump()
+        for i in cls.teams:
+            teams[i] = cls.teams[i].dump()
         data = {
-            'stage': self.stage,
+            'stage': cls.stage,
             'teams': teams,
-            'winner': getattr(self.winner, 'team_id', self.winner),
+            'winner': getattr(cls.winner, 'team_id', cls.winner),
         }
         with open('data/teams.json') as f:
             json.dump(f, data)

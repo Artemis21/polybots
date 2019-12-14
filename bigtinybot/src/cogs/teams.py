@@ -1,5 +1,5 @@
-from ..models import details
-from ..utils import checks
+from models import details
+from utils import checks
 from discord.ext import commands, tasks
 import discord
 
@@ -10,7 +10,7 @@ class Tourney(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.data = details.Teams
-        self.data.load()
+        self.data.load(bot)
 
     async def handle_sm(self, ctx, s, m):
         if type(m) == discord.Embed:
