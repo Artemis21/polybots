@@ -51,12 +51,22 @@ class Team:
 class Teams:
     @classmethod
     def load(cls, bot):
-        with open('data/teams.json') as f:
-            raw = json.load(f)
+        try:
+            with open('data/teams.json') as f:
+                raw = json.load(f)
+        except FileNotFoundError:
+            raw = {}
+        if 'teams' not in raw:
+            raw['teams'] = {}
+        if 'stage' not in raw:
+            raw['stage'] = 'not started'
+        if 'winner' not in raw:
+            raw['winner'] = None
         self.teams = {}
         for i in raw['teams']:
             self.teams[i] = Team.load(raw[i]['teams'], i, bot)
         self.stage = raw['stage']    # not started/signup/in progress/ended
+        self.winner = self.teams.get(raw['winner'], None)
 
     @classmethod
     def add_team(cls, name, members, bot):
@@ -66,7 +76,7 @@ class Teams:
             return False, 'Signups have closed :('
         if self.stage == 'ended':
             return False, 'The tourney is over for this year!'
-        new = Team.new(name, members, bot)
+        new = Team.new(name, members)
         self.teams[new.team_id] = new
         return True, 'Team created!'
 
@@ -85,9 +95,23 @@ class Teams:
         raise ValueError('Team doesn\'t exist')
 
     @classmethod
+    def find_by_member(cls, user):
+        for i in self.teams:
+            if user in i.players:
+                return i
+        return None
+
+    @classmethod
     def give_loss(cls, team_id):
         if team_id in self.teams:
             dead = self.teams[team_id].loose()
+            if len(self.teams) == 1:
+                self.winner = self.teams[[*self.teams.keys()][0]]
+                self.stage = 'ended'
+                return (
+                    True,
+                    f'The tourney is over with {self.winner.name} victorious!'
+                )
             if dead:
                 return True, f'Team {team.name} eliminated!'
             else:
@@ -100,10 +124,12 @@ class Teams:
         e = discord.Embed(title='TinyTourny')
         e.add_field(name='Status', value=self.stage.title())
         e.add_field(name='Teams', value=len(self.teams))
+        if self.winner:
+            e.add_field(name='Winner', value=self.winner.name)
         return e
 
     @classmethod
-    def team_details(cls):
+    def team_details(cls, team_id):
         if team_id in self.teams:
             return True, self.teams[team_id].display()
         else:
@@ -132,21 +158,20 @@ class Teams:
         return True, 'Tourney begun!'
 
     @classmethod
-    def end(cls):
-        if self.stage == 'not started':
-            return False, 'Signups haven\'t even opened yet!'
-        if self.stage == 'signup':
-            return False, 'The game hasn\'t even started yet...'
-        if self.stage == 'ended':
-            return False, 'The tourney is already over for this year!'
-        self.stage = 'ended'
-        return True, 'Tourney ended :('
+    def reset(cls):
+        self.teams = {}
+        self.stage = 'not started'
+        self.winner = None
 
     @classmethod
     def save(cls):
         teams = {}
         for i in self.teams:
             teams[i] = self.teams[i].dump()
-        data = {'stage': self.stage, 'teams': teams}
+        data = {
+            'stage': self.stage,
+            'teams': teams,
+            'winner': getattr(self.winner, 'team_id', self.winner),
+        }
         with open('data/teams.json') as f:
             json.dump(f, data)
