@@ -33,5 +33,8 @@ class BigTinyBot(commands.Bot):
 
     async def on_command_error(self, ctx, error):
         if self.test:
-            tb.print_tb(error.original.__traceback__)
+            try:
+                tb.print_tb(error.original.__traceback__)
+            except AttributeError:
+                pass
         await errors.handle(error, ctx)

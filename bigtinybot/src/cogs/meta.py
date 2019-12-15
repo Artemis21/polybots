@@ -78,7 +78,7 @@ class Help(commands.DefaultHelpCommand):
 
     async def send_command_help(self, command):
         embed = self.get_embed()
-        desc = command.description or Help.description
+        desc = command.help or command.description or Help.description
         desc = desc.replace('{{pre}}', self.context.prefix)
         embed.add_field(name=self.get_command_signature(command),
                         value=desc)

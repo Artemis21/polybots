@@ -12,22 +12,26 @@ class Team:
         for pid in data['players']:
             players.append(bot.get_user(pid))
         lives = data['lives']
-        extra = data.get('extra', '')
-        return cls(name, players, lives, tid, extra)
+        extra = data['extra']
+        games = data['games']
+        wins = data['wins']
+        return cls(name, players, lives, tid, extra, games, wins)
 
     @classmethod
     def new(cls, name, players):
         random.seed(name)
         lets = string.ascii_uppercase + string.digits
         team_id = ''.join(random.choices(lets, k=5))
-        return cls(name, players, 3, team_id, '')
+        return cls(name, players, 3, team_id, '', 0, 0)
 
-    def __init__(self, name, players, lives, team_id, extra):
+    def __init__(self, name, players, lives, team_id, extra, games, wins):
         self.name = name
         self.players = players
         self.lives = lives
         self.team_id = team_id
         self.extra = extra
+        self.games = games
+        self.wins = wins
 
     def dump(self):
         return {
@@ -35,11 +39,16 @@ class Team:
             'players': [i.id for i in self.players],
             'lives': self.lives,
             'extra': self.extra,
+            'games': self.games,
+            'wins': self.wins,
         }
 
     def loose(self):
         self.lives -= 1
         return self.lives == 0
+
+    def win(self):
+        self.wins += 1
 
     def display(self):
         e = discord.Embed(title=self.name)
@@ -49,6 +58,7 @@ class Team:
         e.add_field(name='Team ID', value=self.team_id)
         e.add_field(name='Lives Remaining', value=self.lives)
         e.add_field(name='Extra', value=self.extra or '<not given>')
+        e.add_field(name='Games', value=f'{self.games} ({self.wins} won)')
         return e
 
 
@@ -106,28 +116,32 @@ class Teams:
         return None
 
     @classmethod
-    def give_loss(cls, team_id):
+    def conclude(cls, looser, winner):
         if cls.stage == 'not started':
             return False, 'The game hasn\'t even started yet!'
         if cls.stage == 'signup':
             return False, 'Game still on signups.'
         if cls.stage == 'ended':
             return False, 'The tourney is over for this year!'
-        if team_id in cls.teams:
-            team = cls.teams[team_id]
+        if (looser in cls.teams) and (winner in cls.teams):
+            looser = cls.teams[looser]
+            winner = cls.teams[winner]
+            mess = [
+                f'\nTeam {looser.name} is on {looser.lives} life/lives.',
+                f'Team {winner.name} has been awarded a win!.'
+            ]
             dead = team.loose()
+            winner.win()
+            if dead:
+                del cls.teams[team_id]
+                mess.append(f'Team {team.name} eliminated!')
             if len(cls.teams) == 1:
                 cls.winner = cls.teams[[*cls.teams.keys()][0]]
                 cls.stage = 'ended'
-                return (
-                    True,
+                mess.append(
                     f'The tourney is over with {cls.winner.name} victorious!'
                 )
-            if dead:
-                del cls.teams[team_id]
-                return True, f'Team {team.name} eliminated!'
-            else:
-                return True, f'Team {team.name} is on {team.lives} life/lives.'
+            return True, '\n'.join(mess)
         else:
             return False, 'That team doesn\'t exist :/'
 
@@ -155,6 +169,13 @@ class Teams:
 
     @classmethod
     def team_details(cls, team_id):
+        if team_id in cls.teams:
+            return True, cls.teams[team_id].display()
+        else:
+            return False, 'That team doesn\'t exist :/'
+
+    @classmethod
+    def open_game(cls, team_id, team_id2):
         if team_id in cls.teams:
             return True, cls.teams[team_id].display()
         else:
