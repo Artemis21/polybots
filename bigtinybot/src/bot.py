@@ -3,6 +3,7 @@ import discord
 from utils import errors
 import traceback as tb
 import asyncio
+from utils import checks
 
 
 class BigTinyBot(commands.Bot):
@@ -12,6 +13,7 @@ class BigTinyBot(commands.Bot):
         self.test = test
         self.use_cogs = cogs
         self.load_extension('cogs')
+        self.add_check(checks.channel)
 
     async def on_ready(self):
         act1 = discord.Activity(
