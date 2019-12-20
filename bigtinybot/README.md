@@ -3,6 +3,7 @@ BigTinyBot is a small bot intented to help with the TinyTourney. Its functions i
  - keeping track of remaining teams and lives
  - keeping track of no. of wins
  - matchmaking
+
 __**Registering:**__
 You should only do this once you have a teammate. To register, just use the command `&register TeamName @partner`, then do `&elo XXXX`, where `XXXX` is your combined local ELO. Remember, this must be below `2550`. Note: If you want a space in your team name, do `&register "Team Name" @partner`.
 You can delete your team with the command `&quit`. Consult your teammate first!
