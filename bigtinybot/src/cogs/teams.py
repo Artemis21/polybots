@@ -135,10 +135,9 @@ class Tourney(commands.Cog):
             ctx, *find_game(team, self.data)
         )
 
-    @commands.command(brief='Edit extra info.')
-    async def extra(self, ctx, *, info):
-        """Set your team's extra info. This should include timezones and ELO
-        ratings.
+    @commands.command(brief='Edit ELO.')
+    async def elo(self, ctx, *, info):
+        """Set your team's combined local ELO. This may not be more than 2550.
         """
         game = self.data.find_by_member(ctx.author)
         if not game:

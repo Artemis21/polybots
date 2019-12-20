@@ -12,7 +12,7 @@ def admin(user):
 
 def channel(ctx):
     if ctx.channel.id in data['channels']:
-        return
+        return True
     raise commands.NoPrivateMessage(
         'This bot may only used in whitelisted TT1 channels.'
     )

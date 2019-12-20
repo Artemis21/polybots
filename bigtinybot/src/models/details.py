@@ -57,7 +57,7 @@ class Team:
         )
         e.add_field(name='Team ID', value=self.team_id)
         e.add_field(name='Lives Remaining', value=self.lives)
-        e.add_field(name='Extra', value=self.extra or '<not given>')
+        e.add_field(name='ELO', value=self.extra or '<not given>')
         e.add_field(name='Games', value=f'{self.games} ({self.wins} won)')
         return e
 
@@ -152,9 +152,18 @@ class Teams:
         if cls.stage == 'ended':
             return False, 'The tourney is over for this year!'
         if team_id in cls.teams:
+            try:
+                extra = int(extra)
+            except ValueError:
+                return False, 'That\'s not a valid number!'
+            if extra > 2550:
+                return False, 'Combined local ELO may not be more than 2550!'
             team = cls.teams[team_id]
             team.extra = extra
-            return True, f'Extra info for team {team.name} set to `{extra}`.'
+            return (
+                True,
+                f'Combined local ELO for team {team.name} set to `{extra}`.'
+            )
         else:
             return False, 'That team doesn\'t exist :/'
 
