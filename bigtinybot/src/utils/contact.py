@@ -6,6 +6,7 @@ with open('config/settings.json') as f:
 
 
 async def load(bot):
+    global RAMANA, ANNOUNCE
     usr = bot.get_user(data['ramana'])
     RAMANA = usr.dm_channel
     if not RAMANA:

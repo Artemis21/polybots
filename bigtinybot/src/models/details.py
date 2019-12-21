@@ -23,7 +23,7 @@ class Team:
         random.seed(name)
         lets = string.ascii_uppercase + string.digits
         team_id = ''.join(random.choices(lets, k=5))
-        return cls(name, players, 3, team_id, '', 0, 0, 0)
+        return cls(name, players, 3, team_id, '', [], 0, 0)
 
     def __init__(
             self, name, players, lives, team_id, extra, games, wins, hosts
@@ -154,10 +154,10 @@ class Teams:
             if looser.team_id not in winner.playing:
                 return False, f'{looser.name} isn\'t playing {winner.name}.'
             mess = [
-                f'\nTeam {looser.name} is on {looser.lives} life/lives.',
-                f'Team {winner.name} has been awarded a win!.'
+                f'\nTeam {looser.name} is on {looser.lives-1} life/lives.',
+                f'Team {winner.name} has been awarded a win!'
             ]
-            dead = team.loose()
+            dead = looser.loose()
             winner.win()
             if dead:
                 del cls.teams[team_id]

@@ -5,7 +5,7 @@ import datetime
 def log(message, level):
     tstamp = datetime.datetime.now().strftime('%d/%m/%y %H:%M')
     with open('data/logs.txt', 'a') as f:
-        f.write(f'{tstamp} [{level.upper()}] {message}')
+        f.write(f'{tstamp} [{level.upper()}] {message}\n')
 
 
 def fetch(level=None):
@@ -16,10 +16,11 @@ def fetch(level=None):
                 if i.strip():
                     if not level:
                         lines.append(i.strip())
-                    m = re.match('([^ ]+[^ ]+) \[([A-Z_]+)\] (.+)$', i)
+                        continue
+                    m = re.match('([^ ]+ [^ ]+) \[([A-Z_]+)\] (.+)$', i)
                     tstamp, lvl, message = m.groups()
                     if lvl == level.upper():
-                        line.append(f'{tstamp} | {message}')
+                        lines.append(f'{tstamp} | {message}')
     except FileNotFoundError:
         return '```\n```'
     return '```\n' + '\n'.join(reversed(lines)) + '```'

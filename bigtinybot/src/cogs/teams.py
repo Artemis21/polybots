@@ -1,5 +1,5 @@
 from models import details
-from utils import checks, logs
+from utils import checks, logs, contact
 from utils.matchmaking import find_game
 from discord.ext import commands, tasks
 import discord
@@ -17,9 +17,9 @@ class Tourney(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         if not self.ready:
+            await contact.load(self.bot)
             self.data.load(self.bot)
             self.save.start()
-            await contact.load(self.bot)
             self.ready = True
 
     @tasks.loop(minutes=1)
@@ -142,7 +142,8 @@ class Tourney(commands.Cog):
         if s:
             logs.log(f'{opponent_id} beat {tid}.', 'WINS')
             logs.log(f'{opponent_id} beat {tid}.', 'GAMES')
-            logs.log(m, 'OTHER')
+            for i in m.split('\n'):
+                logs.log(i, 'OTHER')
 
     # Automatic match command:
 
@@ -163,11 +164,11 @@ class Tourney(commands.Cog):
         tourney mods.
         """
         s, m = self.data.open_game(home, away)
-        self.handle_sm(ctx, s, m)
+        await self.handle_sm(ctx, s, m)
         if s:
+            logs.log(f'{home} to host against {away}.', 'GAMES')
             ping = ' | '.join(i.mention for i in self.data.teams[home].players)
             await contact.ANNOUNCE.send(m + '\n' + ping)
-            logs.log(f'{home} to host against {away}.', 'GAMES')
 
     @commands.command(brief='Edit ELO.')
     async def elo(self, ctx, info):
@@ -192,7 +193,7 @@ class Tourney(commands.Cog):
             strio = io.StringIO(text)
             f = discord.File(strio, 'TTlog.txt')
             await ctx.send(
-                'The requested logs were to long, so here is a file:',
+                text[:1000] + '...```Full version:',
                 file=f
             )
         else:
