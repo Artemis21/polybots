@@ -108,7 +108,7 @@ class Teams:
         cls.winner = cls.teams.get(raw['winner'], None)
 
     @classmethod
-    def add_team(cls, name, members, bot):
+    def add_team(cls, name, members):
         if cls.stage == 'not started':
             return False, 'Signups aren\'t open yet!'
         if cls.stage == 'in progress':

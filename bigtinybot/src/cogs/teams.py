@@ -1,8 +1,9 @@
 from models import details
-from utils import checks, contact
+from utils import checks, logs
 from utils.matchmaking import find_game
 from discord.ext import commands, tasks
 import discord
+import io
 
 
 class Tourney(commands.Cog):
@@ -54,8 +55,15 @@ class Tourney(commands.Cog):
         IMPORTANT: at the time of signing up, your local ELO + your \
         teammate's local ELO *must* be less than 2550!
         """
-        s, m = self.data.add_team(name, (ctx.author, partner), self.bot)
+        s, m = self.data.add_team(name, (ctx.author, partner))
         await self.handle_sm(ctx, s, m)
+        if s:
+            team = self.data.find_by_member(ctx.author)
+            logs.log(
+                f'Team {team.name}, ID {team.team_id} created with '
+                f'{ctx.author} and {partner}.',
+                'TEAMS'
+            )
 
     @commands.command(brief='Delete a team.')
     async def quit(self, ctx, team_id=None):
@@ -67,11 +75,19 @@ class Tourney(commands.Cog):
         if not await self.caution(ctx):
             return
         if checks.admin(ctx.author) and team_id:
-            return await self.handle_sm(ctx, *self.data.remove_team(team_id))
-        game = self.data.find_by_member(ctx.author)
-        if not game:
-            return await ctx.send('You\'re not even in the tourney!')
-        return await self.handle_sm(ctx, *self.data.remove_team(game.team_id))
+            tid = team_id
+            team = self.data.teams.get(team_id, None)
+        else:
+            team = self.data.find_by_member(ctx.author)
+            if not team:
+                return await ctx.send('You\'re not even in the tourney!')
+            tid = team.team_id
+        s, m = self.data.remove_team(tid)
+        await self.handle_sm(ctx, s, m)
+        if s:
+            logs.log(
+                f'Team {team.name}, ID: {team.team_id} was deleted.', 'TEAMS'
+            )
 
     @commands.command(brief='View a team.')
     async def team(self, ctx, team_id=None):
@@ -91,7 +107,7 @@ class Tourney(commands.Cog):
         """View a list of every team, including remaning lives, team name and \
         team ID.
         """
-        lines = ['```']
+        lines = ['```\n']
         for i in self.data.teams.values():
             lines.append(
                 f'{i.name:>20} (ID {i.team_id}): {i.lives} lives remaining'
@@ -124,11 +140,9 @@ class Tourney(commands.Cog):
         s, m = self.data.conclude(team.team_id, opponent_id)
         await self.handle_sm(ctx, s, m)
         if s:
-            await contact.RAMANA.send(
-                f'Team {tid} lost to team {opponent_id}.\nTo start the next '
-                f'game, you can do `&match HOME_ID AWAY_ID`.'
-            )
-            await contact.ANOUNCE.send(m)
+            logs.log(f'{opponent_id} beat {tid}.', 'WINS')
+            logs.log(f'{opponent_id} beat {tid}.', 'GAMES')
+            logs.log(m, 'OTHER')
 
     # Automatic match command:
 
@@ -151,10 +165,12 @@ class Tourney(commands.Cog):
         s, m = self.data.open_game(home, away)
         self.handle_sm(ctx, s, m)
         if s:
-            await contact.ANNOUNCE.send(m)
+            ping = ' | '.join(i.mention for i in self.data.teams[home].players)
+            await contact.ANNOUNCE.send(m + '\n' + ping)
+            logs.log(f'{home} to host against {away}.', 'GAMES')
 
     @commands.command(brief='Edit ELO.')
-    async def elo(self, ctx, *, info):
+    async def elo(self, ctx, info):
         """Set your team's combined local ELO. This may not be more than 2550.
         """
         game = self.data.find_by_member(ctx.author)
@@ -163,6 +179,24 @@ class Tourney(commands.Cog):
         return await self.handle_sm(
             ctx, *self.data.set_extra(game.team_id, info)
         )
+
+    @commands.command(brief='View logs.')
+    async def logs(self, ctx, level=None):
+        """View logs from the tourney. Provide the `level` parameter to only \
+        see one type of log - choose from `GAMES`, `WINS`, `TEAMS` and \
+        `TOURNEY` (not case sensitive). If it is over the 2000 char limit, a \
+        download will be provided.
+        """
+        text = logs.fetch(level)
+        if len(text) > 2000:
+            strio = io.StringIO(text)
+            f = discord.File(strio, 'TTlog.txt')
+            await ctx.send(
+                'The requested logs were to long, so here is a file:',
+                file=f
+            )
+        else:
+            await ctx.send(text)
 
     @commands.command(brief='Open the tourney.')
     async def open_signups(self, ctx):
@@ -173,7 +207,10 @@ class Tourney(commands.Cog):
             return await ctx.send('You must be an admin to run this command!')
         if not await self.caution(ctx):
             return
-        await self.handle_sm(ctx, *self.data.open())
+        s, m = self.data.open()
+        await self.handle_sm(ctx, s, m)
+        if s:
+            logs.log('Signups opened.', 'TOURNEY')
 
     @commands.command(brief='Start the tourney.')
     async def start_tourney(self, ctx):
@@ -184,7 +221,10 @@ class Tourney(commands.Cog):
             return await ctx.send('You must be an admin to run this command!')
         if not await self.caution(ctx):
             return
-        await self.handle_sm(ctx, *self.data.start())
+        s, m = self.data.start()
+        if s:
+            logs.log('Tourney started.', 'TOURNEY')
+        await self.handle_sm(ctx, s, m)
 
     @commands.command(brief='Reset the tourney.')
     async def reset(self, ctx):
@@ -197,3 +237,4 @@ class Tourney(commands.Cog):
             return
         self.data.reset()
         await ctx.send('And with a "Poof!" all their data was gone.')
+        logs.log('Tourney reset.', 'TOURNEY')
