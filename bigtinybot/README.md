@@ -16,7 +16,7 @@ To view a specific team, use the `&team TEAMID` command. Just doing `&team` will
 
 __**Games:**__
 
-To start a new game, use the `&match` command. This will find you a team to play against if possible. When a match is over, the *loosers* should do `&conclude <opponent_id>`. Example: team AAAAA wants a new game. They do `&match` and it tells them to start a game against team BBBBB. So, they register this game in the PolyEloBot. In the end, it turns out that BBBBB won. Now, AAAAA must do `&conclude BBBBB`. If they don't, a player can contact a tourney mod who has the power to do it for them.
+~~To start a new game, use the `&match` command. This will find you a team to play against if possible.~~ Matchmaking will be done manually, by a tourney mod. Watch out for messages indicating that you have a match! When a match is over, the *loosers* should do `&conclude <opponent_id>`. Example: team AAAAA ~~wants a new game. They do `&match`~~ sees a message, and it tells them to start a game against team BBBBB. So, they register this game in the PolyEloBot. In the end, it turns out that BBBBB won. Now, AAAAA must do `&conclude BBBBB`. If they don't, a player can contact a tourney mod who has the power to do it for them.
 
 __**Other:**__
 
