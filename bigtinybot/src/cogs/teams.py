@@ -117,7 +117,7 @@ class Tourney(commands.Cog):
         if checks.admin(ctx.author) and team_id:
             tid = team_id
         else:
-        team = self.data.find_by_member(ctx.author)
+            team = self.data.find_by_member(ctx.author)
             if not team:
                 return await ctx.send('You\'re not even in the tourney!')
             tid = team.team_id
