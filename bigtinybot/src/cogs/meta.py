@@ -12,8 +12,8 @@ OTHER = (
     'BigTinyBot is a bot dedicated to helping out with running the TinyTourney'
     ' Polytopia tournament. It is written in Python and the source code is '
     'available '
-    '[here](https://github.com/Artemis21/polybots/tree/master/bigtinybot) '
-    'Have fun!'
+    '[here](https://github.com/Artemis21/polybots/tree/master/bigtinybot). For'
+    ' more info, check out <#657705096154447872>. Have fun!'
 )
 INVITE = ('https://discordapp.com/api/oauth2/authorize?'
           'client_id={}&permissions=8&scope=bot')
