@@ -29,10 +29,7 @@ class Tourney(commands.Cog):
     async def handle_sm(self, ctx, s, m):
         if type(m) == discord.Embed:
             return await ctx.send(embed=m)
-        if s:
-            await ctx.send(f'Success: {m}')
-        else:
-            await ctx.send(f'Error: {m}')
+        await ctx.send(m)
 
     async def caution(self, ctx):
         await ctx.send(
