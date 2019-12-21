@@ -18,7 +18,7 @@ class Tourney(commands.Cog):
         if not self.ready:
             self.data.load(self.bot)
             self.save.start()
-            await contact.load()
+            await contact.load(self.bot)
             self.ready = True
 
     @tasks.loop(minutes=1)
