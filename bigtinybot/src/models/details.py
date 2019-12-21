@@ -15,16 +15,19 @@ class Team:
         extra = data['extra']
         games = data['games']
         wins = data['wins']
-        return cls(name, players, lives, tid, extra, games, wins)
+        hosts = data['hosts']
+        return cls(name, players, lives, tid, extra, games, wins, hosts)
 
     @classmethod
     def new(cls, name, players):
         random.seed(name)
         lets = string.ascii_uppercase + string.digits
         team_id = ''.join(random.choices(lets, k=5))
-        return cls(name, players, 3, team_id, '', 0, 0)
+        return cls(name, players, 3, team_id, '', 0, 0, 0)
 
-    def __init__(self, name, players, lives, team_id, extra, games, wins):
+    def __init__(
+            self, name, players, lives, team_id, extra, games, wins, hosts
+        ):
         self.name = name
         self.players = players
         self.lives = lives
@@ -32,6 +35,7 @@ class Team:
         self.extra = extra
         self.games = games
         self.wins = wins
+        self.hosts = hosts
 
     def dump(self):
         return {
@@ -41,6 +45,7 @@ class Team:
             'extra': self.extra,
             'games': self.games,
             'wins': self.wins,
+            'hosts': self.hosts,
         }
 
     def loose(self):
@@ -50,6 +55,9 @@ class Team:
     def win(self):
         self.wins += 1
 
+    def play(self, game):
+        self.games.append(game)
+
     def display(self):
         e = discord.Embed(title=self.name)
         e.add_field(
@@ -58,8 +66,25 @@ class Team:
         e.add_field(name='Team ID', value=self.team_id)
         e.add_field(name='Lives Remaining', value=self.lives)
         e.add_field(name='ELO', value=self.extra or '<not given>')
-        e.add_field(name='Games', value=f'{self.games} ({self.wins} won)')
+        e.add_field(
+            name='Games',
+            value=f'{len(self.games)} ({self.wins} won, {self.hosts} hosted)'
+        )
+        e.add_field(
+            name='Playing Now',
+            value=', '.join(self.playing) or 'no-one'
+        )
         return e
+
+    @property
+    def playing(self):
+        playing = []
+        for i in self.games:
+            if i['home'] == self.team_id:
+                playing.append(i['away'])
+            else:
+                playing.append(i['home'])
+        return playing
 
 
 class Teams:
@@ -126,6 +151,8 @@ class Teams:
         if (looser in cls.teams) and (winner in cls.teams):
             looser = cls.teams[looser]
             winner = cls.teams[winner]
+            if looser.team_id not in winner.playing:
+                return False, f'{looser.name} isn\'t playing {winner.name}.'
             mess = [
                 f'\nTeam {looser.name} is on {looser.lives} life/lives.',
                 f'Team {winner.name} has been awarded a win!.'
@@ -185,10 +212,21 @@ class Teams:
 
     @classmethod
     def open_game(cls, team_id, team_id2):
-        if team_id in cls.teams:
-            return True, cls.teams[team_id].display()
+        if team_id in cls.teams and team_id2 in cls.teams:
+            home, away = cls.teams[team_id], cls.teams[team_id2]
+            game = {
+                'home': home.team_id,
+                'away': away.team_id
+            }
+            home.play(game)
+            away.play(game)
+            home.hosts += 1
+            return (
+                True,
+                f'Opened game between {home.name} (host) and {away.name}.'
+            )
         else:
-            return False, 'That team doesn\'t exist :/'
+            return False, 'At least one of those teams doesn\'t exist :/'
 
     @classmethod
     def open(cls):

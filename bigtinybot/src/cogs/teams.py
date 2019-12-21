@@ -1,5 +1,5 @@
 from models import details
-from utils import checks
+from utils import checks, contact
 from utils.matchmaking import find_game
 from discord.ext import commands, tasks
 import discord
@@ -18,6 +18,7 @@ class Tourney(commands.Cog):
         if not self.ready:
             self.data.load(self.bot)
             self.save.start()
+            await contact.load()
             self.ready = True
 
     @tasks.loop(minutes=1)
@@ -114,26 +115,43 @@ class Tourney(commands.Cog):
         if not await self.caution(ctx):
             return
         if checks.admin(ctx.author) and team_id:
-            return await self.handle_sm(
-                ctx, *self.data.conclude(team_id, opponent_id)
+            tid = team_id
+        else:
+        team = self.data.find_by_member(ctx.author)
+            if not team:
+                return await ctx.send('You\'re not even in the tourney!')
+            tid = team.team_id
+        s, m = self.data.conclude(team.team_id, opponent_id)
+        await self.handle_sm(ctx, s, m)
+        if s:
+            await contact.RAMANA.send(
+                f'Team {tid} lost to team {opponent_id}.\nTo start the next '
+                f'game, you can do `&match HOME_ID AWAY_ID`.'
             )
-        team = self.data.find_by_member(ctx.author)
-        if not team:
-            return await ctx.send('You\'re not even in the tourney!')
-        return await self.handle_sm(
-            ctx, *self.data.conclude(team.team_id, opponent_id)
-        )
+            await contact.ANOUNCE.send(m)
 
-    @commands.command(brief='Find a new match.')
-    async def match(self, ctx):
-        """Find a new match. This may not always be possible.
+    # Automatic match command:
+
+    # @commands.command(brief='Find a new match.')
+    # async def match(self, ctx):
+        # """Find a new match. This may not always be possible.
+        # """
+        # team = self.data.find_by_member(ctx.author)
+        # if not team:
+            # return await ctx.send('You\'re not even in the tourney!')
+        # return await self.handle_sm(
+            # ctx, *find_game(team, self.data)
+        # )
+
+    @commands.command(brief='Start a new match.')
+    async def match(self, ctx, home, away):
+        """Start a new match, home vs away. This is for manual matchmaking by \
+        tourney mods.
         """
-        team = self.data.find_by_member(ctx.author)
-        if not team:
-            return await ctx.send('You\'re not even in the tourney!')
-        return await self.handle_sm(
-            ctx, *find_game(team, self.data)
-        )
+        s, m = self.data.open_game(home, away)
+        self.handle_sm(ctx, s, m)
+        if s:
+            await contact.ANNOUNCE.send(m)
 
     @commands.command(brief='Edit ELO.')
     async def elo(self, ctx, *, info):
