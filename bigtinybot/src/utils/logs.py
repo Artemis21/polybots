@@ -5,7 +5,7 @@ import datetime
 def log(message, level):
     tstamp = datetime.datetime.now().strftime('%d/%m/%y %H:%M')
     with open('data/logs.txt', 'a') as f:
-        f.write(f'{time} [{level.upper()}] {message}')
+        f.write(f'{tstamp} [{level.upper()}] {message}')
 
 
 def fetch(level=None):
