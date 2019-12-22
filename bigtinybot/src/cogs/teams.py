@@ -17,6 +17,10 @@ class Tourney(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         if not self.ready:
+            logs.log(
+                'Bot restarted, changes from the past minute may be lost.',
+                'OTHER'
+            )
             await contact.load(self.bot)
             self.data.load(self.bot)
             self.save.start()
