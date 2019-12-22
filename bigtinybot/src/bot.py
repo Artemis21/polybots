@@ -13,7 +13,7 @@ class BigTinyBot(commands.Bot):
         self.test = test
         self.use_cogs = cogs
         self.load_extension('cogs')
-        self.add_check(checks.channel)
+        # self.add_check(checks.channel)
 
     async def on_ready(self):
         act1 = discord.Activity(
