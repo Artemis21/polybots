@@ -183,8 +183,8 @@ class Teams:
                 extra = int(extra)
             except ValueError:
                 return False, 'That\'s not a valid number!'
-            if extra > 2550:
-                return False, 'Combined local ELO may not be more than 2550!'
+            if extra > 2650:
+                return False, 'Combined global ELO may not be more than 2550!'
             team = cls.teams[team_id]
             team.extra = extra
             return (

@@ -49,8 +49,8 @@ class Tourney(commands.Cog):
     async def register(self, ctx, name, partner: discord.Member):
         """Register a team to take part in the tourney.
         `name` is the name of the team. `partner` is you teammate.
-        IMPORTANT: at the time of signing up, your local ELO + your \
-        teammate's local ELO *must* be less than 2550!
+        IMPORTANT: at the time of signing up, your global ELO + your \
+        teammate's global ELO *must* be less than 2650!
         """
         s, m = self.data.add_team(name, (ctx.author, partner))
         await self.handle_sm(ctx, s, m)
@@ -169,7 +169,7 @@ class Tourney(commands.Cog):
 
     @commands.command(brief='Edit ELO.')
     async def elo(self, ctx, info):
-        """Set your team's combined local ELO. This may not be more than 2550.
+        """Set your team's combined global ELO. This may not be more than 2650.
         """
         game = self.data.find_by_member(ctx.author)
         if not game:
