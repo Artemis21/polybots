@@ -4,6 +4,13 @@ import string
 import discord
 
 
+def get_id(name):
+    random.seed(name)
+    lets = string.ascii_uppercase + string.digits
+    team_id = ''.join(random.choices(lets, k=5))
+    return team_id
+
+
 class Team:
     @classmethod
     def load(cls, data, tid, bot):
@@ -20,9 +27,7 @@ class Team:
 
     @classmethod
     def new(cls, name, players):
-        random.seed(name)
-        lets = string.ascii_uppercase + string.digits
-        team_id = ''.join(random.choices(lets, k=5))
+        team_id = get_id(name)
         return cls(name, players, 3, team_id, '', [], 0, 0)
 
     def __init__(
@@ -115,6 +120,14 @@ class Teams:
             return False, 'Signups have closed :('
         if cls.stage == 'ended':
             return False, 'The tourney is over for this year!'
+        if members[0] == members[1]:
+            return False, 'You can\'t have a team by yourself!'
+        for i in members:
+            if cls.find_by_member(i):
+                return False, f'{i} is already in a team.'
+        tid = get_id(name)
+        if tid in cls.teams:
+            return False, 'That name is already taken.'
         new = Team.new(name, members)
         cls.teams[new.team_id] = new
         return True, 'Team created!'
@@ -184,12 +197,12 @@ class Teams:
             except ValueError:
                 return False, 'That\'s not a valid number!'
             if extra > 2650:
-                return False, 'Combined global ELO may not be more than 2550!'
+                return False, 'Combined global ELO may not be more than 2650!'
             team = cls.teams[team_id]
             team.extra = extra
             return (
                 True,
-                f'Combined local ELO for team {team.name} set to `{extra}`.'
+                f'Combined global ELO for team {team.name} set to `{extra}`.'
             )
         else:
             return False, 'That team doesn\'t exist :/'

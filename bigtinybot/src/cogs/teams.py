@@ -97,10 +97,10 @@ class Tourney(commands.Cog):
         are in.
         """
         if not team_id:
-            game = self.data.find_by_member(ctx.author)
-            if not game:
-                return await ctx.send('No game found...')
-            team_id = game.team_id
+            team = self.data.find_by_member(ctx.author)
+            if not team:
+                return await ctx.send('No team found...')
+            team_id = team.team_id
         await self.handle_sm(ctx, *self.data.team_details(team_id))
 
     @commands.command(brief='View all teams.')
@@ -175,11 +175,11 @@ class Tourney(commands.Cog):
     async def elo(self, ctx, info):
         """Set your team's combined global ELO. This may not be more than 2650.
         """
-        game = self.data.find_by_member(ctx.author)
-        if not game:
+        team = self.data.find_by_member(ctx.author)
+        if not team:
             return await ctx.send('You\'re not even in the tourney!')
         return await self.handle_sm(
-            ctx, *self.data.set_extra(game.team_id, info)
+            ctx, *self.data.set_extra(team.team_id, info)
         )
 
     @commands.command(brief='View logs.')
@@ -193,8 +193,9 @@ class Tourney(commands.Cog):
         if len(text) > 2000:
             strio = io.StringIO(text)
             f = discord.File(strio, 'TTlog.txt')
+            extra = '...```Full version:'
             await ctx.send(
-                text[:1000] + '...```Full version:',
+                text[:2000-len(extra)] + extra,
                 file=f
             )
         else:
