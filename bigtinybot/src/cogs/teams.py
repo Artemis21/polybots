@@ -110,9 +110,16 @@ class Tourney(commands.Cog):
         """
         lines = ['```\n']
         for i in self.data.teams.values():
-            lines.append(
-                f'{i.name:>20} (ID {i.team_id}): {i.lives} lives remaining'
-            )
+            lines.append(f'{i.name:>20} (ID {i.team_id}): {i.lives} lives')
+        await ctx.send('\n'.join(lines) + '```')
+
+    @commands.command(brief='View each team\'s combined ELO.')
+    async def every_elo(self, ctx):
+        """View the conbined global ELO of each team.
+        """
+        lines = ['```Name, ID, ELO\n']
+        for i in self.data.teams.values():
+            lines.append(f'{i.name}, {i.team_id}, {i.extra}')
         await ctx.send('\n'.join(lines) + '```')
 
     @commands.command(brief='View tourney details.')
