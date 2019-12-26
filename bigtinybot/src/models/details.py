@@ -210,21 +210,8 @@ class Teams:
 
     @classmethod
     def rename(cls, team_id, name):
-        if cls.stage == 'not started':
-            return False, 'The game hasn\'t even started yet!'
-        if cls.stage == 'ended':
-            return False, 'The tourney is over for this year!'
-        if team_id in cls.teams:
-            name = name.replace('\n', '').strip()[:20]
-            tid = get_id(name)
-            team = cls.teams[team_id]
-            if tid in cls.teams and cls.teams[tid] != team:
-                return False, 'That name is already taken.'
-            # FIXME: the id doesn't update so the dupe name checking will break
-            team.name = name
-            return True, 'Name updated.'
-        else:
-            return False, 'That team doesn\'t exist :/'
+        remove_team(cls, team_id)
+        # no team - no problem
 
     @classmethod
     def details(cls):
