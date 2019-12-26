@@ -117,9 +117,9 @@ class Tourney(commands.Cog):
     async def every_elo(self, ctx):
         """View the conbined global ELO of each team.
         """
-        lines = ['```Name, ID, ELO\n']
+        lines = ['```Name\tID\tELO\n']
         for i in self.data.teams.values():
-            lines.append(f'{i.name}, {i.team_id}, {i.extra}')
+            lines.append(f'{i.name}\t{i.team_id}\t{i.extra or "<not set>"}')
         await ctx.send('\n'.join(lines) + '```')
 
     @commands.command(brief='View tourney details.')
@@ -187,6 +187,17 @@ class Tourney(commands.Cog):
             return await ctx.send('You\'re not even in the tourney!')
         return await self.handle_sm(
             ctx, *self.data.set_extra(team.team_id, info)
+        )
+
+    # @commands.command(brief='Edit team name.')
+    async def rename(self, ctx, *, name):
+        """Change your team's name.
+        """
+        team = self.data.find_by_member(ctx.author)
+        if not team:
+            return await ctx.send('You\'re not even in the tourney!')
+        return await self.handle_sm(
+            ctx, *self.data.set_name(team.team_id, name)
         )
 
     @commands.command(brief='View logs.')
