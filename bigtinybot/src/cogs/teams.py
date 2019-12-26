@@ -2,6 +2,7 @@ from models import details
 from utils import checks, logs, contact
 from utils.matchmaking import find_game
 from discord.ext import commands, tasks
+from pandas import DataFrame
 import discord
 import io
 
@@ -113,14 +114,26 @@ class Tourney(commands.Cog):
             lines.append(f'{i.name:>20} (ID {i.team_id}): {i.lives} lives')
         await ctx.send('\n'.join(lines) + '```')
 
-    @commands.command(brief='View each team\'s combined ELO.')
-    async def every_elo(self, ctx):
-        """View the conbined global ELO of each team.
+    @commands.command(brief='Get the data in excel.')
+    async def excel(self, ctx):
+        """Get an excel file containing all the teams' stats.
         """
-        lines = ['```Name\tID\tELO\n']
+        columns = {
+            'Name': [], 'ID': [], 'ELO': [], 'Lives': [], 'Games': [],
+            'Wins' :[], 'Hosts':[]
+        }
         for i in self.data.teams.values():
-            lines.append(f'{i.name}\t{i.team_id}\t{i.extra or "<not set>"}')
-        await ctx.send('\n'.join(lines) + '```')
+            columns['Name'].append(i.name)
+            columns['ID'].append(i.team_id)
+            columns['ELO'].append(i.extra)
+            columns['Lives'].append(i.lives)
+            columns['Games'].append(i.games)
+            columns['Wins'].append(i.wins)
+            columns['Hosts'].append(i.hosts)
+        df = DataFrame(columns)
+        df.to_excel('data/TTteams.xlsx', sheet_name='teams', index=False)
+        f = discord.File('data/TTteams.xlsx', 'TTteams.xlsx')
+        await ctx.send(file=f)
 
     @commands.command(brief='View tourney details.')
     async def tourney(self, ctx):
