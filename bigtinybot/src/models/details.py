@@ -120,7 +120,7 @@ class Teams:
             return False, 'Signups have closed :('
         if cls.stage == 'ended':
             return False, 'The tourney is over for this year!'
-        name = name.replace('\n', '').strip()
+        name = name.replace('\n', '').strip()[:20]
         if members[0] == members[1]:
             return False, 'You can\'t have a team by yourself!'
         for i in members:
