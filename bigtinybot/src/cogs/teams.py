@@ -158,7 +158,7 @@ class Tourney(commands.Cog):
             if not team:
                 return await ctx.send('You\'re not even in the tourney!')
             tid = team.team_id
-        s, m = self.data.conclude(team.team_id, opponent_id)
+        s, m = self.data.conclude(tid, opponent_id)
         await self.handle_sm(ctx, s, m)
         if s:
             logs.log(f'{opponent_id} beat {tid}.', 'WINS')
@@ -187,8 +187,12 @@ class Tourney(commands.Cog):
         s, m = self.data.open_game(home, away)
         await self.handle_sm(ctx, s, m)
         if s:
-            logs.log(f'{home} to host against {away}.', 'GAMES')
-            ping = ' | '.join(i.mention for i in self.data.teams[home].players)
+            m = f'{home} to host against {away}.'
+            logs.log(m, 'GAMES')
+            players = (
+                self.data.teams[home].players + self.data.teams[away].players
+            )
+            ping = ' | '.join(i.mention for i in players)
             await contact.ANNOUNCE.send(m + '\n' + ping)
 
     @commands.command(brief='Edit ELO.')
