@@ -217,10 +217,11 @@ class Teams:
         if team_id in cls.teams:
             name = name.replace('\n', '').strip()[:20]
             tid = get_id(name)
-            if tid in cls.teams:
+            team = cls.teams[team_id]
+            if tid in cls.teams and cls.teams[tid] != team:
                 return False, 'That name is already taken.'
-            team = cls.teams[team_id]       # FIXME: the id doesn't update so
-            team.name = name                # the dupe name checking will break
+            # FIXME: the id doesn't update so the dupe name checking will break
+            team.name = name
             return True, 'Name updated.'
         else:
             return False, 'That team doesn\'t exist :/'
