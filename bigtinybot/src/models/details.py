@@ -209,6 +209,23 @@ class Teams:
             return False, 'That team doesn\'t exist :/'
 
     @classmethod
+    def rename(cls, team_id, name):
+        if cls.stage == 'not started':
+            return False, 'The game hasn\'t even started yet!'
+        if cls.stage == 'ended':
+            return False, 'The tourney is over for this year!'
+        if team_id in cls.teams:
+            name = name.replace('\n', '').strip()[:20]
+            tid = get_id(name)
+            if tid in cls.teams:
+                return False, 'That name is already taken.'
+            team = cls.teams[team_id]       # FIXME: the id doesn't update so
+            team.name = name                # the dupe name checking will break
+            return True, 'Name updated.'
+        else:
+            return False, 'That team doesn\'t exist :/'
+
+    @classmethod
     def details(cls):
         e = discord.Embed(title='TinyTourny')
         e.add_field(name='Status', value=cls.stage.title())

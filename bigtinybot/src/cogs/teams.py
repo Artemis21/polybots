@@ -206,7 +206,7 @@ class Tourney(commands.Cog):
             ctx, *self.data.set_extra(team.team_id, info)
         )
 
-    # @commands.command(brief='Edit team name.')
+    @commands.command(brief='Edit team name.')
     async def rename(self, ctx, *, name):
         """Change your team's name.
         """
@@ -214,7 +214,7 @@ class Tourney(commands.Cog):
         if not team:
             return await ctx.send('You\'re not even in the tourney!')
         return await self.handle_sm(
-            ctx, *self.data.set_name(team.team_id, name)
+            ctx, *self.data.rename(team.team_id, name)
         )
 
     @commands.command(brief='View logs.')
