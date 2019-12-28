@@ -186,6 +186,10 @@ class Tourney(commands.Cog):
         """Start a new match, home vs away. This is for manual matchmaking by \
         tourney mods.
         """
+        if not checks.admin(ctx.author):
+            return await ctx.send('You must be an admin to run this command!')
+        if not await self.caution(ctx):
+            return
         s, m = self.data.open_game(home, away)
         await self.handle_sm(ctx, s, m)
         if s:
