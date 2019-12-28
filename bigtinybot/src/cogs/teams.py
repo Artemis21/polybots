@@ -78,7 +78,7 @@ class Tourney(commands.Cog):
             return
         if checks.admin(ctx.author) and team_id:
             tid = team_id
-            team = self.data.teams.get(team_id, None)
+            team = self.data.teams.find_by_id(team_id)
         else:
             team = self.data.find_by_member(ctx.author)
             if not team:
@@ -120,7 +120,7 @@ class Tourney(commands.Cog):
         """
         columns = {
             'Name': [], 'ID': [], 'ELO': [], 'Lives': [], 'Games': [],
-            'Wins' :[], 'Hosts':[]
+            'Wins' :[], 'Hosts':[], 'Player 1': [], 'Player 2': []
         }
         for i in self.data.teams.values():
             columns['Name'].append(i.name)
@@ -130,6 +130,8 @@ class Tourney(commands.Cog):
             columns['Games'].append(i.games)
             columns['Wins'].append(i.wins)
             columns['Hosts'].append(i.hosts)
+            columns['Player 1'].append(i.players[0])
+            columns['Player 2'].append(i.players[1])
         df = DataFrame(columns)
         df.to_excel('data/TTteams.xlsx', sheet_name='teams', index=False)
         f = discord.File('data/TTteams.xlsx', 'TTteams.xlsx')
@@ -187,13 +189,14 @@ class Tourney(commands.Cog):
         s, m = self.data.open_game(home, away)
         await self.handle_sm(ctx, s, m)
         if s:
-            m = f'{home} to host against {away}.'
-            logs.log(m, 'GAMES')
-            players = (
-                self.data.teams[home].players + self.data.teams[away].players
-            )
+            log_m = f'{home} to host against {away}.'
+            logs.log(log_m, 'GAMES')
+            team1 = self.data.find_by_id(home)
+            team2 = self.data.find_by_id(away)
+            players = (team1.players[0], *team2.players, team1.players[1])
             ping = ' | '.join(i.mention for i in players)
-            await contact.ANNOUNCE.send(m + '\n' + ping)
+            send_m = f'{team1} to host against {team2}\n{ping}'
+            await contact.ANNOUNCE.send(send_m)
 
     @commands.command(brief='Edit ELO.')
     async def elo(self, ctx, info):

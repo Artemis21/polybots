@@ -91,6 +91,9 @@ class Team:
                 playing.append(i['home'])
         return playing
 
+    def __str__(self):
+        return f'{self.name} ({self.team_id})'
+
 
 class Teams:
     @classmethod
@@ -135,14 +138,15 @@ class Teams:
 
     @classmethod
     def remove_team(cls, team_id):
-        if team_id in cls.teams:
-            del cls.teams[team_id]
+        if team_id.upper() in cls.teams:
+            del cls.teams[team_id.upper()]
             return True, 'Team removed...'
         else:
             return False, 'That team doesn\'t exist :/'
 
     @classmethod
     def convert(cls, raw_arg):
+        raw_arg = raw_arg.upper()
         if raw_arg in cls.teams:
             return cls.teams[raw_arg]
         raise ValueError('Team doesn\'t exist')
@@ -155,7 +159,12 @@ class Teams:
         return None
 
     @classmethod
+    def find_by_id(cls, team_id):
+        return cls.teams.get(team_id.upper(), None)
+
+    @classmethod
     def conclude(cls, looser, winner):
+        looser, winner = looser.upper(), winner.upper()
         if cls.stage == 'not started':
             return False, 'The game hasn\'t even started yet!'
         if cls.stage == 'signup':
@@ -188,6 +197,7 @@ class Teams:
 
     @classmethod
     def set_extra(cls, team_id, extra):
+        team_id = team_id.upper()
         if cls.stage == 'not started':
             return False, 'The game hasn\'t even started yet!'
         if cls.stage == 'ended':
@@ -210,6 +220,7 @@ class Teams:
 
     @classmethod
     def rename(cls, team_id, name):
+        team_id = team_id.upper()
         if cls.stage == 'not started':
             return False, 'The game hasn\'t even started yet!'
         if cls.stage == 'ended':
@@ -237,15 +248,18 @@ class Teams:
 
     @classmethod
     def team_details(cls, team_id):
-        if team_id in cls.teams:
-            return True, cls.teams[team_id].display()
+        team = cls.find_by_id(team_id)
+        if team:
+            return True, team.display()
         else:
             return False, 'That team doesn\'t exist :/'
 
     @classmethod
     def open_game(cls, team_id, team_id2):
-        if team_id in cls.teams and team_id2 in cls.teams:
-            home, away = cls.teams[team_id], cls.teams[team_id2]
+        home = cls.find_by_id(team_id)
+        away = cls.find_by_id(team_id2)
+        print(home, away)
+        if home and away:
             game = {
                 'home': home.team_id,
                 'away': away.team_id
