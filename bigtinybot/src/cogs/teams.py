@@ -15,6 +15,9 @@ class Tourney(commands.Cog):
         self.data = details.Teams
         self.ready = False
 
+    def cog_unload(self):
+        self.data.save()
+
     @commands.Cog.listener()
     async def on_ready(self):
         if not self.ready:
