@@ -12,4 +12,8 @@ async def load(bot):
     if not RAMANA:
         await usr.create_dm()
         RAMANA = usr.dm_channel
-    ANNOUNCE = bot.get_channel(data['announce'])
+    if bot.test:
+        key = 'test_announce'
+    else:
+        key = 'announce'
+    ANNOUNCE = bot.get_channel(data[key])
