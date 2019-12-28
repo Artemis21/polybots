@@ -92,7 +92,8 @@ class Team:
         return playing
 
     def __str__(self):
-        return f'{self.name} ({self.team_id})'
+        mentions = ', '.join((i.mention for i in self.players))
+        return f'**{self.name}**, ID: `{self.team_id}` ({mentions})'
 
 
 class Teams:
@@ -258,7 +259,6 @@ class Teams:
     def open_game(cls, team_id, team_id2):
         home = cls.find_by_id(team_id)
         away = cls.find_by_id(team_id2)
-        print(home, away)
         if home and away:
             game = {
                 'home': home.team_id,

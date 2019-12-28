@@ -193,9 +193,7 @@ class Tourney(commands.Cog):
             logs.log(log_m, 'GAMES')
             team1 = self.data.find_by_id(home)
             team2 = self.data.find_by_id(away)
-            players = (team1.players[0], *team2.players, team1.players[1])
-            ping = ' | '.join(i.mention for i in players)
-            send_m = f'{team1} to host against {team2}\n{ping}'
+            send_m = f'{team1} to host against {team2}'
             await contact.ANNOUNCE.send(send_m)
 
     @commands.command(brief='Edit ELO.')
