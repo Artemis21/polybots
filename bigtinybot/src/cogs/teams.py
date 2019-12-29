@@ -207,9 +207,14 @@ class Teams(commands.Cog):
         team = self.data.find_by_member(ctx.author)
         if not team:
             return await ctx.send('You\'re not even in the tourney!')
-        return await handle_sm(
-            ctx, *self.data.set_players(team.team_id, ctx.author, new)
-        )
+        s, m = self.data.set_players(team.team_id, ctx.author, new)
+        await handle_sm(ctx, s, m)
+        if s:
+            logs.log(
+                f'{ctx.author} swapped their teammate for {new} in team '
+                f'{team.team_id}.',
+                'TEAMS'
+            )
 
     @commands.command(brief='Swap out with another player.')
     async def swap(self, ctx, new: discord.Member, old: discord.Member=None):
@@ -227,9 +232,13 @@ class Teams(commands.Cog):
             players[0] = new
         else:
             players[1] = new
-        return await handle_sm(
-            ctx, *self.data.set_players(team.team_id, *players)
-        )
+        s, m = self.data.set_players(team.team_id, *players)
+        await handle_sm(ctx, s, m)
+        if s:
+            logs.log(
+                f'{old} swapped out with {new} in team {team.team_id}.',
+                'TEAMS'
+            )
 
     @commands.command(brief='View logs.')
     async def logs(self, ctx, level=None):
