@@ -194,6 +194,38 @@ class Teams(commands.Cog):
             ctx, *self.data.rename(team.team_id, name)
         )
 
+    @commands.command(brief='Switch teammate.')
+    async def switch(self, ctx, new: discord.Member):
+        """Change your teammate. Make sure your old teammate is happy with \
+        this!
+        """
+        team = self.data.find_by_member(ctx.author)
+        if not team:
+            return await ctx.send('You\'re not even in the tourney!')
+        return await handle_sm(
+            ctx, *self.data.set_players(team.team_id, ctx.author, new)
+        )
+
+    @commands.command(brief='Swap out with another player.')
+    async def swap(self, ctx, new: discord.Member, old: discord.Member=None):
+        """Swap out with another player - they take your position in the \
+        tourney. A tourney admin may swap someone else out.
+        """
+        old = old or ctx.author
+        if old != ctx.author and not admin(ctx.author):
+            return await ctx.send('Only admins may swap someone else out!')
+        team = self.data.find_by_member(old)
+        if not team:
+            return await ctx.send('You\'re not even in the tourney!')
+        players = list(team.players)
+        if players[0] == old:
+            players[0] = new
+        else:
+            players[1] = new
+        return await handle_sm(
+            ctx, *self.data.set_players(team.team_id, *players)
+        )
+
     @commands.command(brief='View logs.')
     async def logs(self, ctx, level=None):
         """View logs from the tourney. Provide the `level` parameter to only \
