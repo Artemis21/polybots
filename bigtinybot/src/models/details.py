@@ -63,6 +63,9 @@ class Team:
     def play(self, game):
         self.games.append(game)
 
+    def set_players(self, player1, player2):
+        self.players = [player1, player2]
+
     def display(self):
         e = discord.Embed(title=self.name)
         e.add_field(
@@ -215,6 +218,28 @@ class Teams:
             return (
                 True,
                 f'Combined global ELO for team {team.name} set to `{extra}`.'
+            )
+        else:
+            return False, 'That team doesn\'t exist :/'
+
+    @classmethod
+    def set_players(cls, team_id, player1, player2):
+        team_id = team_id.upper()
+        if cls.stage == 'not started':
+            return False, 'The game hasn\'t even started yet!'
+        if cls.stage == 'ended':
+            return False, 'The tourney is over for this year!'
+        if team_id in cls.teams:
+            team = cls.teams[team_id]
+            if player1 == player2:
+                return False, 'You can\'t have a team by yourself!'
+            for i in (player1, player2):
+                if cls.find_by_member(i) not in (None, team):
+                    return False, f'{i} is already in a team.'
+            team.set_players(player1, player2)
+            return (
+                True,
+                f'Team {team.name}\'s players are now {player1} and {player2}.'
             )
         else:
             return False, 'That team doesn\'t exist :/'
