@@ -173,14 +173,19 @@ class Teams(commands.Cog):
         # )
 
     @commands.command(brief='Edit ELO.')
-    async def elo(self, ctx, info):
+    async def elo(self, ctx, info, team_id=None):
         """Set your team's combined global ELO. This may not be more than 2650.
+        Tourney admins can also provide a team ID to set ELO for another team.
         """
-        team = self.data.find_by_member(ctx.author)
-        if not team:
-            return await ctx.send('You\'re not even in the tourney!')
+        if admin(ctx.author) and team_id:
+            tid = team_id
+        else:
+            team = self.data.find_by_member(ctx.author)
+            if not team:
+                return await ctx.send('You\'re not even in the tourney!')
+            tid = team.team_id
         return await handle_sm(
-            ctx, *self.data.set_extra(team.team_id, info)
+            ctx, *self.data.set_extra(tid, info)
         )
 
     @commands.command(brief='Edit team name.')
