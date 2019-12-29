@@ -16,3 +16,18 @@ def channel(ctx):
     raise commands.NoPrivateMessage(
         'This bot may only used in whitelisted TT1 channels.'
     )
+
+
+async def caution(ctx, bot):
+    await ctx.send(
+        'Are you sure you wish to procede? This cannot be undone. `Yes` to'
+        ' continue, anything else to cancel.'
+    )
+
+    def check(m):
+        return m.author == ctx.author and m.channel == ctx.channel
+    mes = await bot.wait_for('message', check=check)
+    if mes.content.upper() != 'YES':
+        await ctx.send('Cancelled.')
+        return False
+    return True
