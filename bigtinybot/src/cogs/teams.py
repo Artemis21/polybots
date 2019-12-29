@@ -1,5 +1,6 @@
 from models import details
-from utils import checks, logs, contact
+from utils import logs, contact
+from utils.checks import caution, admin
 from utils.matchmaking import find_game
 from discord.ext import commands, tasks
 from pandas import DataFrame
@@ -7,7 +8,13 @@ import discord
 import io
 
 
-class Tourney(commands.Cog):
+async def handle_sm(ctx, s, m):
+    if type(m) == discord.Embed:
+        return await ctx.send(embed=m)
+    await ctx.send(m)
+
+
+class Teams(commands.Cog):
     """Info on teams and the tourney.
     """
     def __init__(self, bot):
@@ -34,25 +41,6 @@ class Tourney(commands.Cog):
     async def save(self):
         self.data.save()
 
-    async def handle_sm(self, ctx, s, m):
-        if type(m) == discord.Embed:
-            return await ctx.send(embed=m)
-        await ctx.send(m)
-
-    async def caution(self, ctx):
-        await ctx.send(
-            'Are you sure you wish to procede? This cannot be undone. `Yes` to'
-            ' continue, anything else to cancel.'
-        )
-
-        def check(m):
-            return m.author == ctx.author and m.channel == ctx.channel
-        mes = await self.bot.wait_for('message', check=check)
-        if mes.content.upper() != 'YES':
-            await ctx.send('Cancelled.')
-            return False
-        return True
-
     @commands.command(brief='Register your team.')
     async def register(self, ctx, name, partner: discord.Member):
         """Register a team to take part in the tourney.
@@ -61,7 +49,7 @@ class Tourney(commands.Cog):
         teammate's global ELO *must* be less than 2650!
         """
         s, m = self.data.add_team(name, (ctx.author, partner))
-        await self.handle_sm(ctx, s, m)
+        await handle_sm(ctx, s, m)
         if s:
             team = self.data.find_by_member(ctx.author)
             logs.log(
@@ -77,9 +65,9 @@ class Tourney(commands.Cog):
         `team_id` is the id of the team to delete, defaults to the team you \
         are in.
         """
-        if not await self.caution(ctx):
+        if not await caution(ctx, self.bot):
             return
-        if checks.admin(ctx.author) and team_id:
+        if admin(ctx.author) and team_id:
             tid = team_id
             team = self.data.teams.find_by_id(team_id)
         else:
@@ -88,7 +76,7 @@ class Tourney(commands.Cog):
                 return await ctx.send('You\'re not even in the tourney!')
             tid = team.team_id
         s, m = self.data.remove_team(tid)
-        await self.handle_sm(ctx, s, m)
+        await handle_sm(ctx, s, m)
         if s:
             logs.log(
                 f'Team {team.name}, ID: {team.team_id} was deleted.', 'TEAMS'
@@ -105,7 +93,7 @@ class Tourney(commands.Cog):
             if not team:
                 return await ctx.send('No team found...')
             team_id = team.team_id
-        await self.handle_sm(ctx, *self.data.team_details(team_id))
+        await handle_sm(ctx, *self.data.team_details(team_id))
 
     @commands.command(brief='View all teams.')
     async def teams(self, ctx):
@@ -154,9 +142,9 @@ class Tourney(commands.Cog):
         `team_id`: the ID of the loosing team, defaults to that of the person \
         running the command.
         """
-        if not await self.caution(ctx):
+        if not await caution(ctx, self.bot):
             return
-        if checks.admin(ctx.author) and team_id:
+        if admin(ctx.author) and team_id:
             tid = team_id
         else:
             team = self.data.find_by_member(ctx.author)
@@ -164,7 +152,7 @@ class Tourney(commands.Cog):
                 return await ctx.send('You\'re not even in the tourney!')
             tid = team.team_id
         s, m = self.data.conclude(tid, opponent_id)
-        await self.handle_sm(ctx, s, m)
+        await handle_sm(ctx, s, m)
         if s:
             logs.log(f'{opponent_id} beat {tid}.', 'WINS')
             logs.log(f'{opponent_id} beat {tid}.', 'GAMES')
@@ -180,26 +168,9 @@ class Tourney(commands.Cog):
         # team = self.data.find_by_member(ctx.author)
         # if not team:
             # return await ctx.send('You\'re not even in the tourney!')
-        # return await self.handle_sm(
+        # return await handle_sm(
             # ctx, *find_game(team, self.data)
         # )
-
-    @commands.command(brief='Start a new match.')
-    async def match(self, ctx, home, away):
-        """Start a new match, home vs away. This is for manual matchmaking by \
-        tourney mods.
-        """
-        if not checks.admin(ctx.author):
-            return await ctx.send('You must be an admin to run this command!')
-        s, m = self.data.open_game(home, away)
-        await self.handle_sm(ctx, s, m)
-        if s:
-            log_m = f'{home} to host against {away}.'
-            logs.log(log_m, 'GAMES')
-            team1 = self.data.find_by_id(home)
-            team2 = self.data.find_by_id(away)
-            send_m = f'{team1} to host against {team2}'
-            await contact.ANNOUNCE.send(send_m)
 
     @commands.command(brief='Edit ELO.')
     async def elo(self, ctx, info):
@@ -208,7 +179,7 @@ class Tourney(commands.Cog):
         team = self.data.find_by_member(ctx.author)
         if not team:
             return await ctx.send('You\'re not even in the tourney!')
-        return await self.handle_sm(
+        return await handle_sm(
             ctx, *self.data.set_extra(team.team_id, info)
         )
 
@@ -219,7 +190,7 @@ class Tourney(commands.Cog):
         team = self.data.find_by_member(ctx.author)
         if not team:
             return await ctx.send('You\'re not even in the tourney!')
-        return await self.handle_sm(
+        return await handle_sm(
             ctx, *self.data.rename(team.team_id, name)
         )
 
@@ -242,17 +213,25 @@ class Tourney(commands.Cog):
         else:
             await ctx.send(text)
 
+
+class Admin(commands.Cog):
+    """Admin only commands.
+    """
+    def __init__(self, bot):
+        self.bot = bot
+        self.data = details.Teams
+
     @commands.command(brief='Open the tourney.')
     async def open_signups(self, ctx):
         """Open signups for the tourney. This may only be done by a tourney \
         admin and may only be done once - proceed with caution!
         """
-        if not checks.admin(ctx.author):
+        if not admin(ctx.author):
             return await ctx.send('You must be an admin to run this command!')
-        if not await self.caution(ctx):
+        if not await caution(ctx, self.bot):
             return
         s, m = self.data.open()
-        await self.handle_sm(ctx, s, m)
+        await handle_sm(ctx, s, m)
         if s:
             logs.log('Signups opened.', 'TOURNEY')
 
@@ -261,24 +240,41 @@ class Tourney(commands.Cog):
         """Let the tourney begin! This may only be done by a tourney \
         admin and may only be done once - proceed with caution!
         """
-        if not checks.admin(ctx.author):
+        if not admin(ctx.author):
             return await ctx.send('You must be an admin to run this command!')
-        if not await self.caution(ctx):
+        if not await caution(ctx, self.bot):
             return
         s, m = self.data.start()
         if s:
             logs.log('Tourney started.', 'TOURNEY')
-        await self.handle_sm(ctx, s, m)
+        await handle_sm(ctx, s, m)
 
     @commands.command(brief='Reset the tourney.')
     async def reset(self, ctx):
         """Delete all tourney data. This may only be done by a tourney \
         admin and is irreversible - proceed with caution!
         """
-        if not checks.admin(ctx.author):
+        if not admin(ctx.author):
             return await ctx.send('You must be an admin to run this command!')
-        if not await self.caution(ctx):
+        if not await caution(ctx, self.bot):
             return
         self.data.reset()
         await ctx.send('And with a "Poof!" all their data was gone.')
         logs.log('Tourney reset.', 'TOURNEY')
+
+    @commands.command(brief='Start a new match.')
+    async def match(self, ctx, home, away):
+        """Start a new match, home vs away. This is for manual matchmaking by \
+        tourney mods.
+        """
+        if not admin(ctx.author):
+            return await ctx.send('You must be an admin to run this command!')
+        s, m = self.data.open_game(home, away)
+        await handle_sm(ctx, s, m)
+        if s:
+            log_m = f'{home} to host against {away}.'
+            logs.log(log_m, 'GAMES')
+            team1 = self.data.find_by_id(home)
+            team2 = self.data.find_by_id(away)
+            send_m = f'{team1} to host against {team2}'
+            await contact.ANNOUNCE.send(send_m)
