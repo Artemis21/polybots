@@ -154,8 +154,8 @@ class Teams(commands.Cog):
         s, m = self.data.conclude(tid, opponent_id)
         await handle_sm(ctx, s, m)
         if s:
-            logs.log(f'{opponent_id} beat {tid}.', 'WINS')
-            logs.log(f'{opponent_id} beat {tid}.', 'GAMES')
+            logs.log(f'{opponent_id.upper()} beat {tid.upper()}.', 'WINS')
+            logs.log(f'{opponent_id.upper()} beat {tid.upper()}.', 'GAMES')
             for i in m.split('\n'):
                 logs.log(i, 'OTHER')
 
