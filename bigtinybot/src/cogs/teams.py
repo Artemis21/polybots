@@ -95,6 +95,21 @@ class Teams(commands.Cog):
             team_id = team.team_id
         await handle_sm(ctx, *self.data.team_details(team_id))
 
+    @commands.command(brief='Search by member.')
+    async def userteam(self, ctx, member: discord.Member):
+        team = self.data.find_by_member(member)
+        if team:
+            await ctx.send(embed=team.display())
+        else:
+            await ctx.send('No team found...')
+
+    @commands.command(brief='Search by name.')
+    async def search(self, ctx, name):
+        for team in self.data.teams.values():
+            if name.lower() in team.name.lower():
+                return await ctx.send(embed=team.display())
+        await ctx.send('No team found...')
+
     @commands.command(brief='View all teams.')
     async def teams(self, ctx):
         """View a list of every team, including remaning lives, team name and \
