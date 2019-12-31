@@ -324,9 +324,9 @@ class Admin(commands.Cog):
         logs.log('Tourney reset.', 'TOURNEY')
 
     @commands.command(brief='Start a new match.')
-    async def match(self, ctx, home, away):
+    async def match(self, ctx, home, away, round_num='1/2/3'):
         """Start a new match, home vs away. This is for manual matchmaking by \
-        tourney mods.
+        tourney mods. Provide `round_num` to add data to the announcement.
         """
         if not admin(ctx.author):
             return await ctx.send('You must be an admin to run this command!')
@@ -337,5 +337,9 @@ class Admin(commands.Cog):
             logs.log(log_m, 'GAMES')
             team1 = self.data.find_by_id(home)
             team2 = self.data.find_by_id(away)
-            send_m = f'{team1} to host against {team2}'
+            round_info = (
+                f' in round {round_num}.\nRemember to prefix the game name '
+                f'with `TT{round_num}`!'
+            )
+            send_m = f'{team1} to host against {team2}{round_info}'
             await contact.ANNOUNCE.send(send_m)
