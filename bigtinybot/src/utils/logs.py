@@ -17,8 +17,9 @@ def fetch(level=None):
                     if not level:
                         lines.append(i.strip())
                         continue
-                    m = re.match('([^ ]+ [^ ]+) \[ *([A-Z_]+)\ *] (.+)$', i)
+                    m = re.match('([^ ]+ [^ ]+) \[ *([A-Z_]+)\ *] (.*)$', i)
                     tstamp, lvl, message = m.groups()
+                    message = message or '??? corrupt entry ???'
                     if (not level) and (lvl != 'WINS'):
                         lines.append(i.strip())
                         continue
