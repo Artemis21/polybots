@@ -97,6 +97,9 @@ class Teams(commands.Cog):
 
     @commands.command(brief='Search by member.')
     async def userteam(self, ctx, member: discord.Member):
+        """Search for a team by team member, eg. `&userteam @Artemis` or \
+        `&userteam Ramana`.
+        """
         team = self.data.find_by_member(member)
         if team:
             await ctx.send(embed=team.display())
@@ -104,7 +107,11 @@ class Teams(commands.Cog):
             await ctx.send('No team found...')
 
     @commands.command(brief='Search by name.')
-    async def search(self, ctx, name):
+    async def search(self, ctx, *, name):
+        """Search for a team by team name, or a portion of the team name, eg. \
+        to search for team "The Birbs", both `&search The Birbs` and \
+        `&search birbs` should work.
+        """
         for team in self.data.teams.values():
             if name.lower() in team.name.lower():
                 return await ctx.send(embed=team.display())
