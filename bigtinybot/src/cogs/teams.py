@@ -173,6 +173,9 @@ class Teams(commands.Cog):
             if not team:
                 return await ctx.send('You\'re not even in the tourney!')
             tid = team.team_id
+        await ctx.send(
+            f'Pending confirmation: {opponent_id.upper()} beat {tid.upper()}.'
+        )
         s, m = self.data.conclude(tid, opponent_id)
         await handle_sm(ctx, s, m)
         if s:
