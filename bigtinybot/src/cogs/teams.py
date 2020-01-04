@@ -164,8 +164,6 @@ class Teams(commands.Cog):
         `team_id`: the ID of the loosing team, defaults to that of the person \
         running the command.
         """
-        if not await caution(ctx, self.bot):
-            return
         if admin(ctx.author) and team_id:
             tid = team_id
         else:
@@ -176,6 +174,8 @@ class Teams(commands.Cog):
         await ctx.send(
             f'Pending confirmation: {opponent_id.upper()} beat {tid.upper()}.'
         )
+        if not await caution(ctx, self.bot):
+            return
         s, m = self.data.conclude(tid, opponent_id)
         await handle_sm(ctx, s, m)
         if s:
