@@ -338,4 +338,4 @@ class Teams:
             'winner': getattr(cls.winner, 'team_id', cls.winner),
         }
         with open('data/teams.json', 'w') as f:
-            json.dump(data, f)
+            json.dump(data, f, indent=4)
