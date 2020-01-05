@@ -124,10 +124,10 @@ class Teams(commands.Cog):
         """
         tlist = list(self.data.teams.values())
         tlist.sort(reverse=True, key=lambda x: (x.lives, x.wins))
-        lines = ['```\n']
+        lines = ['```ID    | Lives | Wins | Name']
         for i in tlist:
             lines.append(
-                f'{i.team_id}: {i.lives} lives, {i.wins} wins ({i.name})'
+                f'{i.team_id} | {i.lives:>5} | {i.wins:>4} | {i.name}'
             )
         await ctx.send('\n'.join(lines) + '```')
 
