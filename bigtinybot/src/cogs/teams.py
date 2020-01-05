@@ -2,6 +2,7 @@ from models import details
 from utils import logs, contact
 from utils.checks import caution, admin
 from utils.matchmaking import find_game
+from utils.paginator import CodePaginator
 from discord.ext import commands, tasks
 from pandas import DataFrame
 import discord
@@ -124,12 +125,13 @@ class Teams(commands.Cog):
         """
         tlist = list(self.data.teams.values())
         tlist.sort(reverse=True, key=lambda x: (x.lives, x.wins))
-        lines = ['```ID    | Lives | Wins | Name']
+        lines = ''
         for i in tlist:
-            lines.append(
-                f'{i.team_id} | {i.lives:>5} | {i.wins:>4} | {i.name}'
-            )
-        await ctx.send('\n'.join(lines) + '```')
+            lines += f'{i.team_id}: {i.name}\n'
+            lines += f'{i.lives} lives, {i.wins} wins\n'
+        lines = lines[:-1]
+        head = ''
+        await CodePaginator(ctx, lines, head).setup()
 
     @commands.command(brief='Get the data in excel.')
     async def excel(self, ctx):
