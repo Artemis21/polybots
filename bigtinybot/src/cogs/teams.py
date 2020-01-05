@@ -135,7 +135,7 @@ class Teams(commands.Cog):
             n += 1
         lines = lines[:-1]
         head = 'diff'
-        await CodePaginator(ctx, lines, head).setup()
+        await CodePaginator(ctx, lines, head, 24).setup()
 
     @commands.command(brief='Get the data in excel.')
     async def excel(self, ctx):
