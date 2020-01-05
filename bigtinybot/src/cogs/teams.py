@@ -122,9 +122,13 @@ class Teams(commands.Cog):
         """View a list of every team, including remaning lives, team name and \
         team ID.
         """
+        tlist = list(self.data.teams.values())
+        tlist.sort(reverse=True, key=lambda x: (x.lives, x.wins))
         lines = ['```\n']
-        for i in self.data.teams.values():
-            lines.append(f'{i.name:>20} (ID {i.team_id}): {i.lives} lives')
+        for i in tlist:
+            lines.append(
+                f'{i.team_id}: {i.lives} lives, {i.wins} wins ({i.name})'
+            )
         await ctx.send('\n'.join(lines) + '```')
 
     @commands.command(brief='Get the data in excel.')
