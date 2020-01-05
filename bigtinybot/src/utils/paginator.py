@@ -51,6 +51,26 @@ class Paginator:
         await react.remove(user)
 
 
+class CodePaginator(Paginator):
+    def __init__(self, ctx, content, header='', maxlines=16):
+        base = f'Page %s of %s:```{header}\n%s```'
+        sets = ['']
+        for line in content.split('\n'):
+            if sets[-1].count('\n') == maxlines:
+                sets.append('')
+            sets[-1] += '\n' + line
+        self.sets = [
+            base % (idx+1, len(sets), i) for idx, i in enumerate(sets)
+        ]
+        super().__init__(ctx, len(self.sets) - 1)
+
+    async def send(self, ch):
+        return await ch.send(self.sets[0])
+
+    async def edit(self, mes, page):
+        await mes.edit(content=self.sets[page])
+
+
 class FieldPaginator(Paginator):
     def __init__(self, ctx, title, fields, desc='', colour=None, maxf=10):
         if not colour:
