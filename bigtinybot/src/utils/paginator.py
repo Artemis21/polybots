@@ -52,8 +52,8 @@ class Paginator:
 
 
 class CodePaginator(Paginator):
-    def __init__(self, ctx, content, header='', maxlines=16):
-        base = f'Page %s of %s:```{header}\n%s```'
+    def __init__(self, ctx, content, header='', maxlines=15):
+        base = f'Page %s of %s:```{header}%s```'
         sets = ['']
         for line in content.split('\n'):
             if sets[-1].count('\n') == maxlines:

@@ -126,11 +126,15 @@ class Teams(commands.Cog):
         tlist = list(self.data.teams.values())
         tlist.sort(reverse=True, key=lambda x: (x.lives, x.wins))
         lines = ''
+        qs = {1: '- ', 2: '  ', 3: '+ '}
+        n = 1
         for i in tlist:
-            lines += f'{i.team_id}: {i.name}\n'
-            lines += f'{i.lives} lives, {i.wins} wins\n'
+            q = qs[i.lives]
+            lines += f'{q}{n}. {i.team_id} {i.name}\n'
+            lines += f'{q}Lives: {i.lives}, Wins: {i.wins}\n\n'
+            n += 1
         lines = lines[:-1]
-        head = ''
+        head = 'diff'
         await CodePaginator(ctx, lines, head).setup()
 
     @commands.command(brief='Get the data in excel.')
