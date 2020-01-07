@@ -130,8 +130,8 @@ class Teams(commands.Cog):
         n = 1
         for i in tlist:
             q = qs[i.lives]
-            header = f'{q}Lives: {i.lives}, Wins: {i.wins}\n'
-            line = f'    {n}. {i.team_id} {i.name}\n'
+            header = f'Lives: {i.lives}, Wins: {i.wins}\n'
+            line = f'{q}{n}. {i.team_id} {i.name}\n'
             if header in lines:
                 lines[header] += line
             else:
