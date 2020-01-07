@@ -130,7 +130,7 @@ class Teams(commands.Cog):
         n = 1
         for i in tlist:
             q = qs[i.lives]
-            header = f'Lives: {i.lives}, Wins: {i.wins}\n'
+            header = f'\nLives: {i.lives}, Wins: {i.wins}\n'
             line = f'{q}{n}. {i.team_id} {i.name}\n'
             if header in lines:
                 lines[header] += line
@@ -143,7 +143,7 @@ class Teams(commands.Cog):
         for head, body in lines:
             text += head + body
         head = 'diff'
-        await CodePaginator(ctx, text, head, 24).setup()
+        await CodePaginator(ctx, text[1:], head, 20).setup()
 
     @commands.command(brief='Get the data in excel.')
     async def excel(self, ctx):
