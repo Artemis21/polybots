@@ -129,7 +129,6 @@ class Teams(commands.Cog):
         qs = {0: '--- ', 1: '- ', 2: '  ', 3: '+ '}
         n = 1
         for i in tlist:
-            print(i)
             q = qs[i.lives]
             header = f'{q}Lives: {i.lives}, Wins: {i.wins}\n'
             line = f'    {n}. {i.team_id} {i.name}\n'
@@ -139,8 +138,7 @@ class Teams(commands.Cog):
                 lines[header] = line
             n += 1
         lines = list(zip(lines.keys(), lines.values()))
-        lines.sort(reverse=True)
-        print(lines)
+        lines.sort(reverse=True, key=lambda x: x[2:])
         text = ''
         for head, body in lines:
             text += head + body
