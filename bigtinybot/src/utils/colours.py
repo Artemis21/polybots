@@ -7,7 +7,7 @@ r = requests.get(
     '-small-basic/'
 )
 matches = re.findall(
-    r'([a-zA-Z]+?)</td>\\n<td style="width: 80px;">#([A-Z0-9]{6})',
+    r'([a-zA-Z]+?)</td>\\n<td>#([A-Z0-9]{6})',
     str(r.content)
 )
 
