@@ -55,7 +55,7 @@ class Team:
 
     def loose(self):
         self.lives -= 1
-        return self.lives == 0
+        return self.lives < 1
 
     def win(self):
         self.wins += 1
@@ -187,10 +187,10 @@ class Teams:
             dead = looser.loose()
             winner.win()
             if dead:
-                del cls.teams[team_id]
-                mess.append(f'Team {team.name} eliminated!')
+                del cls.teams[looser.team_id]
+                mess.append(f'Team {looser.name} eliminated!')
             if len(cls.teams) == 1:
-                cls.winner = cls.teams[[*cls.teams.keys()][0]]
+                cls.winner = winner
                 cls.stage = 'ended'
                 mess.append(
                     f'The tourney is over with {cls.winner.name} victorious!'

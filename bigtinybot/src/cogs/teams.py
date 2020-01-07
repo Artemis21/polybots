@@ -126,7 +126,7 @@ class Teams(commands.Cog):
         tlist = list(self.data.teams.values())
         tlist.sort(reverse=True, key=lambda x: (x.lives, x.wins))
         lines = ''
-        qs = {1: '- ', 2: '  ', 3: '+ '}
+        qs = {0: '--- ', 1: '- ', 2: '  ', 3: '+ '}
         n = 1
         for i in tlist:
             q = qs[i.lives]
