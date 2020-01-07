@@ -187,9 +187,8 @@ class Teams:
             dead = looser.loose()
             winner.win()
             if dead:
-                del cls.teams[looser.team_id]
                 mess.append(f'Team {looser.name} eliminated!')
-            if len(cls.teams) == 1:
+            if len((i for i in cls.teams.values() if i.lives > 0) == 1:
                 cls.winner = winner
                 cls.stage = 'ended'
                 mess.append(
