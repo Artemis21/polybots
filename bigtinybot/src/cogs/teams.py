@@ -5,6 +5,7 @@ from utils.matchmaking import find_game
 from utils.paginator import CodePaginator
 from discord.ext import commands, tasks
 from pandas import DataFrame
+from typing import Optional
 import discord
 import io
 
@@ -60,22 +61,19 @@ class Teams(commands.Cog):
             )
 
     @commands.command(brief='Delete a team.')
-    async def quit(self, ctx, team_id=None):
+    async def quit(self, ctx, team: Optional[details.Teams.convert]):
         """Remove a team from the tourny. Only tournament admins may remove
         someone elses team.
-        `team_id` is the id of the team to delete, defaults to the team you \
+        `team` is the id of the team to delete, defaults to the team you \
         are in.
         """
         if not await caution(ctx, self.bot):
             return
-        if admin(ctx.author) and team_id:
-            tid = team_id
-            team = self.data.teams.find_by_id(team_id)
-        else:
+        if not (admin(ctx.author) and team):
             team = self.data.find_by_member(ctx.author)
             if not team:
                 return await ctx.send('You\'re not even in the tourney!')
-            tid = team.team_id
+        tid = team.team_id
         s, m = self.data.remove_team(tid)
         await handle_sm(ctx, s, m)
         if s:
@@ -84,17 +82,16 @@ class Teams(commands.Cog):
             )
 
     @commands.command(brief='View a team.')
-    async def team(self, ctx, team_id=None):
+    async def team(self, ctx, team: Optional[details.Teams.convert]):
         """View the details of a team.
-        `team_id` is the id of the team to view, defaults to the team you \
+        `team` is the id of the team to view, defaults to the team you \
         are in.
         """
-        if not team_id:
+        if not team:
             team = self.data.find_by_member(ctx.author)
             if not team:
                 return await ctx.send('No team found...')
-            team_id = team.team_id
-        await handle_sm(ctx, *self.data.team_details(team_id))
+        await handle_sm(ctx, *self.data.team_details(team.team_id))
 
     @commands.command(brief='Search by member.')
     async def userteam(self, ctx, member: discord.Member):
@@ -175,22 +172,26 @@ class Teams(commands.Cog):
         await ctx.send(embed=self.data.details())
 
     @commands.command(brief='Record a completed game.')
-    async def conclude(self, ctx, opponent_id, team_id=None):
+    async def conclude(
+            self, ctx, opponent: details.Teams.convert,
+            team: Optional[details.Teams.convert]
+            ):
         """Record a completed game. This may either be done by the loosing \
         team or a tournament admin.
-        `opponent_id`: the ID of the winning team.
-        `team_id`: the ID of the loosing team, defaults to that of the person \
+        `opponent`: the ID of the winning team.
+        `team`: the ID of the loosing team, defaults to that of the person \
         running the command.
         """
-        if admin(ctx.author) and team_id:
-            tid = team_id
-        else:
+        if not await caution(ctx, self.bot):
+            return
+        if not (admin(ctx.author) and team):
             team = self.data.find_by_member(ctx.author)
             if not team:
                 return await ctx.send('You\'re not even in the tourney!')
-            tid = team.team_id
+        tid = team.team_id
+        opponent_id = opponent.team_id
         await ctx.send(
-            f'Pending confirmation: {opponent_id.upper()} beat {tid.upper()}.'
+            f'Pending confirmation: **{opponent.name}** beat **{team.name}**.'
         )
         if not await caution(ctx, self.bot):
             return
@@ -198,9 +199,13 @@ class Teams(commands.Cog):
         await handle_sm(ctx, s, m)
         if s:
             logs.log(f'{opponent_id.upper()} beat {tid.upper()}.', 'WINS')
-            logs.log(f'{opponent_id.upper()} beat {tid.upper()}.', 'GAMES')
+            logs.log(
+                f'{opponent.name} ({opponent.team_id}) beat {team.name} '
+                f'({team.team_id}).', 'GAMES'
+            )
             for i in m.split('\n'):
-                logs.log(i, 'OTHER')
+                if i.strip():
+                    logs.log(i, 'OTHER')
 
     # Automatic match command:
 
@@ -216,17 +221,17 @@ class Teams(commands.Cog):
         # )
 
     @commands.command(brief='Edit ELO.')
-    async def elo(self, ctx, info, team_id=None):
+    async def elo(self, ctx, info, team: Optional[details.Teams.convert]):
         """Set your team's combined global ELO. This may not be more than 2650.
         Tourney admins can also provide a team ID to set ELO for another team.
         """
-        if admin(ctx.author) and team_id:
-            tid = team_id
-        else:
+        if not await caution(ctx, self.bot):
+            return
+        if not (admin(ctx.author) and team):
             team = self.data.find_by_member(ctx.author)
             if not team:
                 return await ctx.send('You\'re not even in the tourney!')
-            tid = team.team_id
+        tid = team.team_id
         return await handle_sm(
             ctx, *self.data.set_extra(tid, info)
         )
@@ -352,22 +357,27 @@ class Admin(commands.Cog):
         logs.log('Tourney reset.', 'TOURNEY')
 
     @commands.command(brief='Start a new match.')
-    async def match(self, ctx, home, away, round_num='1/2/3'):
+    async def match(
+            self, ctx, home: details.Teams.convert,
+            away: details.Teams.convert, round_num='1/2/3'
+            ):
         """Start a new match, home vs away. This is for manual matchmaking by \
         tourney mods. Provide `round_num` to add data to the announcement.
         """
         if not admin(ctx.author):
             return await ctx.send('You must be an admin to run this command!')
-        s, m = self.data.open_game(home, away)
+        s, m = self.data.open_game(home.team_id, away.team_id)
         await handle_sm(ctx, s, m)
         if s:
-            log_m = f'{home} to host against {away}.'
+            log_m = (
+                f'{home.name} ({home.team_id}) to host against {away.name} '
+                f'({away.team_id}).'
+            )
             logs.log(log_m, 'GAMES')
-            team1 = self.data.find_by_id(home)
-            team2 = self.data.find_by_id(away)
             round_info = (
                 f' in round {round_num}.\nRemember to prefix the game name '
                 f'with `TT{round_num}`!'
             )
-            send_m = f'{team1} to host against {team2}{round_info}'
-            await contact.ANNOUNCE.send(send_m)
+            send_m = f'{home} to host against {away}{round_info}'
+            #await contact.ANNOUNCE.send(send_m)
+            await ctx.send(send_m)
