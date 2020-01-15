@@ -79,7 +79,7 @@ class Team:
             value=f'{len(self.games)} ({self.wins} won, {self.hosts} hosted)'
         )
         e.add_field(
-            name='Playing Now',
+            name='Played Ever',
             value=', '.join(self.playing) or 'no-one'
         )
         return e
@@ -100,6 +100,13 @@ class Team:
 
 
 class Teams:
+    @classmethod
+    def convert(cls, raw):
+        raw = raw.upper()
+        if raw in cls.teams:
+            return cls.teams[raw]
+        raise ValueError('Team ID not found.')
+
     @classmethod
     def load(cls, bot):
         try:
