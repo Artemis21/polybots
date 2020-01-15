@@ -125,6 +125,7 @@ class Teams:
             cls.teams[i] = Team.load(raw['teams'][i], i, bot)
         cls.stage = raw['stage']    # not started/signup/in progress/ended
         cls.winner = cls.teams.get(raw['winner'], None)
+        cls.reported = raw.get('reported', [])
 
     @classmethod
     def add_team(cls, name, members):
@@ -183,6 +184,9 @@ class Teams:
         if cls.stage == 'ended':
             return False, 'The tourney is over for this year!'
         if (looser in cls.teams) and (winner in cls.teams):
+            if [looser, winner] in cls.reported:
+                return False, 'That win has already been reported!'
+            cls.reported.append([looser, winner])
             looser = cls.teams[looser]
             winner = cls.teams[winner]
             if looser.team_id not in winner.playing:
@@ -342,6 +346,7 @@ class Teams:
             'stage': cls.stage,
             'teams': teams,
             'winner': getattr(cls.winner, 'team_id', cls.winner),
+            'reported': cls.reported,
         }
         with open('data/teams.json', 'w') as f:
             json.dump(data, f, indent=4)
