@@ -182,8 +182,6 @@ class Teams(commands.Cog):
         `team`: the ID of the loosing team, defaults to that of the person \
         running the command.
         """
-        if not await caution(ctx, self.bot):
-            return
         if not (admin(ctx.author) and team):
             team = self.data.find_by_member(ctx.author)
             if not team:
