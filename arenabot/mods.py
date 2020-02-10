@@ -117,4 +117,5 @@ async def del_(ctx, num: int):
     await ctx.send('Done!')
 
 
-bot.run('NjQwMzQxNTYxMjYzMjU5NjU3.Xj9EWA.5KIYlGRHhFMwmP0EZRQzEeRV3CQ')
+with open('TOKEN') as f:
+    bot.run(f.read().strip())
