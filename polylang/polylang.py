@@ -14,7 +14,7 @@ if platform.dist()[0] == 'debian':
     test = True
 else:
     # production mode
-    pre = ':'
+    pre = ';'
     token = key
     test = False
 
