@@ -95,7 +95,9 @@ async def get(ctx):
 async def all_(ctx):
     '''Get a list of every modifier.
     '''
-    await ctx.send(Modifiers.all())
+    for i in Modifiers.all():
+        await ctx.send(i)
+
 
 
 @bot.command(brief='Add a new modifier.')
