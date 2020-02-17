@@ -30,9 +30,12 @@ class Modifiers:
     @classmethod
     def all(cls):
         n = 1
-        t = 'All modifiers:'
+        t = ['All modifiers:']
         for mod in cls.mods:
-            t += f'\n**({n})** {cls.tostr(mod)}'
+            line = f'\n**({n})** {cls.tostr(mod)}'
+            if len(t[-1] + line) > 2000:
+                t.append('')
+            t[-1] += line
             n += 1
         return t
 
