@@ -70,7 +70,7 @@ class Games(commands.Cog):
         await ctx.send(embed=game.display())
 
     @commands.command(brief='Join a game.')
-    async def join(self, ctx, game_id):
+    async def join(self, ctx, game_id: int):
         '''Join a game. Give a game ID.
         '''
         if game_id not in Data.games:
