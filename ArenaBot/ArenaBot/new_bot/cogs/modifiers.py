@@ -17,7 +17,7 @@ class Modifiers(commands.Cog):
 
     @commands.command(brief='Add a modifier.')
     @commands.has_permissions(manage_channels=True)
-    async def addmod(ctx, name, turns: int, *, desc):
+    async def addmod(self, ctx, name, turns: int, *, desc):
         '''Add a new modifier. May only be used by arena admins. A value of 0 \
         for turns means infinity. Examples:
         `mod new "Modifier Name" 0 The modifier description.`
@@ -28,7 +28,7 @@ class Modifiers(commands.Cog):
 
     @commands.command(brief='Edit a modifier.')
     @commands.has_permissions(manage_channels=True)
-    async def editmod(ctx, num: int, field, *, new):
+    async def editmod(self, ctx, num: int, field, *, new):
         '''Edit a modifier by number. Example:
         `mod edit 3 name New Modifier Name`
         `mod edit 4 desc The new modifier description.`
@@ -51,7 +51,7 @@ class Modifiers(commands.Cog):
 
     @commands.command(brief='Remove a modifier.')
     @commands.has_permissions(manage_channels=True)
-    async def delmod(ctx, num: int):
+    async def delmod(self, ctx, num: int):
         '''Remove a modifier by number.
         `mod del 3`
         '''

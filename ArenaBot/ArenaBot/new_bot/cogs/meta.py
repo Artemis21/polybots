@@ -36,9 +36,12 @@ class Help(commands.DefaultHelpCommand):
         '`no`, `n`, `false`, `f`, `0`, `disable` or `off` for no.\n\n'
     )
 
-    def get_embed(self, desc=''):
+    def get_embed(self, ctx, desc=''):
         embed = discord.Embed(color=colours['green'], description=desc)
-        embed.set_author(name='Help', icon_url=bot.user.avatar_url)
+        embed.set_author(
+            name='Help',
+            icon_url=self.context.bot.user.avatar_url
+        )
         return embed
 
     def get_cog(self, cog, coms):

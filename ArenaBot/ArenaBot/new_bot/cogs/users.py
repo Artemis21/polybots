@@ -21,7 +21,7 @@ class Players(commands.Cog):
             n += 1
         desc = '\n'.join(lines)
         pag = DescPaginator(ctx, 'Leaderboard', desc, 0x00ff00, 20)
-        await pag.send()
+        await pag.setup()
 
     @commands.command(brief='View a user.')
     async def player(self, ctx, user: discord.Member=None):

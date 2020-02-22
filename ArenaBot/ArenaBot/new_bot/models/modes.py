@@ -118,9 +118,8 @@ class Modes:
         return '```' + (text[1:] or '[no modifiers found]') + '```'
 
     @classmethod
-    def get_mode(arg):
-        '''
-        Convert a game mode as command parameter.
+    def get_mode(cls, arg):
+        '''Convert a game mode as command parameter.
         '''
         for i in cls.modes:
             if i.name == arg.lower():

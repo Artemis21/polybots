@@ -98,7 +98,7 @@ class Games(commands.Cog):
     async def modes(self, ctx):
         '''View a list of every game mode.
         '''
-        await ctx.send(Mods.pretty_modes())
+        await ctx.send(Modes.pretty_modes())
 
     @commands.command(brief='Open a new game.', aliases=['new', 'newgame'])
     @commands.has_permissions(manage_channels=True)
