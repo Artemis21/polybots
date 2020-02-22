@@ -22,7 +22,7 @@ class User:
         game = None
         code = 'Not Set'
         u = cls(user=user, points=points, tz=tz, game=game, code=code)
-        await user.add_role(u.tier)
+        await user.add_roles(u.tier)
         return u
 
     def __init__(self, user, points, tz, game, code):
