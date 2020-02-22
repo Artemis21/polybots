@@ -20,7 +20,7 @@ INVITE = (
 
 class Help(commands.DefaultHelpCommand):
     brief = 'Shows this message.'
-    description = (
+    help = (
         'Get help on the bot, a command or a command group, eg. '
         '`{{pre}}help`, `{{pre}}help about` or `{{pre}}help Meta` '
         '\n__Understanding command usage:__\n'
@@ -35,6 +35,11 @@ class Help(commands.DefaultHelpCommand):
         '`yes`, `y`, `true`, `t`, `1`, `enable` or `on` for yes, or '
         '`no`, `n`, `false`, `f`, `0`, `disable` or `off` for no.\n\n'
     )
+    def __init__(self):
+        super().__init__(command_attrs = {
+            'help': Help.help,
+            'brief': Help.brief
+        })
 
     def get_embed(self, desc=''):
         embed = discord.Embed(color=colours['green'], description=desc)
@@ -53,8 +58,7 @@ class Help(commands.DefaultHelpCommand):
         for i in coms:
             if i.hidden:
                 continue
-            new = ('**' + self.get_command_signature(i) + '**   *'
-                   + (i.brief or Help.brief) + '*\n')
+            new = f'**{self.get_command_signature(i)}**   *{i.brief}*\n'
             if (len(value) + len(new)) > 1024:
                 ret[cog.qualified_name + f'(part {part})\n'] = value
                 value = new
@@ -80,7 +84,7 @@ class Help(commands.DefaultHelpCommand):
 
     async def send_command_help(self, command):
         embed = self.get_embed()
-        desc = command.help or command.description or Help.description
+        desc = command.help
         desc = desc.replace('{{pre}}', self.context.prefix)
         embed.add_field(name=self.get_command_signature(command),
                         value=desc)
