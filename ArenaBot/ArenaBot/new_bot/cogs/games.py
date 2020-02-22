@@ -6,9 +6,10 @@ import discord
 
 class GameConv(commands.Converter):
     async def convert(self, ctx, arg):
-        if game_id not in Data.games:
-            raise discord.CommandError(f'Game ID `{game_id}` not found.')
-        return Data.games[game_id]
+        arg = int(arg)
+        if arg not in Data.games:
+            raise commands.CommandError(f'Game ID `{arg}` not found.')
+        return Data.games[arg]
 
     async def default(self, ctx):
         game = Data.get(ctx.channel)
@@ -26,8 +27,7 @@ class Games(commands.Cog):
 
     def pretty_game(self, game, incl_open=False):
         if game.open:
-            maxpl = game.mode.players * game.mode.teams
-            extra = f'{len(game.players)}/{maxpl} players'
+            extra = f'{len(game.players)}/{game.mode.players} players'
         else:
             extra = '#' + game.channel.name
         mode = game.mode.name
@@ -42,7 +42,7 @@ class Games(commands.Cog):
         '''
         games = []
         for id in Data.games:
-            games.append(self.pretty_game(game), True)
+            games.append(self.pretty_game(Data.games[id], True))
         await ctx.send('```'+('\n\n'.join(games) or 'No games')+'```')
 
     @commands.command(brief='View open games.', aliases=['open'])
@@ -98,7 +98,7 @@ class Games(commands.Cog):
     async def modes(self, ctx):
         '''View a list of every game mode.
         '''
-        await ctx.send(Modes.pretty_modes())
+        await ctx.send(embed=Modes.all())
 
     @commands.command(brief='Open a new game.', aliases=['new', 'newgame'])
     @commands.has_permissions(manage_channels=True)
