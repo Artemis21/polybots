@@ -135,24 +135,29 @@ class Game:
             if n == self.mode.players:
                 n = 0
                 teams.append([])
+        if not teams[-1]:
+            teams = teams[:-1]
         return teams
 
     @property
     def open(self):
-        return len(self.players) < self.mode.players * self.mode.teams
+        return len(self.players) < self.mode.players
 
     def display(self):
         desc = ('In Progress', 'Open')[self.open]
-        e = discord.Embed(title=self, description=desc)
+        e = discord.Embed(title=str(self), description=desc)
         if self.tier:
             e.add_field(name='Tier', value=self.tier.mention)
         if self.channel:
             e.add_field(name='Channel', value=self.channel.mention)
         if self.modifiers:
-            e.add_field(name='Modifiers', value='\n'.join(self.modifiers))
-        e.add_field(name='Mode', value=self.mode)
+            e.add_field(
+                name='Modifiers', value=('\n'.join(self.modifiers) or 'none')
+            )
+        e.add_field(name='Mode', value=self.mode.name)
         for n, team in enumerate(self.teams):
-            pings = ' | '.join(i.mention for i in teams)
+            print(n, team)
+            pings = ' | '.join(i.mention for i in team)
             e.add_field(name=f'Team {n+1}', value=pings)
         return e
 
@@ -171,7 +176,7 @@ class Game:
         return {
             'modifiers': self.modifiers,
             'players': [i.id for i in self.players],
-            'mode': self.mode,
+            'mode': self.mode.name,
             'tier': tier,
             'channel': channel,
             'id': self.id,
@@ -193,13 +198,13 @@ class Games:
             cls.games[g.id] = g
 
     @classmethod
-    def get(self, channel):
+    def get(cls, channel):
         for id in cls.games:
             if cls.games[id].channel.id == channel.id:
                 return cls.games[id]
 
     @classmethod
-    def new(self, mode, tier):
+    def new(cls, mode, tier):
         g = Game.new(mode, tier, cls.nextid)
         cls.games[cls.nextid] = g
         cls.nextid += 1

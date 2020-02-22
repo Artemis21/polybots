@@ -1,3 +1,6 @@
+import discord
+
+
 class Mode:
     @classmethod
     def load(cls, data):
@@ -27,6 +30,10 @@ class Mode:
         self.round_mods = round_mods
         self.win = win_pts
         self.loss = loss_pts
+
+    @property
+    def players(self):
+        return self.teams * self.team_size
 
     def dump(self):
         return {
@@ -71,12 +78,6 @@ class Mode:
         '''
         return '{} ({})'.format(self.name, self.main_str())
 
-    def for_list(self):
-        '''
-        Format for mode list.
-        '''
-        return '{:^9}: {:^35.35}'.format(self.name, self.main_str())
-
 
 class Modes:
     nums = {
@@ -106,16 +107,15 @@ class Modes:
         )
 
     @classmethod
-    def pretty_modes(cls):
-        one = '{}{}: {:<20.20}'
-        line = True
-        text = ''
-        n = 1
-        for i in cls.modes:
-            text += one.format(('|', '\n')[line], n, i)
-            line = not line
-            n += 1
-        return '```' + (text[1:] or '[no modifiers found]') + '```'
+    def all(cls):
+        e = discord.Embed(
+            title='Game modes',
+            description='​',     # ZWSP
+            color=0x00ffff
+        )
+        for mode in cls.modes:
+            e.add_field(name=mode.name, value=mode.main_str())
+        return e
 
     @classmethod
     def get_mode(cls, arg):
