@@ -4,6 +4,7 @@ from utils import errors
 import traceback as tb
 import asyncio
 import models
+from models.config import Config
 
 
 class ArenaBot(commands.Bot):
@@ -14,14 +15,18 @@ class ArenaBot(commands.Bot):
         self.use_cogs = cogs
         self.ready = False
 
+    async def guild_check(self, ctx):
+        return ctx.guild == Config.guild
+
     async def on_ready(self):
         if self.ready:
             return
-        print(f'Logged in as {self.user}.')
         models.load(self)
+        self.add_check(self.guild_check)
         self.load_extension('cogs')
         self.save.start()
         self.ready = True
+        print(f'Logged in as {self.user}.')
         act1 = discord.Activity(
             name=f'{self.command_prefix}help.',
             type=discord.ActivityType.listening
