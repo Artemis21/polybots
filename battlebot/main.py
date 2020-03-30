@@ -1,6 +1,8 @@
 import discord
 from discord.ext import commands
 import logging
+import re
+import traceback
 
 
 with open('TOKEN') as f:
@@ -9,7 +11,8 @@ with open('TOKEN') as f:
 DESC = (
     'BattleBot is a simple helper bot created by Artemis#8799 for the '
     'Battle Teachings server. Currently, it\'s only function is to create '
-    'channel groups for games.'
+    'channel groups for games. The source code is available '
+    '[here](https://github.com/Artemis21/polybots/tree/master/battlebot).'
 )
 ADVERT = 'Order a bot at artybot.xyz.'
 AD_ICON = 'https://artybot.xyz/static/icon.png'
@@ -27,7 +30,7 @@ class Help(commands.DefaultHelpCommand):
                     self.get_command_signature(command),
                     command.brief or Help.brief
                 )
-        e = discord.Embed(title='Help', color=0x00FF00, description=text)
+        e = discord.Embed(title='Help', color=0x00FF66, description=text)
         await self.get_destination().send(embed=e)
 
     async def send_command_help(self, command):
@@ -35,7 +38,7 @@ class Help(commands.DefaultHelpCommand):
             '{{pre}}', bot.command_prefix
         )
         title = self.get_command_signature(command)
-        e = discord.Embed(title=title, color=0x00FF00, description=desc)
+        e = discord.Embed(title=title, color=0x00FF66, description=desc)
         await self.get_destination().send(embed=e)
 
     async def send_cog_help(self, cog):
@@ -43,15 +46,28 @@ class Help(commands.DefaultHelpCommand):
 
 
 logging.basicConfig(level=logging.INFO)
-bot = commands.Bot(command_prefix='!')
+bot = commands.Bot(command_prefix='1')
 bot.help_command = Help()
+
+
+@bot.event
+async def on_command_error(ctx, error):
+    rawtitle = type(error).__name__
+    rawtitle = re.sub('([a-z])([A-Z])', r'\1 \2', rawtitle)
+    title = rawtitle[0].upper() + rawtitle[1:].lower()
+    e = discord.Embed(color=0xFF0066, title=title, description=str(error))
+    await ctx.send(embed=e)
+    if hasattr(error, 'original'):
+        err = error.original
+        traceback.print_tb(err.__traceback__)
+        print(f'{type(err).__name__}: {err}.')
 
 
 @bot.command(brief='About the bot.')
 async def about(ctx):
     '''Provides some details relating to the bot.
     '''
-    e = discord.Embed(colour=0x0033AA, title='About', description=DESC)
+    e = discord.Embed(colour=0x0066FF, title='About', description=DESC)
     e.set_thumbnail(url=bot.user.avatar_url)
     e.set_footer(text=ADVERT, icon_url=AD_ICON)
     await ctx.send(embed=e)
