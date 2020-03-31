@@ -46,7 +46,7 @@ class Help(commands.DefaultHelpCommand):
 
 
 logging.basicConfig(level=logging.INFO)
-bot = commands.Bot(command_prefix='1')
+bot = commands.Bot(command_prefix='!')
 bot.help_command = Help()
 
 

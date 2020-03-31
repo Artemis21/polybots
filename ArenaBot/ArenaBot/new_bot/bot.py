@@ -28,7 +28,7 @@ class ArenaBot(commands.Bot):
         self.ready = True
         print(f'Logged in as {self.user}.')
         act1 = discord.Activity(
-            name=f'{self.command_prefix}help.',
+            name=f'{Config.prefix}help.',
             type=discord.ActivityType.listening
         )
         act2 = discord.Activity(
@@ -38,7 +38,7 @@ class ArenaBot(commands.Bot):
         acts = ((act1, 6), (act2, 6))
         n = 0
         while True:
-            act1.name = f'{self.command_prefix}help.'
+            act1.name = f'{Config.prefix}help.'
             await self.change_presence(activity=acts[n][0])
             n += 1
             n %= len(acts)
