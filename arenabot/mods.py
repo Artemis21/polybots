@@ -68,9 +68,10 @@ class Modifiers:
 def admins():
     async def predicate(ctx):
         return ctx.author.id in [
-            610146313463660565,  # Rook
-            588943380835336203,  # Mik Mik
-            496381034628251688,  # Artemis
+            610146313463660565,     # Rook
+            588943380835336203,     # Mik Mik
+            496381034628251688,     # Artemis
+            XXXXXXXXXXXXXXXXXX,     # Insert Planet26 Here
         ]
     return commands.check(predicate)
 
@@ -97,7 +98,6 @@ async def all_(ctx):
     '''
     for i in Modifiers.all():
         await ctx.send(i)
-
 
 
 @bot.command(brief='Add a new modifier.')

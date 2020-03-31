@@ -45,7 +45,7 @@ class Game:
         if self.tier:
             if self.tier not in user.roles:
                 return f'You must have the {self.tier} role to join this game.'
-        player = Users.get_user(player)
+        player = await Users.get_user(user)
         if user.id in [i.id for i in self.players]:
             return 'You\'re already in this game!'
         if player.game:
