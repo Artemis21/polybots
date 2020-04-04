@@ -105,7 +105,8 @@ manage channels permission to run this command.
         for other in players:
             if other != player:
                 overwrites[other] = locked
-        await cat.create_text_channel(player.name, overwrites=overwrites)
+        c = await cat.create_text_channel(player.name, overwrites=overwrites)
+        await c.send(player.mention)
     await ctx.send(f'Done! ({disc.mention})')
 
 
