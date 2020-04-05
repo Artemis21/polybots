@@ -10,12 +10,19 @@ with open('TOKEN') as f:
 
 DESC = (
     'BattleBot is a simple helper bot created by Artemis#8799 for the '
-    'Battle Teachings server. Currently, it\'s only function is to create '
-    'channel groups for games. The source code is available '
+    'Battle Teachings server. It\'s current functions are creating and '
+    'archiving game channels. The source code is available '
     '[here](https://github.com/Artemis21/polybots/tree/master/battlebot).'
 )
 ADVERT = 'Order a bot at artybot.xyz.'
 AD_ICON = 'https://artybot.xyz/static/icon.png'
+
+ARCHIVES = {
+    'a': 692808476778430574,
+    'archives': 692808476778430574,
+    't': 696395537993170997,
+    'tourney': 696395537993170997,
+}
 
 
 class Help(commands.DefaultHelpCommand):
@@ -91,10 +98,9 @@ async def game(
         ├─ #artemis
         └─ #reality
     Each player will be locked out of the other player's channel. The \
-category will be placed at the end of the channel list. You must have the \
-manage channels permission to run this command.
+    category will be placed at the end of the channel list. You must have the \
+    manage channels permission to run this command.
     '''
-    position = len(ctx.guild.channels)
     name = f'{label} {player1.name} vs {player2.name}'
     cat = await ctx.guild.create_category(name)
     disc = await cat.create_text_channel('discussion')
@@ -109,6 +115,45 @@ manage channels permission to run this command.
         await c.send(player.mention)
     await disc.send(' '.join(i.mention for i in players))
     await ctx.send(f'Done! ({disc.mention})')
+
+
+@bot.command(brief='Archive this category.')
+@commands.has_permissions(manage_channels=True)
+async def archive(ctx, archive='archives'):
+    '''Archive the channel category this command is used in. This will delete \
+    the discussion channel and category, and move the channels in it to the \
+    archive channel. You can optionally specify a parameter which tells the \
+    bot which archive to use. Default is "archives", which means the ARCHIVES \
+    category, but you can also use "tourney" or "t", which means TOURNEY \
+    ARCHIVES.
+    Examples:
+    `{{pre}}archive`: archive this game to the ARCHIVES category
+    `{{pre}}archive t`: archive this game to the TOURNEY ARCHVIES category.
+    NOTE: you must run this command in the discussion channel of a game.
+    '''
+    if str(ctx.channel) != 'discussion' or not ctx.channel.category_id:
+        return await ctx.send(
+            'This command must be run in a discussion channel.'
+        )
+    archive = archive.lower()
+    if archive not in ARCHIVES:
+        return await ctx.send(
+            '`archive` must be one of "archives", "a", "tourney" or "t". Run '
+            '`!help archive` for more info.'
+        )
+    archive = bot.get_channel(ARCHIVES[archive])
+    if len(archive.channels) > 48:
+        return await ctx.send(
+            f'The category {archive} is full, categories may only contain 50 '
+            'channels.'
+        )
+    category = bot.get_channel(ctx.channel.category_id)
+    for channel in category.channels:
+        if channel.id != ctx.channel.id:
+            await channel.edit(category=category)
+            await channel.send(f'{ctx.author.mention} archived!')
+    await ctx.channel.delete()
+    await category.delete()
 
 
 # https://discordapp.com/api/oauth2/authorize?client_id=694291738264862782&permissions=388177&scope=bot
