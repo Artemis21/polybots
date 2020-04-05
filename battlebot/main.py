@@ -150,7 +150,7 @@ async def archive(ctx, archive='archives'):
     category = bot.get_channel(ctx.channel.category_id)
     for channel in category.channels:
         if channel.id != ctx.channel.id:
-            await channel.edit(category=category)
+            await channel.edit(category=archive)
             await channel.send(f'{ctx.author.mention} archived!')
     await ctx.channel.delete()
     await category.delete()
