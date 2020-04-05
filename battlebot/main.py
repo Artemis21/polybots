@@ -148,10 +148,9 @@ async def archive(ctx, archive='archives'):
             'channels.'
         )
     category = bot.get_channel(ctx.channel.category_id)
-    unlocked = discord.PermissionOverwrite()
     for channel in category.channels:
         if channel.id != ctx.channel.id:
-            await channel.edit(category=archive, overwrites=unlocked)
+            await channel.edit(category=archive, overwrites={})
             await channel.send(f'{ctx.author.mention} archived!')
     await ctx.channel.delete()
     await category.delete()
