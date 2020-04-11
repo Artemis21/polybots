@@ -1,4 +1,5 @@
 from pymongo import MongoClient
+import json
 
 from utils.models import Model
 
@@ -44,7 +45,25 @@ class Game(DivisionSpecificModel):
         super().create(data)
 
 
+class Settings:
+    @classmethod
+    def load(cls):
+        with open('data/settings.json') as f:
+            cls.data = json.load(f)
+
+    @classmethod
+    def __getattr__(cls, name):
+        return cls.data[name]
+
+    @classmethod
+    def __setattr__(cls, name, value):
+        cls.data[name] = value
+        with open('data/settings.json', 'w') as f:
+            json.dump(cls.data, f)
+
+
 def setup():
     db = MongoClient().giant
     User.collection = db.users
     Game.collection = db.games
+    Settings.load()

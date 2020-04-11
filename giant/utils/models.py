@@ -55,10 +55,10 @@ class Model:
         type(self).collection.delete_one({'_id': self.id})
         del type(self).objects[self.id]
 
-    def __getitem__(self, key):
+    def __getattr__(self, key):
         return self.data[key]
 
-    def __setitem__(self, key, new):
+    def __setattr__(self, key, new):
         self.data[key] = new
         type(self).collection.update_one(
             {'_id': self.id}, {'$set': {key: new}}
