@@ -20,13 +20,13 @@ def test_users():
     log(INFO, 'Creating user...')
     user = models.User.create(**TEST_USER, division='B')
     log(INFO, 'Giving user points...')
-    user['points'] += 10
+    user.points += 10
     log(INFO, 'Clearing user cache...')
     models.User.clear_cache()
     log(INFO, 'Getting user...')
     user = models.User.load(user.id)
     log(INFO, 'Checking points...')
-    if user['points'] != 10:
+    if user.points != 10:
         log(
             WARNING,
             'User points did not update correctly, should be 10 not '
