@@ -63,7 +63,9 @@ class Game(DivisionSpecificModel):
 
 
 class Kills(dict):
-    def __init__(self, game, dict_={}):
+    def __init__(self, game, dict_=None):
+        if not dict_:
+            dict_ = {}
         self.game = game
         super().__init__(dict_)
 
@@ -89,12 +91,69 @@ class Kills(dict):
         return str(self)
 
 
-class Settings:
+class IdList(list):
+    def append(self, item):
+        super().append(item)
+        Settings.save()
+
+    def remove(self, item):
+        super().remove(item)
+        Settings.save()
+
+    def clear(self):
+        super().clear()
+        Settings.save()
+
+    def extend(self, other):
+        super().extend(other)
+        Settings.save()
+
+    def copy(self):
+        return IdList(self)
+
+    def __str__(self):
+        return '<IdList {}>'.format(super().__repr__())
+
+    def __repr__(self):
+        return str(self)
+
+
+class SettingsType(type):
+    def __getattr__(cls, name):
+        if name in ('FIELDS', 'data'):
+            return super().__getattribute__(name)
+        if name in cls.FIELDS:
+            if name in cls.data:
+                return cls.data[name]
+            else:
+                obj = cls.FIELDS[name]
+                try:
+                    obj = obj.copy()
+                except AttributeError:
+                    pass
+                cls.data[name] = obj
+                return obj
+        raise AttributeError(f'No attribute named {name}.')
+
+    def __setattr__(cls, name, value):
+        if name in ('FIELDS', 'data'):
+            return super().__setattr__(name, value)
+        if name not in cls.FIELDS:
+            raise AttributeError(f'{name} is not a defined field.')
+        if not isinstance(value, type(cls.FIELDS[name])):
+            raise ValueError('Field {} must be of type {}.'.format(
+                name, type(cls.FIELDS[name]).__name__
+            ))
+        cls.data[name] = value
+        cls.save()
+
+
+class Settings(metaclass=SettingsType):
     FIELDS = {
-        'admin_users': [496381034628251688],    # Artemis#8799
-        'admin_roles': [],
-        'banned_users': [],
-        'banned_roles': [],
+        'admin_users': IdList([496381034628251688]),    # Artemis#8799
+        'admin_roles': IdList([]),
+        'banned_users': IdList([]),
+        'banned_roles': IdList([]),
         'season': 2,
         'leagues': 3,
     }
@@ -108,20 +167,14 @@ class Settings:
             cls.data = {}
 
     @classmethod
-    def __getattr__(cls, name):
-        if name in cls.FIELDS:
-            return cls.data.get(name, cls.FIELDS[name])
-        raise AttributeError(f'No attribute named {name}.')
-
-    @classmethod
-    def __setattr__(cls, name, value):
-        if name not in cls.FIELDS:
-            raise AttributeError(f'{name} is not a defined field.')
-        if isinstance(value, type(cls.FIELDS[name])):
-            raise ValueError(f'Field {name} must be of type {type(value)}.')
-        cls.data[name] = value
+    def save(cls):
         with open('data/settings.json', 'w') as f:
             json.dump(cls.data, f)
+
+    @classmethod
+    def reset(cls):
+        cls.data = {}
+        cls.save()
 
 
 def setup():
