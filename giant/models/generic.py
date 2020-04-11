@@ -77,3 +77,81 @@ class Model:
 
     def __repr__(self):
         return str(self)
+
+
+class DivisionSpecificModel(Model):
+    @classmethod
+    def all_in_league(cls, league, season=None):
+        s = {'league': league}
+        if season:
+            s['season'] = season
+        return cls.all(s)
+
+    @classmethod
+    def all_in_division(cls, league, division, season=None):
+        s = {'division': division, 'league': league}
+        if season:
+            s['season'] = season
+        return cls.all(s)
+
+
+class ModelDict(dict):
+    def __init__(self, game, dict_=None):
+        if not dict_:
+            dict_ = {}
+        self.game = game
+        super().__init__(dict_)
+
+    def __getitem__(self, key):
+        return super().__getitem__(str(key))
+
+    def __setitem__(self, key, value):
+        super().__setitem__(str(key), value)
+        self.game.kills = self
+
+    def __iter__(self):
+        for key in super().__iter__():
+            yield int(key)
+
+    def keys(self):
+        for key in super().keys():
+            yield int(key)
+
+    def __str__(self):
+        return '<ModelDict {}>'.format(super().__repr__())
+
+    def __repr__(self):
+        return str(self)
+
+
+class ModelList(list):
+    def __init__(self, model, data=None):
+        if not data:
+            data = []
+        super().__init__(data)
+        self.model = model
+
+    def append(self, item):
+        super().append(item)
+        self.model.save()
+
+    def remove(self, item):
+        super().remove(item)
+        self.model.save()
+
+    def clear(self):
+        super().clear()
+        self.model.save()
+
+    def extend(self, other):
+        super().extend(other)
+        self.model.save()
+
+    def copy(self):
+        return ModelList(self.model, self)
+
+    def __str__(self):
+        return '<ModelList {}>'.format(super().__repr__())
+
+    def __repr__(self):
+        return str(self)

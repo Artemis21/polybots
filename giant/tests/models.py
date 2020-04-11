@@ -155,11 +155,9 @@ def test_settings():
             '100 should not be an admin role.'
         )
         
-        
+
 def test():
     log(INFO, 'Starting model tests')
-    log(DEBUG, 'Setting up database')
-    models.setup()
     test_users()
     test_games()
     test_settings()
