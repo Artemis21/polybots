@@ -46,6 +46,16 @@ class Game(DivisionSpecificModel):
 
 
 class Settings:
+    FIELDS = {
+        'admin_users': [],
+        'admin_roles': [],
+        'banned_users': [],
+        'banned_roles': [],
+        'season': 2,
+        'leagues': 4,
+        'divisions': 8
+    }
+
     @classmethod
     def load(cls):
         with open('data/settings.json') as f:
@@ -53,10 +63,16 @@ class Settings:
 
     @classmethod
     def __getattr__(cls, name):
-        return cls.data[name]
+        if name in cls.FIELDS:
+            return cls.data.get(name, cls.FIELDS[name])
+        raise AttributeError(f'No attribute named {name}.')
 
     @classmethod
     def __setattr__(cls, name, value):
+        if name not in cls.FIELDS:
+            raise AttributeError(f'{name} is not a defined field.')
+        if isinstance(value, type(cls.FIELDS[name])):
+            raise ValueError(f'Field {name} must be of type {type(value)}.')
         cls.data[name] = value
         with open('data/settings.json', 'w') as f:
             json.dump(cls.data, f)
