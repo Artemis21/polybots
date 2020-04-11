@@ -6,12 +6,18 @@ from utils.models import Model
 
 class DivisionSpecificModel(Model):
     @classmethod
-    def all_in_league(cls, league):
-        return cls.all({'league': league})
+    def all_in_league(cls, league, season=None):
+        s = {'league': league}
+        if season:
+            s['season'] = season
+        return cls.all(s)
 
     @classmethod
-    def all_in_division(cls, league, division):
-        return cls.all({'division': division, 'league': league})
+    def all_in_division(cls, league, division, season=None):
+        s = {'division': division, 'league': league}
+        if season:
+            s['season'] = season
+        return cls.all(s)
 
 
 class User(DivisionSpecificModel):
@@ -40,26 +46,66 @@ class Game(DivisionSpecificModel):
             'season': season,
             'name': None,
             'status': 'not started',
-            'kills': {}
+            'kills': Kills(None)
         }
-        super().create(data)
+        obj = super().create(data)
+        obj.kills.game = obj
+        return obj
+
+    def __init__(self, id, data):
+        data['kills'] = Kills(self, data['kills'])
+        super().__init__(id, data)
+
+    def __setattr__(self, name, value):
+        if name == 'kills':
+            value = {str(i): value[i] for i in value}
+        super().__setattr__(name, value)
+
+
+class Kills(dict):
+    def __init__(self, game, dict_={}):
+        self.game = game
+        super().__init__(dict_)
+
+    def __getitem__(self, key):
+        return super().__getitem__(str(key))
+
+    def __setitem__(self, key, value):
+        super().__setitem__(str(key), value)
+        self.game.kills = self
+
+    def __iter__(self):
+        for key in super().__iter__():
+            yield int(key)
+
+    def keys(self):
+        for key in super().keys():
+            yield int(key)
+
+    def __str__(self):
+        return '<Kills {}>'.format(super().__repr__())
+
+    def __repr__(self):
+        return str(self)
 
 
 class Settings:
     FIELDS = {
-        'admin_users': [],
+        'admin_users': [496381034628251688],    # Artemis#8799
         'admin_roles': [],
         'banned_users': [],
         'banned_roles': [],
         'season': 2,
-        'leagues': 4,
-        'divisions': 8
+        'leagues': 3,
     }
 
     @classmethod
     def load(cls):
-        with open('data/settings.json') as f:
-            cls.data = json.load(f)
+        try:
+            with open('data/settings.json') as f:
+                cls.data = json.load(f)
+        except FileNotFoundError:
+            cls.data = {}
 
     @classmethod
     def __getattr__(cls, name):

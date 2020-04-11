@@ -56,9 +56,13 @@ class Model:
         del type(self).objects[self.id]
 
     def __getattr__(self, key):
+        if key in ('data',  'id'):
+            return super().__getattr__(key)
         return self.data[key]
 
     def __setattr__(self, key, new):
+        if key in ('data', 'id'):
+            return super().__setattr__(key, new)
         self.data[key] = new
         type(self).collection.update_one(
             {'_id': self.id}, {'$set': {key: new}}

@@ -1,5 +1,5 @@
 import models
-from logging import log, INFO, WARNING
+from logging import basicConfig, log, INFO, WARNING
 
 
 TEST_USER = {
@@ -10,7 +10,24 @@ TEST_USER = {
 TEST_USER_2 = {
     'id': 987654321098,
     'name': 'Apollo',
-    'code': 'oNG90nonnaf090aFF0j',
+    'code': 'oNG90noN090aFF0j',
+}
+TEST_GAME = {
+    'host': TEST_USER['id'],
+    'division': 'B',
+    'league': 4,
+    'season': 2
+}
+TEST_GAME_2 = {
+    'host': TEST_USER_2['id'],
+    'division': 'B',
+    'league': 4,
+    'season': 2
+}
+TEST_KILL = {
+    'code': 'C',
+    'killer': TEST_USER['id'],
+    'turn': 10
 }
 
 
@@ -58,8 +75,50 @@ def test_games():
     log(INFO, 'Setting up database...')
     models.setup()
     log(INFO, 'Creating a game...')
+    game = models.Game.create(**TEST_GAME)
+    log(INFO, 'Setting the name...')
+    game.name = 'Popcorn and Moans'
+    log(INFO, 'Registering a kill...')
+    game.kills[TEST_USER_2['id']] = TEST_KILL
+    log(INFO, 'Checking name...')
+    if game.name != 'Popcorn and Moans':
+        log(
+            WARNING,
+            'Game name should be "Popcorn and Moans", not "{}".'.format(
+                game.name
+            )
+        )
+    log(INFO, 'Clearing the cache...')
+    models.Game.clear_cache()
+    log(INFO, 'Getting the game...')
+    game = models.Game.load(game.id)
+    log(INFO, 'Checking kills...')
+    if dict(game.kills) != {TEST_USER_2['id']: TEST_KILL}:
+        log(
+            WARNING,
+            'Kills should be {}, not {}.'.format(
+                {TEST_USER_2['id']: TEST_KILL}, game.kills
+            )
+        )
+    log(INFO, 'Creating a second game...')
+    models.Game.create(**TEST_GAME_2)
+    log(INFO, 'Finding games by division...')
+    games = models.Game.all_in_division(4, 'B', 2)
+    if len(games) != 2:
+        log(WARNING, 'There should be 2 games, not {}.'.format(len(games)))
+    log(INFO, 'Deleting all games by division...')
+    models.Game.delete_all({'division': 'B'})
+    log(INFO, 'Checking number of games...')
+    if models.Game.all():
+        log(
+            WARNING,
+            "There shouldn't be any games left but there are {}.".format(
+                len(models.Game.all())
+            )
+        )
 
 
 if __name__ == '__main__':
+    basicConfig(level=WARNING)
     test_users()
     test_games()
