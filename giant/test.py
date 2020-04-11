@@ -1,8 +1,13 @@
 from tests import models
-import logging
+from logging import basicConfig, log, INFO, WARNING
+
+
+def test():
+    log(INFO, 'Starting tests')
+    models.test()
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
-    models.test_users()
-    models.test_games()
+    basicConfig(level=WARNING)
+    test()
+    print('Tests complete')
