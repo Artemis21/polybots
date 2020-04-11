@@ -15,7 +15,10 @@ class DivisionSpecificModel(Model):
 
 class User(DivisionSpecificModel):
     @classmethod
-    def create(cls, id, name, code, division, league=4, points=0):
+    def create(
+            cls, id: int, name: str, code: str, division: str,
+            league: int = 4, points: int = 0
+            ):
         data = {
             'league': league,
             'division': division,
@@ -28,7 +31,7 @@ class User(DivisionSpecificModel):
 
 class Game(DivisionSpecificModel):
     @classmethod
-    def create(cls, host, division, league, season):
+    def create(cls, host: int, division: str, league: int, season: int):
         data = {
             'host': host,
             'division': division,
