@@ -2,6 +2,32 @@ from main.gamename import game
 from main.cityname import city, alphabet
 from main.elyrion import ely_to_eng, eng_to_ely
 from discord.ext import commands
+import discord
+
+
+async def imitate(ctx, text):
+    try:
+        whs = await ctx.channel.webhooks()
+        if whs:
+            wh = whs[0]
+        else:
+            wh = await ctx.channel.create_webhook(name='Toolkit')
+        await wh.send(
+            text, username=ctx.author.display_name, 
+            avatar_url=str(ctx.author.avatar_url)
+        )
+    except discord.Forbidden:
+        e = discord.Embed(description=text)
+        e.set_author(
+            name=ctx.author.display_name, 
+            icon_url=str(ctx.author.avatar_url)
+        )
+        e.set_footer(
+            text='For full fuctionality, please give the bot the manage webhooks '
+                 'permission.'
+        )
+        await ctx.send(embed=e)
+    await ctx.message.delete()
 
 
 class Names(commands.Cog):
@@ -50,7 +76,11 @@ class Names(commands.Cog):
         Examples:
         `{{pre}}elyrion This is what I want to convert.`
         """
-        await ctx.send(eng_to_ely(english))
+        text = eng_to_ely(english)
+        if ctx.guild:
+            await imitate(ctx, text)
+        else:
+            await ctx.send(text)
 
 
     @commands.command(brief='Translate from Elyrion.')
