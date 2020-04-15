@@ -5,16 +5,16 @@ from discord.ext import commands
 import discord
 
 
-async def imitate(ctx, text):
+async def imitate(ctx, text, original):
     try:
         whs = await ctx.channel.webhooks()
         if whs:
             wh = whs[0]
         else:
             wh = await ctx.channel.create_webhook(name='Toolkit')
-        await wh.send(
+        m = await wh.send(
             text, username=ctx.author.display_name, 
-            avatar_url=str(ctx.author.avatar_url)
+            avatar_url=str(ctx.author.avatar_url), wait=True
         )
     except discord.Forbidden:
         e = discord.Embed(description=text)
@@ -26,8 +26,25 @@ async def imitate(ctx, text):
             text='For full fuctionality, please give the bot the manage webhooks '
                  'permission.'
         )
-        await ctx.send(embed=e)
-    await ctx.message.delete()
+        m = await ctx.send(embed=e)
+    try:
+        await ctx.message.delete()
+    except discord.Forbidden:
+        await ctx.send(
+            'For full fuctionality, please give the bot the manage messages '
+            'permission.'
+        )
+    await m.add_reaction('❓')
+    def check(reaction, user):
+        return (
+            reaction.emoji == '❓' and reaction.message.id == m.id 
+            and not user.bot
+        )
+
+    while True:
+        _, user = await ctx.bot.wait_for('reaction_add', check=check)
+        await user.create_dm()
+        await user.dm_channel.send(original)
 
 
 class Names(commands.Cog):
@@ -78,7 +95,8 @@ class Names(commands.Cog):
         """
         text = eng_to_ely(english)
         if ctx.guild:
-            await imitate(ctx, text)
+            await imitate(ctx, text, english)
+
         else:
             await ctx.send(text)
 
