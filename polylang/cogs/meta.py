@@ -6,11 +6,10 @@ from utils.paginator import FieldPaginator as Paginator
 import json
 
 
-AUTHOR = 'Artemis#8032'
+AUTHOR = 'Artemis#8799'
 OTHER = (
     'PolyLang is a Discord bot made to generate words and phrases in the '
-    'languages of Polytopia. It currently only supports city and game names '
-    'but may grow.'
+    'languages of Polytopia.'
 )
 INVITE = (
     'https://discordapp.com/api/oauth2/authorize?client_id={}&permissions=8'
@@ -21,97 +20,31 @@ SOURCE = 'https://github.com/Artemis21/Polybots'
 
 class Help(commands.DefaultHelpCommand):
     brief = 'Shows this message.'
-    description = (
-        'Get help on the bot, a command or a command group, eg. '
-        '`{{pre}}help`, `{{pre}}help about` or `{{pre}}help Meta` '
-        '\n__Understanding command usage:__\n'
-        '`[value]`: optional value\n'
-        '`<value>`: required value\n'
-        '`[value...]` or `[value]...`: multiple values\n'
-        '`[value="default"]`: default value available.'
-        '\n__Values:__\n'
-        'A value can be anything without a space in it, eg. `text`, '
-        '`@user`, `#channel`, `3`, `no`. If you want text with a space '
-        'in it, do `"some text"`. Yes/no values can be any of '
-        '`yes`, `y`, `true`, `t`, `1`, `enable` or `on` for yes, or '
-        '`no`, `n`, `false`, `f`, `0`, `disable` or `off` for no.\n\n'
-    )
-
-    def get_embed(self, desc=''):
-        embed = discord.Embed(color=colours['green'], description=desc)
-        embed.set_author(name='Help', icon_url=bot.user.avatar_url)
-        return embed
-
-    def get_cog(self, cog, coms):
-        if not cog:
-            return
-        value = ''
-        part = 1
-        ret = {}
-        for i in coms:
-            if i.hidden:
-                continue
-            new = ('**' + self.get_command_signature(i) + '**   *'
-                   + (i.brief or Help.brief) + '*\n')
-            if (len(value) + len(new)) > 1024:
-                ret[cog.qualified_name + f'(part {part})\n'] = value
-                value = new
-                part += 1
-            else:
-                value += new
-        name = cog.qualified_name
-        if part != 1:
-            name += f'(part {part})'
-        ret[name + '\n'] = value
-        return ret
+    help = 'Provides help on a command.'
 
     async def send_bot_help(self, cogs):
-        fields = {}
-        for i in cogs:
-            new = self.get_cog(i, cogs[i])
-            if new:
-                fields.update(new)
-        pag = Paginator(
-            self.context, 'Help', fields, colour=colours['green'], maxf=3
-        )
-        await pag.setup()
+        text = ''
+        for cog in cogs:
+            for command in cogs[cog]:
+                if command.hidden:
+                    continue
+                text += '**{}** *{}*\n'.format(
+                    self.get_command_signature(command),
+                    command.brief or Help.brief
+                )
+        e = discord.Embed(title='Help', color=0x00FF66, description=text)
+        await self.get_destination().send(embed=e)
 
     async def send_command_help(self, command):
-        embed = self.get_embed()
-        desc = command.help or command.description or Help.description
-        desc = desc.replace('{{pre}}', self.context.prefix)
-        embed.add_field(name=self.get_command_signature(command),
-                        value=desc)
-        await self.get_destination().send(embed=embed)
+        desc = (command.help or Help.help).replace(
+            '{{pre}}', bot.command_prefix
+        )
+        title = self.get_command_signature(command)
+        e = discord.Embed(title=title, color=0x00FF66, description=desc)
+        await self.get_destination().send(embed=e)
 
     async def send_cog_help(self, cog):
-        desc = cog.description.replace('{{pre}}', self.context.prefix)
-        embed = self.get_embed(desc=desc)
-        coms = await self.filter_commands(cog.get_commands())
-        for name, val in self.get_cog(cog, coms).items():
-            embed.add_field(name=name, value=val)
-        await self.get_destination().send(embed=embed)
-
-
-class Config:
-    @classmethod
-    def load(cls):
-        try:
-            with open('data/config.json') as f:
-                cls.data = json.load(f)
-        except FileNotFoundError:
-            cls.data = {}
-        bot.command_prefix = cls.data.get('prefix', bot.command_prefix)
-
-    @classmethod
-    def set_prefix(cls, prefix):
-        cls.data['prefix'] = prefix
-        bot.command_prefix = prefix
-
-    @classmethod
-    def save(cls):
-        with open('data/config.json', 'w') as f:
-            json.dump(cls.data, f)
+        await self.send_bot_help(bot.cogs)
 
 
 class Meta(commands.Cog):
@@ -121,10 +54,7 @@ class Meta(commands.Cog):
     def __init__(self, bot_):
         global bot
         bot = bot_
-        helpcom = Help()
-        bot.help_command = helpcom
-        helpcom.cog = self
-        Config.load()
+        bot.help_command = Help()
 
     @commands.Cog.listener()
     async def on_message(self, mes):
@@ -190,31 +120,3 @@ class Meta(commands.Cog):
                 pass
             rows.append(line)
         await ctx.send('\n'.join(rows))
-
-    @commands.command(
-        brief='Set the prefix.',
-        description=(
-            'Set the command prefix for this server. The bot may then be used '
-            'with that prefix only.'
-        ),
-        hidden=True
-    )
-    @commands.is_owner()
-    async def prefix(self, ctx, prefix):
-        Config.set_prefix(prefix)
-        await ctx.send(f'`{prefix}` is now the prefix.')
-        Config.save()
-
-    @commands.command(
-        brief='Backup ./data',
-        description='Move a copy of `./data` to `../backup/botdata/{n}/`',
-        hidden=True
-    )
-    @commands.is_owner()
-    async def backup(self, ctx, n: int):
-        if os.system(f'mkdir ../backup/botdata/{n}') == 256:
-            os.system('mkdir ../backup')
-            os.system('mkdir ../backup/botdata')
-            os.system(f'mkdir ../backup/botdata/{n}')
-        c = os.system(f'cp data ../backup/botdata/{n} -r')
-        await ctx.send(f'Backup completed with exit code {c}.')
