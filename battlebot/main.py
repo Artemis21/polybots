@@ -22,6 +22,8 @@ ARCHIVES = {
     'archives': 692808476778430574,
     't': 696395537993170997,
     'tourney': 696395537993170997,
+    't2': 701562336233652315,
+    'tourney2': 701562336233652315,
 }
 
 
@@ -49,7 +51,7 @@ class Help(commands.DefaultHelpCommand):
         await self.get_destination().send(embed=e)
 
     async def send_cog_help(self, cog):
-        await self.send_bot_help()
+        await self.send_bot_help(bot.cogs)
 
 
 logging.basicConfig(level=logging.INFO)
@@ -125,7 +127,7 @@ async def archive(ctx, archive='archives'):
     archive channel. You can optionally specify a parameter which tells the \
     bot which archive to use. Default is "archives", which means the ARCHIVES \
     category, but you can also use "tourney" or "t", which means TOURNEY \
-    ARCHIVES.
+    ARCHIVES, or "tourney2" / "t2" for TOURNEY ARCHIVES 2.
     Examples:
     `{{pre}}archive`: archive this game to the ARCHIVES category
     `{{pre}}archive t`: archive this game to the TOURNEY ARCHVIES category.
@@ -138,8 +140,7 @@ async def archive(ctx, archive='archives'):
     archive = archive.lower()
     if archive not in ARCHIVES:
         return await ctx.send(
-            '`archive` must be one of "archives", "a", "tourney" or "t". Run '
-            '`!help archive` for more info.'
+            'Invalid archive, run `!help archive` for more info.'
         )
     archive = bot.get_channel(ARCHIVES[archive])
     if len(archive.channels) > 48:
