@@ -3,6 +3,7 @@ from discord.ext import commands
 import logging
 import re
 import traceback
+import random
 
 
 with open('TOKEN') as f:
@@ -80,6 +81,13 @@ async def about(ctx):
     e.set_thumbnail(url=bot.user.avatar_url)
     e.set_footer(text=ADVERT, icon_url=AD_ICON)
     await ctx.send(embed=e)
+
+
+@bot.command(brief='Flip a coin.')
+async def flip(ctx):
+    '''Flip a coin, returns either heads or tails.
+    '''
+    await ctx.send(random.choice(('Heads', 'Tails')))
 
 
 @bot.command(brief='Create a game.')
