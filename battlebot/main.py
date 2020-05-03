@@ -201,6 +201,33 @@ async def unlock(ctx):
         overwrites[target] = discord.PermissionOverwrite()
     await ctx.channel.edit(overwrites=overwrites)
     await ctx.send('Done!')
+
+
+@bot.command(brief='Re-lock this channel.')
+async def relock(ctx):
+    """Re-lock the channel this command is sent in.
+
+    Requires that you own this channel or you are an admin.
+    This is for when you accidentally do `{{pre}}unlock`.
+    """
+    allowed = getattr(get_owner(ctx.channel), 'id', None) == ctx.author.id
+    if not allowed:
+        allowed = ctx.channel.permissions_for(ctx.author).manage_channels
+    if not allowed:
+        return await ctx.send(
+            'Only the owner of this channel (or an admin) may unlock it.\n'
+            'Note: only admins may unlock games created before the 28th of '
+            'April due to technical issues.'
+        )
+    overwrites = {}
+    for other_channel in ctx.channel.category.channels:
+        opponent = get_owner(other_channel)
+        if opponent:
+            overwrites[opponent] = discord.PermissionOverwrite(
+                read_messages=False
+            )
+    await ctx.channel.edit(overwrites=overwrites)
+    await ctx.send('Done!')
     
 
 @bot.command(brief='Create a game.')
