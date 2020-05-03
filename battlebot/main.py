@@ -222,7 +222,7 @@ async def relock(ctx):
     overwrites = {}
     for other_channel in ctx.channel.category.channels:
         opponent = get_owner(other_channel)
-        if opponent:
+        if opponent and opponent.id != ctx.author.id:
             overwrites[opponent] = discord.PermissionOverwrite(
                 read_messages=False
             )
