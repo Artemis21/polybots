@@ -8,6 +8,7 @@ import sqlite3
 import string
 
 
+
 with open('TOKEN') as f:
     TOKEN = f.read().strip()
 
@@ -210,7 +211,8 @@ async def relock(ctx):
     Requires that you own this channel or you are an admin.
     This is for when you accidentally do `{{pre}}unlock`.
     """
-    allowed = getattr(get_owner(ctx.channel), 'id', None) == ctx.author.id
+    owner_id = getattr(get_owner(ctx.channel), 'id', None)
+    allowed = owner_id == ctx.author.id
     if not allowed:
         allowed = ctx.channel.permissions_for(ctx.author).manage_channels
     if not allowed:
@@ -222,13 +224,13 @@ async def relock(ctx):
     overwrites = {}
     for other_channel in ctx.channel.category.channels:
         opponent = get_owner(other_channel)
-        if opponent and opponent.id != ctx.author.id:
+        if opponent and opponent.id != owner_id:
             overwrites[opponent] = discord.PermissionOverwrite(
                 read_messages=False
             )
     await ctx.channel.edit(overwrites=overwrites)
     await ctx.send('Done!')
-    
+
 
 @bot.command(brief='Create a game.')
 @commands.has_permissions(manage_channels=True)
