@@ -66,12 +66,12 @@ class Meta(commands.Cog):
         await ctx.send(f'Prefix is now `{prefix}`.')
 
     @commands.command(
-        brief='Add an admin role.',
+        brief='Add an admin user.',
         name='add-admin', aliases=['admin']
     )
     @commands.is_owner()
     async def addadmin(self, ctx, user: discord.Member):
-        """Set a role as admin.
+        """Set a user as admin.
 
         Admins can do anything except add and remove admins.
         """
@@ -84,12 +84,12 @@ class Meta(commands.Cog):
             await ctx.send(f'{user} is already an admin.')
 
     @commands.command(
-        brief='Remove an admin role.', name='remove-admin',
+        brief='Remove an admin user.', name='remove-admin',
         aliases=['unadmin']
     )
     @commands.is_owner()
     async def removeadmin(self, ctx, user: discord.Member):
-        """Unset a role as admin."""
+        """Unset a user as admin."""
         admins = config.admins
         for admin in admins:
             if admin.id == user.id:

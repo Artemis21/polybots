@@ -3,6 +3,8 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import typing
 from collections import namedtuple
+from tools.cache import cache, DONT_CACHE
+import string
 
 
 SCOPE = [
@@ -30,28 +32,87 @@ Player = namedtuple(
         'needs_games',
         'host',
         'second',
-        'third'
+        'third',
+        'row'
+    ]
+)
+StaticPlayer = namedtuple(
+    'StaticPlayer',
+    [
+        'discord_name',
+        'polytopia_name',
+        'friend_code',
+        'elo',
+        'row'
+    ]
+)
+Game = namedtuple(
+    'Game',
+    [
+        'player1',
+        'player2',
+        'player3',
+        'winner',
+        'loser1',
+        'loser2',
+        'level',
+        'id'
     ]
 )
 
-player_cache = []
-player_search_cache = {}
-sheet_cache = {}
+
+def get_game_id(level: int, row: int) -> str:
+    if level == 0:
+        level = 10
+    num = int(f'{level}{row}')
+    b36 = ''
+    digits = string.digits + string.ascii_uppercase
+    while num:
+        b36 = digits[int(num % 36)] + b36
+        num = int(num / 36)
+    return b36
 
 
+def get_game_row(gameid: str) -> typing.Tuple[int, int]:
+    gameid = str(int(gameid, 36))
+    if gameid[:2] == '10':
+        level = 0
+        row = int(gameid[2:])
+    else:
+        level = int(gameid[0])
+        row = int(gameid[1:])
+    return level, row
+
+
+@cache
 def get_sheet(
         name: typing.Optional[str] = None, *,
         level: typing.Optional[int] = None
         ) -> typing.Optional[gspread.Worksheet]:
     """Get a spreadsheet, using caching."""
-    global sheet_cache
     if level is not None:
         name = f'Level {level}'
-    if name in sheet_cache:
-        return sheet_cache[name]
     sheet = spread_sheet.worksheet(name)
-    sheet_cache[name] = sheet
     return sheet
+
+
+@cache
+def get_players_static() -> typing.List[StaticPlayer]:
+    """Get a list of users, but only static attributes (for caching)."""
+    sheet = get_sheet('Player Hub')
+    records = sheet.get_all_records(head=6)
+    players = []
+    for row, record in enumerate(records):
+        if not record['Discord Name:']:
+            continue
+        players.append(StaticPlayer(
+            discord_name=record['Discord Name:'] or 'Not found',
+            polytopia_name=record['Polytopia Name:'] or 'Not found',
+            friend_code=record['Friend Code:'] or 'Not found',
+            elo=record['ELO'] or 1000,
+            row=row + 2
+        ))
+    return players
 
 
 def get_players() -> typing.List[Player]:
@@ -59,7 +120,7 @@ def get_players() -> typing.List[Player]:
     sheet = get_sheet('Player Hub')
     records = sheet.get_all_records(head=6)
     players = []
-    for record in records:
+    for row, record in enumerate(records):
         if not record['Discord Name:']:
             continue
         players.append(Player(
@@ -74,50 +135,36 @@ def get_players() -> typing.List[Player]:
             needs_games=record['Needs Games'] != 'No',
             host=record['Host'] or 0,
             second=record['2nd'] or 0,
-            third=record['3rd'] or 0
+            third=record['3rd'] or 0,
+            row=row + 2
         ))
     return players
 
 
-def search_player(
-        searches: typing.List[str], use_cache: bool = True
-        ) -> typing.List[Player]:
-    """Search for a player.
-    
-    This can be by discord user, or a search for discord name /
-    polytopia name / friend code. If use_cache is True, attempt
-    to find the player in the cache before updating the cache and
-    trying again if they are not found.
-    """
-    global player_cache, player_search_cache
-    for search in searches:
-        if search in player_search_cache:
-            return player_search_cache[search]
-    searches = [search.lower() for search in searches]
-    possible = []
-    if not use_cache:
-        player_cache = get_players()
-    for player in player_cache:
-        fields = (
-            player.discord_name, player.polytopia_name, player.friend_code
-        )
-        for field in fields:
-            added = False
-            for search in searches:
-                if search in field.lower():
-                    possible.append(player)
-                    added = True
-                    break
-            if added:
-                break
-    if (not possible) and use_cache:
-        return search_player(searches, False)
-    for search in player_search_cache:
-        player_search_cache[search] = possible
-    return possible
+def all_games(level: int) -> typing.List[Game]:
+    """Find all games on a level."""
+    sheet = get_sheet(level=level)
+    raw_games = sheet.get_all_records()
+    games = []
+    for row, raw_game in enumerate(raw_games):
+        if not raw_game['HOST']:
+            continue
+        if raw_game['WINNER'] == 'UNFINISHED':
+            raw_game['WINNER'] = ''
+        games.append(Game(
+            player1=raw_game['HOST'],
+            player2=raw_game['2nd PICK'],
+            player3=raw_game['3rd PICK'],
+            winner=raw_game['WINNER'],
+            loser1=raw_game['LOSER 1'],
+            loser2=raw_game['LOSER 2'],
+            level=level,
+            id=get_game_id(level, row + 2)
+        ))
+    return games
 
 
-def create_game(level: int, player1: str, player2: str, player3: str):
+def create_game(level: int, player1: str, player2: str, player3: str) -> str:
     """Create a game."""
     sheet = get_sheet(level=level)
     empty = False
@@ -129,13 +176,16 @@ def create_game(level: int, player1: str, player2: str, player3: str):
     if not empty:
         row += 1
         sheet.add_rows(1)
+    # pylint: disable=too-many-function-args
     cells = sheet.range(row, 1, row, 3)
     players = [player1, player2, player3]
     for cell, player in zip(cells, players):
         cell.value = player
     sheet.update_cells(cells)
+    return get_game_id(level, row)
 
 
+@cache
 def find_game(level: int, *players: typing.Tuple[str]) -> int:
     """Find which row a game is on."""
     sheet = get_sheet(level=level)
@@ -146,23 +196,30 @@ def find_game(level: int, *players: typing.Tuple[str]) -> int:
             found = True
             break
     if not found:
-        return 0
+        return 0, DONT_CACHE
     else:
         return n + 1    # we want it to be 1 based
 
 
-def set_result(level: int, winner: str, loser1: str, loser2: str) -> bool:
-    """Set the result of a game."""
+def eliminate_player(level: int, row: int, player: str) -> str:
+    """Mark a player as eliminated."""
     sheet = get_sheet(level=level)
-    row = find_game(level, winner, loser1, loser2)
-    if not row:
-        return False
-    cells = sheet.range(row, 1, row, 5)
-    players = [winner, loser1, loser2]
-    for cell, player in zip(cells, players):
-        cell.value = player
+    # pylint: disable=too-many-function-args
+    cells = sheet.range(row, 1, row, 7)
+    if not cells[0].value:
+        return f'That game does not exist.'
+    if cells[-1].value:
+        cells[-2].value = player
+        for other_cell in cells[:3]:
+            if other_cell.value not in (cells[-1].value, player):
+                cells[-3].value = other_cell.value
+                break
+        message = f'{player} was eliminated, {other_cell.value} wins!'
+    else:
+        cells[-1].value = player
+        message = f'{player} was eliminated.'
     sheet.update_cells(cells)
-    return True
+    return message
 
 
 def rematch_check(
@@ -175,12 +232,20 @@ def rematch_check(
     return levels
 
 
-def transpose_games():
-    """Transpose the games sheets."""
-    for n in range(10):
-        sheet = get_sheet(level=n)
-        data = sheet.get_all_values('FORMULA')
-        print(data, '\n\n')
-        new_data = list(map(list, zip(*data)))
-        sheet.resize(rows=len(new_data), cols=len(new_data[0]))
-        sheet.update(new_data, raw=True)
+def get_game(level: int, row: int):
+    """Get a game."""
+    sheet = get_sheet(level=level)
+    # pylint: disable=too-many-function-args
+    cells = sheet.range(row, 1, row, 7)
+    if not cells[0].value:
+        return None
+    return Game(
+        player1=cells[0].value,
+        player2=cells[1].value,
+        player3=cells[2].value,
+        winner=cells[-3].value if cells[-3].value != 'UNFINISHED' else '',
+        loser1=cells[-2].value,
+        loser2=cells[-1].value,
+        level=level,
+        id=get_game_id(level, row)
+    )
