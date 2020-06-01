@@ -6,7 +6,7 @@ import discord
 
 from tools import players
 from tools.checks import admin
-from tools.converters import PlayerConverter, StaticPlayerConverter, level
+from tools.converters import PlayerConverter, StaticPlayerConverter, level_id
 
 
 class Players(commands.Cog):
@@ -37,3 +37,19 @@ class Players(commands.Cog):
     async def leaderboard(self, ctx):
         """View the leaderboard."""
         await players.leaderboard_command(ctx)
+
+    @commands.command(
+        brief='View players on a level.', name='players-on-level',
+        aliases=['level']
+    )
+    async def players_on_level(self, ctx, level: level_id):
+        """Get a list of players currently on some level."""
+        await players.all_on_level_command(ctx, level)
+
+    @commands.command(
+        brief='See who needs games.', name='need-games', aliases=['waiting']
+    )
+    @admin()
+    async def needs_games(self, ctx, level: level_id):
+        """See who is waiting for games on some level."""
+        await players.on_level_needs_game_command(ctx, level)

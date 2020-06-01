@@ -41,17 +41,43 @@ async def get_code_command(ctx: Context, player: sheetsapi.StaticPlayer):
     await ctx.send(f'`{player.friend_code}`')
 
 
+def list_players(check: typing.Callable) -> typing.List[str]:
+    """List all players, with an optional filter."""
+    players = sheetsapi.get_players()
+    players = list(filter(check, players))
+    players.sort(key=lambda player: (-player.wins, player.losses))
+    lines = []
+    for n, player in enumerate(players):
+        lines.append(
+            f'**#{n + 1}:** {player.discord_name} *({player.wins}W/'
+            f'{player.losses}L)*'
+        )
+    return lines
+
+
 async def leaderboard_command(ctx: Context):
     """Command to view the leaderboard."""
     async with ctx.typing():
-        players = sheetsapi.get_players()
-        players.sort(key=lambda player: (-player.wins, player.losses))
-        lines = []
-        for n, player in enumerate(players):
-            lines.append(
-                f'**#{n + 1}:** {player.discord_name} *({player.wins}W/'
-                f'{player.losses}L)*'
-            )
+        lines = list_players(lambda p: True)
     await TextPaginator(
         ctx, lines, '**__Leaderboard__**', per_page=20
+    ).setup()
+
+
+async def all_on_level_command(ctx: Context, level: int):
+    async with ctx.typing():
+        lines = list_players(lambda p: p.wins == level)
+    await TextPaginator(
+        ctx, lines, f'**__Level {level} Players__**', per_page=20
+    ).setup()
+
+
+async def on_level_needs_game_command(ctx: Context, level: int):
+    async with ctx.typing():
+        lines = list_players(
+            lambda p: p.needs_games and (p.wins == level)
+        )
+    await TextPaginator(
+        ctx, lines, f'**__Level {level} players needing games__**',
+        per_page=20
     ).setup()

@@ -55,3 +55,16 @@ class Config:
         """Set the list of admin roles."""
         raw = [role.id for role in admins]
         ConfigModel.set_admins(raw)
+
+    @property
+    def log_channel(self) -> typing.Optional[discord.TextChannel]:
+        """Get the log channel."""
+        channel_id = ConfigModel.get_log_channel()
+        guild = self.guild
+        if guild:
+            return guild.get_channel(channel_id)
+
+    @log_channel.setter
+    def log_channel(self, channel: discord.TextChannel):
+        """Set the log channel."""
+        ConfigModel.set_log_channel(channel.id)
