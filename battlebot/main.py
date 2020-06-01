@@ -45,6 +45,9 @@ def ensure_tables():
     sql("""CREATE TABLE IF NOT EXISTS archives (
         category INTEGER, name STRING
     );""")
+    sql("""CREATE TABLE IF NOT EXISTS codes (
+        user INTEGER, code STRING
+    );""")
 
 
 def add_channel(channel, user):
@@ -81,6 +84,16 @@ def get_archives():
     rows = sql('SELECT category, name FROM archives;')
     for row in rows:
         yield bot.get_channel(row[0]), row[1].lower()
+
+
+def get_code(user):
+    rows = sql('SELECT code FROM codes WHERE user=?;', user)
+    if rows:
+        return rows[0][0]
+
+
+def set_code(user, code):
+    rows = sql('INSERT INTO codes (user, code) VALUES (?, ?);', user, code)
 
 
 class CategoryConverter(commands.converter.CategoryChannelConverter):
@@ -179,6 +192,23 @@ async def about(ctx):
 async def flip(ctx):
     """Flip a coin, returns either heads or tails."""
     await ctx.send(random.choice(('Heads', 'Tails')))
+
+
+@bot.command(brief='Get a friend code.')
+async def code(ctx, *, user: discord.Member):
+    """Get someone's friend code."""
+    code = get_code(user.id)
+    if code:
+        await ctx.send(f'`{code}`')
+    else:
+        await ctx.send(f'{user} has not set a code.')
+
+
+@bot.command(brief='Set your friend code.', name='set-code')
+async def set_code_cmd(ctx, code):
+    """Set your friend code."""
+    set_code(ctx.author.id, code)
+    await ctx.send('Done!')
 
 
 @bot.command(brief='Unlock this channel.')
