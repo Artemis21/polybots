@@ -1,13 +1,14 @@
 """Load the cogs."""
 from cogs.meta import Meta
 from cogs.players import Players
+from cogs.games import Games
 
 from tools import datautils
 
 import discord
 
 
-COGS = [Players, Meta]
+COGS = [Players, Games, Meta]
 
 
 def setup(bot: discord.Client):

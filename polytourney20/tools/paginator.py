@@ -19,8 +19,9 @@ class Paginator:
     async def setup(self):
         """Async setup."""
         self.mes = await self.send()
-        await self.mes.add_reaction('◀')
-        await self.mes.add_reaction('▶')
+        if self.max_page > 0:
+            await self.mes.add_reaction('◀')
+            await self.mes.add_reaction('▶')
 
     async def send(self):
         """Send page 1 and return the message."""
