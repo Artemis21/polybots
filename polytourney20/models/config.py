@@ -54,3 +54,15 @@ class Config:
     def set_admins(data: typing.Dict, cls, admins: typing.List[int]):
         """Set the list of admin users."""
         data['admins'] = admins
+
+    @classmethod
+    @configdata
+    def set_log_channel(data: typing.Dict, cls, channel: int):
+        """Set the log channel."""
+        data['log_channel'] = channel
+
+    @classmethod
+    @configdata
+    def get_log_channel(data: typing.Dict, cls) -> int:
+        """Get the log channel."""
+        return data.get('log_channel', None)

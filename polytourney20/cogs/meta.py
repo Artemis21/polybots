@@ -8,8 +8,10 @@ from tools.checks import admin
 
 
 ABOUT = (
-    '{bot_name} was created by Artemis#8799 for the INSERT TOURNEY NAME HERE.'
-    ' It acts as an interface to the Google spreadsheet.'
+    '{bot_name} was created by Artemis#8799 for the 2020 Supreme Summer '
+    'Skirmish. You can find more information about the tournament '
+    '[here](https://polytopia.fun). The bot mostly acts as an interface to '
+    'the Google spreadsheet.'
 )
 INVITE = (
     'https://discord.com/api/oauth2/authorize?client_id=715154552600526920&'
@@ -39,7 +41,6 @@ class Meta(commands.Cog):
     @commands.Cog.listener()
     async def on_command_error(self, ctx: commands.Context, error: Exception):
         """Handle an error."""
-        print(error)
         await on_command_error(ctx, error)
 
     @commands.command(brief='About the bot.')
@@ -64,6 +65,15 @@ class Meta(commands.Cog):
         """Set the command prefix."""
         config.prefix = prefix
         await ctx.send(f'Prefix is now `{prefix}`.')
+
+    @commands.command(brief='Set announcement channel.')
+    @admin()
+    async def announcements(self, ctx, channel: discord.TextChannel):
+        """Set the command prefix."""
+        config.log_channel = channel
+        await ctx.send(
+            f'Announcements will now be made in {channel.mention}.'
+        )
 
     @commands.command(
         brief='Add an admin user.',

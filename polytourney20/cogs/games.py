@@ -6,7 +6,7 @@ import discord
 
 from tools import games
 from tools.checks import admin
-from tools.converters import StaticPlayerConverter, level, game_id
+from tools.converters import StaticPlayerConverter, level_id, game_id
 
 
 class Games(commands.Cog):
@@ -21,7 +21,7 @@ class Games(commands.Cog):
         name='incomplete-games'
     )
     async def incomplete_games(
-            self, ctx, level: level,
+            self, ctx, level: level_id,
             player: typing.Optional[StaticPlayerConverter]
             ):
         """View all incomplete games, optionally filtering by player."""
@@ -32,7 +32,7 @@ class Games(commands.Cog):
             name='complete-games'
         )
     async def complete_games(
-            self, ctx, level: level,
+            self, ctx, level: level_id,
             player: typing.Optional[StaticPlayerConverter]
             ):
         """View all complete games, optionally filtering by player."""
@@ -42,7 +42,7 @@ class Games(commands.Cog):
         brief='View all games.', aliases=['games'], name='all-games'
     )
     async def all_games(
-            self, ctx, level: level,
+            self, ctx, level: level_id,
             player: typing.Optional[StaticPlayerConverter]
             ):
         """View all games, optionally filtering by player."""
@@ -57,7 +57,7 @@ class Games(commands.Cog):
         brief='Search for a game.', name='search-game', aliases=['search']
     )
     async def search_game(
-            self, ctx, level: level,
+            self, ctx, level: level_id,
             player1: StaticPlayerConverter,
             player2: StaticPlayerConverter,
             player3: StaticPlayerConverter):
@@ -81,7 +81,7 @@ class Games(commands.Cog):
     )
     @admin()
     async def open_game(
-            self, ctx, level: level,
+            self, ctx, level: level_id,
             host: StaticPlayerConverter,
             second: StaticPlayerConverter,
             third: StaticPlayerConverter):
@@ -97,4 +97,3 @@ class Games(commands.Cog):
             self, ctx, game: game_id, player: StaticPlayerConverter):
         """Mark a player as eliminated from a game (admin only)."""
         await games.eliminate_player_command(ctx, game, player)
-

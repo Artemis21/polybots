@@ -4,7 +4,7 @@ from tools import sheetsapi
 import typing
 
 
-def level(argument: str) -> int:
+def level_id(argument: str) -> int:
     """A converter for the game levels."""
     try:
         level = int(argument)

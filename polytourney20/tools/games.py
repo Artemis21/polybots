@@ -3,6 +3,10 @@ import typing
 from discord.ext.commands import Context
 from tools.paginator import TextPaginator
 import discord
+from tools.config import Config
+
+
+config = Config()
 
 
 def list_games(level: int, fun: typing.Callable):
@@ -97,6 +101,20 @@ async def open_game_command(
             level, host.discord_name, second.discord_name, third.discord_name
         )
     await ctx.send('Game created!')
+    if config.log_channel:
+        users = []
+        for player in (host, second, third):
+            user = discord.utils.get(
+                config.guild.members, name=player.discord_name
+            )
+            if user:
+                users.append(user.mention)
+            else:
+                users.append(f'**@{player.discord_name}**')
+        await config.log_channel.send(
+            f'New level {level} game!\n{users[0]} will host, {users[1]} will '
+            f'have second pick and {users[2]} will be last.'
+        )
 
 
 async def rematch_check_command(
