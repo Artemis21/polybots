@@ -234,7 +234,7 @@ async def tz(ctx, *, user: discord.Member):
     if tz:
         await ctx.send(f'`{tz}`')
     else:
-        await ctx.send(f'{user} has not set a tz.')
+        await ctx.send(f'{user} has not set a timezone.')
 
 
 @bot.command(brief='Set your timezone.', name='set-tz')
