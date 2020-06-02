@@ -45,8 +45,8 @@ def ensure_tables():
     sql("""CREATE TABLE IF NOT EXISTS archives (
         category INTEGER, name STRING
     );""")
-    sql("""CREATE TABLE IF NOT EXISTS codes (
-        user INTEGER, code STRING
+    sql("""CREATE TABLE IF NOT EXISTS users (
+        user INTEGER, code STRING, tz STRING
     );""")
 
 
@@ -86,14 +86,29 @@ def get_archives():
         yield bot.get_channel(row[0]), row[1].lower()
 
 
-def get_code(user):
-    rows = sql('SELECT code FROM codes WHERE user=?;', user)
+def get_user_attr(user, attr):
+    rows = sql(f'SELECT {attr} FROM users WHERE user=?;', user)
     if rows:
         return rows[0][0]
 
 
-def set_code(user, code):
-    rows = sql('INSERT INTO codes (user, code) VALUES (?, ?);', user, code)
+def set_user_attr(user, attr, value):
+    if sql('SELECT * FROM users WHERE user=?;', user):
+        sql(f'UPDATE users SET {attr}=? WHERE user=?;', value, user)
+    else:
+        sql(f'INSERT INTO users (user, {attr}) VALUES (?, ?);', user, value)
+
+
+def migrate_users():
+    exists = sql(
+        'SELECT name FROM sqlite_master WHERE '
+        f'type="table" AND name="codes";'
+    )
+    if exists:
+        rows = sql('SELECT user, code FROM codes;')
+        for row in rows:
+            sql('INSERT INTO users (user, code) VALUES (?, ?);', *row)
+        sql('DROP TABLE codes;')
 
 
 class CategoryConverter(commands.converter.CategoryChannelConverter):
@@ -160,6 +175,7 @@ bot.help_command = Help()
 @bot.event
 async def on_ready():
     ensure_tables()
+    migrate_users()
 
 
 @bot.event
@@ -197,7 +213,7 @@ async def flip(ctx):
 @bot.command(brief='Get a friend code.')
 async def code(ctx, *, user: discord.Member):
     """Get someone's friend code."""
-    code = get_code(user.id)
+    code = get_user_attr(user.id, 'code')
     if code:
         await ctx.send(f'`{code}`')
     else:
@@ -207,7 +223,24 @@ async def code(ctx, *, user: discord.Member):
 @bot.command(brief='Set your friend code.', name='set-code')
 async def set_code_cmd(ctx, code):
     """Set your friend code."""
-    set_code(ctx.author.id, code)
+    set_user_attr(ctx.author.id, 'code', code)
+    await ctx.send('Done!')
+
+
+@bot.command(brief='Get a timezone.')
+async def tz(ctx, *, user: discord.Member):
+    """Get someone's timezone."""
+    tz = get_user_attr(user.id, 'tz')
+    if tz:
+        await ctx.send(f'`{tz}`')
+    else:
+        await ctx.send(f'{user} has not set a tz.')
+
+
+@bot.command(brief='Set your timezone.', name='set-tz')
+async def set_tz_cmd(ctx, tz):
+    """Set your timezone."""
+    set_user_attr(ctx.author.id, 'tz', tz)
     await ctx.send('Done!')
 
 
