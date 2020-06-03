@@ -91,19 +91,11 @@ async def all_games_cmd(
     await TextPaginator(ctx, lines, name, per_page=20).setup()
 
 
-
-async def open_game_command(
-        ctx: Context, level: int, host: sheetsapi.StaticPlayer,
-        second: sheetsapi.StaticPlayer, third: sheetsapi.StaticPlayer):
-    """Command to open a game."""
-    async with ctx.typing():
-        sheetsapi.create_game(
-            level, host.discord_name, second.discord_name, third.discord_name
-        )
-    await ctx.send('Game created!')
+async def _log_game(level, *players):
+    """Announce the opening of a game."""
     if config.log_channel:
         users = []
-        for player in (host, second, third):
+        for player in players:
             user = discord.utils.get(
                 config.guild.members, name=player.discord_name
             )
@@ -115,6 +107,33 @@ async def open_game_command(
             f'New level {level} game!\n{users[0]} will host, {users[1]} will '
             f'have second pick and {users[2]} will be last.'
         )
+
+
+async def open_game_command(
+        ctx: Context, level: int, host: sheetsapi.StaticPlayer,
+        second: sheetsapi.StaticPlayer, third: sheetsapi.StaticPlayer):
+    """Command to open a game."""
+    async with ctx.typing():
+        sheetsapi.create_game(
+            level, host.discord_name, second.discord_name, third.discord_name
+        )
+        await _log_game(level, host, second, third)
+    await ctx.send('Game created!')
+
+
+async def open_many_command(
+        ctx: Context, level: int,
+        games: typing.List[typing.List[sheetsapi.StaticPlayer]]):
+    """Command to open multiple games."""
+    async with ctx.typing():
+        sheetsapi.create_games(
+            level, [
+                [player.discord_name for player in game] for game in games
+            ]
+        )
+        for game in games:
+            await _log_game(level, *game)
+    await ctx.send('Games created!')
 
 
 async def rematch_check_command(

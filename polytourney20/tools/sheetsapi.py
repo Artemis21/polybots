@@ -185,6 +185,29 @@ def create_game(level: int, player1: str, player2: str, player3: str) -> str:
     return get_game_id(level, row)
 
 
+def create_games(level: int, games: typing.List[typing.List[str]]):
+    """Create multiple games."""
+    sheet = get_sheet(level=level)
+    column = sheet.col_values(1)
+    for row, host_name in enumerate(column):
+        if not host_name:
+            break
+    row += 1    # we want it to be 1 based
+    rows = len(column)
+    if row + len(games) < rows:
+        sheet.add_rows(rows - (row + len(games)))
+        if row == rows:
+            row += 1
+    # pylint: disable=too-many-function-args
+    cells = sheet.range(row, 1, row + len(games), 3)
+    cell_num = 0
+    for game in games:
+        for player in game:
+            cells[cell_num].value = player
+            cell_num += 1
+    sheet.update_cells(cells)
+
+
 @cache
 def find_game(level: int, *players: typing.Tuple[str]) -> int:
     """Find which row a game is on."""

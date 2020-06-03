@@ -1,7 +1,12 @@
-from discord.ext.commands import Context, BadArgument, MemberConverter
+from discord.ext.commands import (
+    Context, BadArgument, MemberConverter, Converter
+)
+from discord.ext.commands.view import StringView
 from tools.cache import cache, DONT_CACHE, BYPASS_CACHE
 from tools import sheetsapi
 import typing
+import discord
+from inspect import Parameter
 
 
 def level_id(argument: str) -> int:
@@ -18,7 +23,7 @@ def level_id(argument: str) -> int:
 def game_id(argument: str) -> typing.Tuple[int]:
     try:
         return sheetsapi.get_game_row(argument)
-    except (IndexError, ValueError) as e:
+    except (IndexError, ValueError):
         raise BadArgument(f'Invalid game ID `{argument}`.')
 
 
@@ -74,6 +79,7 @@ def search_player(
     possible = []
     if static_only:
         if bypass_cache:
+            # pylint: disable=too-many-function-args
             players = sheetsapi.get_players_static(BYPASS_CACHE)
         else:
             players = sheetsapi.get_players_static()
@@ -99,3 +105,34 @@ def search_player(
             return possible
     else:
         return possible, DONT_CACHE
+
+
+class ManyConverter(Converter):
+    """Converter for multiple lists of arguments."""
+
+    def __init__(self, seperator='\n', **params):
+        """Create the converter."""
+        self.params = [
+            Parameter(
+                name, Parameter.POSITIONAL_ONLY, annotation=params[name]
+            ) for name in params
+        ]
+        self.seperator = seperator
+
+    async def convert(self, ctx: Context, argument: str):
+        """Convert a list of lists of arguments."""
+        lines = argument.strip(self.seperator).split(self.seperator)
+        argument_sets = []
+        for line in lines:
+            view = StringView(line)
+            argument_sets.append([])
+            for param in self.params:
+                converter = param.annotation
+                arg = view.get_quoted_word()
+                view.skip_ws()
+                argument_sets[-1].append(
+                    await ctx.command.do_conversion(
+                        ctx, converter, arg, param
+                    )
+                )
+        return argument_sets
