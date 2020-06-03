@@ -6,7 +6,9 @@ import discord
 
 from tools import games
 from tools.checks import admin
-from tools.converters import StaticPlayerConverter, level_id, game_id
+from tools.converters import (
+    StaticPlayerConverter, level_id, game_id, ManyConverter
+)
 
 
 class Games(commands.Cog):
@@ -87,6 +89,25 @@ class Games(commands.Cog):
             third: StaticPlayerConverter):
         """Open a new game (admin only)."""
         await games.open_game_command(ctx, level, host, second, third)
+
+    @commands.command(brief='Open many games.', name='mass-open')
+    @admin()
+    async def mass_open(
+            self, ctx, level: level_id, *, all_players: ManyConverter(
+                host=StaticPlayerConverter,
+                second=StaticPlayerConverter,
+                third=StaticPlayerConverter
+            )):
+        """Open many games at once (admin only).
+        
+        Example:
+        ```{{pre}}mass-open 5
+        @host @second @third
+        @player1 @player2 @player3
+        @goochie @ramana @artemis```
+        Would open 3 level 5 games.
+        """
+        await games.open_many_command(ctx, level, all_players)
 
     @commands.command(
         brief='Eliminate a player.',
