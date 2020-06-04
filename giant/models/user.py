@@ -4,8 +4,8 @@ from .generic import DivisionSpecificModel
 class User(DivisionSpecificModel):
     @classmethod
     def create(
-            cls, id: int, name: str, code: str, division: str,
-            league: int = 4, points: int = 0
+            cls, id: int, division: str, name: str = 'Not set',
+            code: str = 'Not set', league: int = 4, points: int = 0
             ):
         data = {
             'league': league,
