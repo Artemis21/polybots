@@ -1,3 +1,4 @@
+"""Utility for user renaming of channels, including game name validation."""
 import random
 
 

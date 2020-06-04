@@ -147,6 +147,7 @@ def all_games(level: int) -> typing.List[Game]:
     raw_games = sheet.get_all_records()
     games = []
     for row, raw_game in enumerate(raw_games):
+        print(raw_game)
         if not raw_game['HOST']:
             continue
         if raw_game['WINNER'] == 'UNFINISHED':
