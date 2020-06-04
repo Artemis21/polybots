@@ -39,3 +39,11 @@ class Utils(commands.Cog):
         async with ctx.typing():
             await massrole.massrole(role, users)
         await ctx.send('Done :thumbsup:')
+
+    @commands.command(brief='How many members a role has.')
+    async def members(self, ctx, *, role: discord.Role):
+        """Check how many people have a role.
+
+        Example: `{{pre}}members @some-role`.
+        """
+        await ctx.send(f'{len(role.members)} people have that role.')
