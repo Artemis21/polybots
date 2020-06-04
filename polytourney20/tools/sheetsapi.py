@@ -147,18 +147,15 @@ def all_games(level: int) -> typing.List[Game]:
     raw_games = sheet.get_all_records()
     games = []
     for row, raw_game in enumerate(raw_games):
-        print(raw_game)
-        if not raw_game['HOST']:
+        if not raw_game['Host']:
             continue
-        if raw_game['WINNER'] == 'UNFINISHED':
-            raw_game['WINNER'] = ''
         games.append(Game(
-            player1=raw_game['HOST'],
-            player2=raw_game['2nd PICK'],
-            player3=raw_game['3rd PICK'],
-            winner=raw_game['WINNER'],
-            loser1=raw_game['LOSER 1'],
-            loser2=raw_game['LOSER 2'],
+            player1=raw_game['Host'],
+            player2=raw_game['2nd Pick'],
+            player3=raw_game['3rd Pick'],
+            winner=raw_game['Winner'],
+            loser1=raw_game['Loser 1'],
+            loser2=raw_game['Loser 2'],
             level=level,
             id=get_game_id(level, row + 2)
         ))
