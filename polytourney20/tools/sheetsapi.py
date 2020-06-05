@@ -2,7 +2,7 @@
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import typing
-from collections import namedtuple
+from collections import namedtuple, defaultdict
 from tools.cache import cache, DONT_CACHE
 import string
 
@@ -244,13 +244,19 @@ def eliminate_player(level: int, row: int, player: str) -> str:
 
 
 def rematch_check(
-        player1: str, player2: str, player3: str) -> typing.List[int]:
-    """Check what levels a game exists on."""
-    levels = []
+        games: typing.List[typing.List[str]]) -> typing.Dict[
+            typing.Tuple[str], typing.Set[int]
+        ]:
+    """Check what levels some games exist on."""
+    rematches = defaultdict(set)
     for level in range(10):
-        if find_game(level, player1, player2, player3):
-            levels.append(level)
-    return levels
+        sheet = get_sheet(level=level)
+        grid = sheet.get_all_values()
+        for row in grid:
+            for game in games:
+                if all((player in row) for player in game):
+                    rematches[tuple(game)].add(level)
+    return rematches
 
 
 def get_game(level: int, row: int):

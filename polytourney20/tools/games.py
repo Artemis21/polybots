@@ -141,10 +141,11 @@ async def rematch_check_command(
         player2: sheetsapi.StaticPlayer, player3: sheetsapi.StaticPlayer):
     """Command to check if a game exists."""
     async with ctx.typing():
-        levels = sheetsapi.rematch_check(
-            player1.discord_name, player2.discord_name,
-            player3.discord_name
+        players = (
+            player1.discord_name, player2.discord_name, player3.discord_name
         )
+        rematches = sheetsapi.rematch_check([players])
+        levels = tuple(rematches[players])
     if not levels:
         await ctx.send('That wouldn\'t be a rematch.')
     if len(levels) == 1:
