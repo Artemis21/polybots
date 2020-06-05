@@ -246,9 +246,16 @@ def eliminate_player(level: int, row: int, player: str) -> str:
 def rematch_check(
         player1: str, player2: str, player3: str) -> typing.List[int]:
     """Check what levels a game exists on."""
+    sheet = get_sheet('Rematch Check')
+    in_cells = sheet.range('B4:D4')
+    for cell, player in zip(in_cells, (player1, player2, player3)):
+        cell.value = player
+    sheet.update_cells(in_cells)
+    out_cells = sheet.range('F4:O4')
+    out_values = [cell.value for cell in out_cells]
     levels = []
     for level in range(10):
-        if find_game(level, player1, player2, player3):
+        if int(out_values[level]):
             levels.append(level)
     return levels
 
