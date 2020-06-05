@@ -109,13 +109,46 @@ async def _log_game(level, *players):
         )
 
 
+def _rematch_check(
+        *players: typing.Tuple[sheetsapi.StaticPlayer]
+        ) -> typing.Tuple[str, bool]:
+    """Check whether a game would be a rematch and form a message."""
+    levels = sheetsapi.rematch_check(
+        *[player.discord_name for player in players]
+    )
+    if not levels:
+        return 'That wouldn\'t be a rematch.', False
+    if len(levels) == 1:
+        return f'That would be a rematch from level {levels[0]}.', True
+    else:
+        str_levels = ', '.join(map(str, levels[:-1])) + f' and {levels[-1]}'
+        return f'That would be a rematch from levels {str_levels}.', True
+
+
 async def open_game_command(
         ctx: Context, level: int, host: sheetsapi.StaticPlayer,
         second: sheetsapi.StaticPlayer, third: sheetsapi.StaticPlayer):
     """Command to open a game."""
     async with ctx.typing():
+        message, is_rematch = _rematch_check(host, second, third)
+    if is_rematch:
+        await ctx.send(
+            f'{message} Are you sure you want to continue? (`yes` to'
+            ' continue, anything else to cancel)'
+        )
+        response = await ctx.bot.wait_for(
+            'message',
+            check=lambda m: (
+                m.author.id == ctx.author.id and m.channel.id == ctx.channel.id
+            )
+        )
+        if response.content.lower() != 'yes':
+            await ctx.send('Cancelling.')
+            return
+    async with ctx.typing():
         sheetsapi.create_game(
-            level, host.discord_name, second.discord_name, third.discord_name
+            level, host.discord_name, second.discord_name,
+            third.discord_name
         )
         await _log_game(level, host, second, third)
     await ctx.send('Game created!')
@@ -141,17 +174,8 @@ async def rematch_check_command(
         player2: sheetsapi.StaticPlayer, player3: sheetsapi.StaticPlayer):
     """Command to check if a game exists."""
     async with ctx.typing():
-        levels = sheetsapi.rematch_check(
-            player1.discord_name, player2.discord_name,
-            player3.discord_name
-        )
-    if not levels:
-        await ctx.send('That wouldn\'t be a rematch.')
-    if len(levels) == 1:
-        await ctx.send(f'That would be a rematch from level {levels[0]}.')
-    else:
-        str_levels = ', '.join(map(str, levels[:-1])) + f' and {levels[-1]}'
-        await ctx.send(f'That would be a rematch from levels {str_levels}.')
+        message, _is_rematch = _rematch_check(player1, player2, player3)
+    await ctx.send(message)
 
 
 async def eliminate_player_command(
