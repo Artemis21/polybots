@@ -106,9 +106,9 @@ def get_players_static() -> typing.List[StaticPlayer]:
         if not record['Discord Name:']:
             continue
         players.append(StaticPlayer(
-            discord_name=record['Discord Name:'] or 'Not found',
-            polytopia_name=record['Polytopia Name:'] or 'Not found',
-            friend_code=record['Friend Code:'] or 'Not found',
+            discord_name=str(record['Discord Name:']) or 'Not found',
+            polytopia_name=str(record['Polytopia Name:']) or 'Not found',
+            friend_code=str(record['Friend Code:']) or 'Not found',
             elo=record['ELO'] or 1000,
             row=row + 2
         ))
@@ -124,9 +124,9 @@ def get_players() -> typing.List[Player]:
         if not record['Discord Name:']:
             continue
         players.append(Player(
-            discord_name=record['Discord Name:'] or 'Not found',
-            polytopia_name=record['Polytopia Name:'] or 'Not found',
-            friend_code=record['Friend Code:'] or 'Not found',
+            discord_name=str(record['Discord Name:']) or 'Not found',
+            polytopia_name=str(record['Polytopia Name:']) or 'Not found',
+            friend_code=str(record['Friend Code:']) or 'Not found',
             elo=record['ELO'] or 1000,
             wins=record['Wins:'] or 0,
             losses=record['Losses'] or 0,
@@ -150,12 +150,12 @@ def all_games(level: int) -> typing.List[Game]:
         if not raw_game['Host']:
             continue
         games.append(Game(
-            player1=raw_game['Host'],
-            player2=raw_game['2nd Pick'],
-            player3=raw_game['3rd Pick'],
-            winner=raw_game['Winner'],
-            loser1=raw_game['Loser 1'],
-            loser2=raw_game['Loser 2'],
+            player1=str(raw_game['Host']),
+            player2=str(raw_game['2nd Pick']),
+            player3=str(raw_game['3rd Pick']),
+            winner=str(raw_game['Winner']),
+            loser1=str(raw_game['Loser 1']),
+            loser2=str(raw_game['Loser 2']),
             level=level,
             id=get_game_id(level, row + 2)
         ))
