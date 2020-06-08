@@ -190,7 +190,7 @@ def create_games(level: int, games: typing.List[typing.List[str]]):
     for row, host_name in enumerate(column):
         if not host_name:
             break
-    row += 1    # we want it to be 1 based
+    row += 2    # we want it to be 1 based, and not overwrite last
     rows = len(column)
     if row + len(games) < rows:
         sheet.add_rows(rows - (row + len(games)))
