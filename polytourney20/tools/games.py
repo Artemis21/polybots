@@ -96,8 +96,11 @@ async def _log_game(level, *players):
     if config.log_channel:
         users = []
         for player in players:
+            main_name = '#'.join(
+                player.discord_name.split('#')[:-1]
+            ) or player.discord_name
             user = discord.utils.get(
-                config.guild.members, name=player.discord_name
+                config.guild.members, name=main_name
             )
             if user:
                 users.append(user.mention)
