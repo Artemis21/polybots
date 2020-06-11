@@ -132,7 +132,7 @@ def get_players() -> typing.List[Player]:
             losses=record['Losses'] or 0,
             total_games=record['Total Games'] or 0,
             games_in_progress=record['Games in Progress'] or 0,
-            needs_games=record['Needs Games'] != 'No',
+            needs_games=record['Needs Games?'] != 'No',
             host=record['Host'] or 0,
             second=record['2nd'] or 0,
             third=record['3rd'] or 0,
