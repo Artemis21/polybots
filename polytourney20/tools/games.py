@@ -38,7 +38,7 @@ async def incomplete_games_cmd(
 
     lines = list_games(level, filter)
     if player:
-        including = f' including {player}'
+        including = f' including {player.discord_name}'
     else:
         including = ''
     name = f'**__Incomplete level {level} games{including}__**'
@@ -62,7 +62,7 @@ async def complete_games_cmd(
 
     lines = list_games(level, filter)
     if player:
-        including = f' including {player}'
+        including = f' including {player.discord_name}'
     else:
         including = ''
     name = f'**__Complete level {level} games{including}__**'
@@ -84,7 +84,7 @@ async def all_games_cmd(
 
     lines = list_games(level, filter)
     if player:
-        including = f' including {player}'
+        including = f' including {player.discord_name}'
     else:
         including = ''
     name = f'**__All level {level} games{including}__**'
