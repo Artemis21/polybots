@@ -110,11 +110,17 @@ class Games(commands.Cog):
         await games.open_many_command(ctx, level, all_players)
 
     @commands.command(
-        brief='Eliminate a player.',
-        name='eliminate-player', aliases=['eliminate']
+        brief='Record a loss.', aliases=['eliminate', 'elim', 'loss']
     )
     @admin()
-    async def eliminate_player(
+    async def loose(
             self, ctx, game: game_id, player: StaticPlayerConverter):
-        """Mark a player as eliminated from a game (admin only)."""
-        await games.eliminate_player_command(ctx, game, player)
+        """Mark a player as having lost a game (admin only)."""
+        await games.loose_command(ctx, game, player)
+
+    @commands.command(brief='Record a win.')
+    @admin()
+    async def win(
+            self, ctx, game: game_id, player: StaticPlayerConverter):
+        """Mark a player as having won a game (admin only)."""
+        await games.win_command(ctx, game, player)
