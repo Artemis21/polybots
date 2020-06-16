@@ -231,16 +231,22 @@ def eliminate_player(level: int, row: int, player: str) -> str:
         return f'That game does not exist.'
     if cells[-1].value:
         cells[-2].value = player
-        for other_cell in cells[:3]:
-            if other_cell.value not in (cells[-1].value, player):
-                cells[-3].value = other_cell.value
-                break
-        message = f'{player} was eliminated, {other_cell.value} wins!'
     else:
         cells[-1].value = player
-        message = f'{player} was eliminated.'
     sheet.update_cells(cells)
-    return message
+    return f'{player} was eliminated.'
+
+
+def award_win(level: int, row: int, player: str) -> bool:
+    """Mark a player as having won a game."""
+    sheet = get_sheet(level=level)
+    # pylint: disable=too-many-function-args
+    cells = sheet.range(row, 1, row, 7)
+    if not cells[0].value:
+        return f'That game does not exist.'
+    cells[-3].value = player
+    sheet.update_cells(cells)
+    return f'{player} has won!'
 
 
 def rematch_check(

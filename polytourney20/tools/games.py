@@ -181,12 +181,21 @@ async def rematch_check_command(
     await ctx.send(message)
 
 
-async def eliminate_player_command(
+async def loose_command(
         ctx: Context, game: typing.Tuple[int], player: sheetsapi.StaticPlayer
         ):
     """Command to eliminate a player from a game."""
     async with ctx.typing():
         message = sheetsapi.eliminate_player(*game, player.discord_name)
+    await ctx.send(message)
+
+
+async def win_command(
+        ctx: Context, game: typing.Tuple[int],
+        player: sheetsapi.StaticPlayer):
+    """Command to mark a player as having won a game."""
+    async with ctx.typing():
+        message = sheetsapi.award_win(*game, player.discord_name)
     await ctx.send(message)
 
 
