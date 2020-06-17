@@ -7,7 +7,7 @@ import discord
 from tools import games
 from tools.checks import admin
 from tools.converters import (
-    StaticPlayerConverter, level_id, game_id, ManyConverter
+    PlayerConverter, StaticPlayerConverter, level_id, game_id, ManyConverter
 )
 
 
@@ -84,11 +84,11 @@ class Games(commands.Cog):
     @admin()
     async def open_game(
             self, ctx, level: level_id,
-            host: StaticPlayerConverter,
-            second: StaticPlayerConverter,
-            third: StaticPlayerConverter):
+            player1: PlayerConverter,
+            player2: PlayerConverter,
+            player3: PlayerConverter):
         """Open a new game (admin only)."""
-        await games.open_game_command(ctx, level, host, second, third)
+        await games.open_game_command(ctx, level, [player1, player2, player3])
 
     @commands.command(brief='Open many games.', name='mass-open')
     @admin()

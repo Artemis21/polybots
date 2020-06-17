@@ -1,8 +1,11 @@
-from tools import sheetsapi
 import typing
+import random
+
 from discord.ext.commands import Context
-from tools.paginator import TextPaginator
 import discord
+
+from tools import sheetsapi
+from tools.paginator import TextPaginator
 from tools.config import Config
 
 
@@ -129,11 +132,10 @@ def _rematch_check(
 
 
 async def open_game_command(
-        ctx: Context, level: int, host: sheetsapi.StaticPlayer,
-        second: sheetsapi.StaticPlayer, third: sheetsapi.StaticPlayer):
+        ctx: Context, level: int, players: typing.List[sheetsapi.Player]):
     """Command to open a game."""
     async with ctx.typing():
-        message, is_rematch = _rematch_check(host, second, third)
+        message, is_rematch = _rematch_check(*players)
     if is_rematch:
         await ctx.send(
             f'{message} Are you sure you want to continue? (`yes` to'
@@ -149,9 +151,24 @@ async def open_game_command(
             await ctx.send('Cancelling.')
             return
     async with ctx.typing():
+        host = min(
+            players, key=lambda player: (
+                player.host / player.total_games,
+                player.elo,
+                random.randrange(1000)
+            )
+        )
+        second = min(
+            [player for player in players if player != host],
+            key=lambda player: (
+                player.second / player.total_games,
+                player.elo,
+                random.randrange(1000)
+            )
+        )
+        third = [p for p in players if p not in (host, second)][0]
         sheetsapi.create_game(
-            level, host.discord_name, second.discord_name,
-            third.discord_name
+            level, host.discord_name, second.discord_name, third.discord_name
         )
         await _log_game(level, host, second, third)
     await ctx.send('Game created!')
