@@ -12,11 +12,23 @@ from tools.config import Config
 config = Config()
 
 
-def list_games(level: int, fun: typing.Callable):
+def list_games(
+        level: int, fun: typing.Callable, *players: sheetsapi.StaticPlayer):
     """List all games with a filter."""
     games = sheetsapi.all_games(level)
     lines = []
-    for game in filter(fun, games):
+
+    def filter_fun(game: sheetsapi.Game):
+        """Check if a game is to be included."""
+        if not fun(game):
+            return False
+        game_players = (game.player1, game.player2, game.player3)
+        return all(
+            ((not p) or (p.discord_name in game_players))
+            for p in players
+        )
+
+    for game in filter(filter_fun, games):
         lines.append(
             f'`{game.id}` **{game.player1}** v **{game.player2}** v '
             f'**{game.player3}**'
@@ -26,22 +38,15 @@ def list_games(level: int, fun: typing.Callable):
 
 async def incomplete_games_cmd(
         ctx: Context, level: int,
-        player: typing.Optional[sheetsapi.StaticPlayer]
+        player1: typing.Optional[sheetsapi.StaticPlayer],
+        player2: typing.Optional[sheetsapi.StaticPlayer]
         ):
     """Command to view incomplete games for some level."""
-
-    def filter(game):
-        if game.winner:
-            return False
-        if not player:
-            return True
-        return player.discord_name in (
-            game.player1, game.player2, game.player3
-        )
-
-    lines = list_games(level, filter)
-    if player:
-        including = f' including {player.discord_name}'
+    lines = list_games(level, lambda game: not game.winner, player1, player2)
+    if player1:
+        including = f' including {player1.discord_name}'
+        if player2:
+            including += f' and {player2.discord_name}'
     else:
         including = ''
     name = f'**__Incomplete level {level} games{including}__**'
@@ -50,22 +55,15 @@ async def incomplete_games_cmd(
 
 async def complete_games_cmd(
         ctx: Context, level: int,
-        player: typing.Optional[sheetsapi.StaticPlayer]
+        player1: typing.Optional[sheetsapi.StaticPlayer],
+        player2: typing.Optional[sheetsapi.StaticPlayer]
         ):
     """Command to view complete games for some level."""
-
-    def filter(game):
-        if not game.winner:
-            return False
-        if not player:
-            return True
-        return player.discord_name in (
-            game.player1, game.player2, game.player3
-        )
-
-    lines = list_games(level, filter)
-    if player:
-        including = f' including {player.discord_name}'
+    lines = list_games(level, lambda game: game.winner, player1, player2)
+    if player1:
+        including = f' including {player1.discord_name}'
+        if player2:
+            including += f' and {player2.discord_name}'
     else:
         including = ''
     name = f'**__Complete level {level} games{including}__**'
@@ -74,20 +72,15 @@ async def complete_games_cmd(
 
 async def all_games_cmd(
         ctx: Context, level: int,
-        player: typing.Optional[sheetsapi.StaticPlayer]
+        player1: typing.Optional[sheetsapi.StaticPlayer],
+        player2: typing.Optional[sheetsapi.StaticPlayer]
         ):
     """Command to view all games for some level."""
-
-    def filter(game):
-        if not player:
-            return True
-        return player.discord_name in (
-            game.player1, game.player2, game.player3
-        )
-
-    lines = list_games(level, filter)
-    if player:
-        including = f' including {player.discord_name}'
+    lines = list_games(level, lambda game: True, player1, player2)
+    if player1:
+        including = f' including {player1.discord_name}'
+        if player2:
+            including += f' and {player2.discord_name}'
     else:
         including = ''
     name = f'**__All level {level} games{including}__**'

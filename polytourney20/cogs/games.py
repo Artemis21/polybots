@@ -24,10 +24,11 @@ class Games(commands.Cog):
     )
     async def incomplete_games(
             self, ctx, level: level_id,
-            player: typing.Optional[StaticPlayerConverter]
+            player1: typing.Optional[StaticPlayerConverter],
+            player2: typing.Optional[StaticPlayerConverter]
             ):
         """View all incomplete games, optionally filtering by player."""
-        await games.incomplete_games_cmd(ctx, level, player)
+        await games.incomplete_games_cmd(ctx, level, player1, player2)
 
     @commands.command(
             brief='View complete games.', aliases=['complete'],
@@ -35,20 +36,22 @@ class Games(commands.Cog):
         )
     async def complete_games(
             self, ctx, level: level_id,
-            player: typing.Optional[StaticPlayerConverter]
+            player1: typing.Optional[StaticPlayerConverter],
+            player2: typing.Optional[StaticPlayerConverter]
             ):
         """View all complete games, optionally filtering by player."""
-        await games.complete_games_cmd(ctx, level, player)
+        await games.complete_games_cmd(ctx, level, player1, player2)
 
     @commands.command(
         brief='View all games.', aliases=['games'], name='all-games'
     )
     async def all_games(
             self, ctx, level: level_id,
-            player: typing.Optional[StaticPlayerConverter]
+            player1: typing.Optional[StaticPlayerConverter],
+            player2: typing.Optional[StaticPlayerConverter]
             ):
         """View all games, optionally filtering by player."""
-        await games.all_games_cmd(ctx, level, player)
+        await games.all_games_cmd(ctx, level, player1, player2)
 
     @commands.command(brief='View a game.')
     async def game(self, ctx, game: game_id):
