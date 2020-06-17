@@ -111,7 +111,8 @@ async def _log_game(level, *players):
                 users.append(f'**@{player.discord_name}**')
         await config.log_channel.send(
             f'New level {level} game!\n{users[0]} will host, {users[1]} will '
-            f'have second pick and {users[2]} will be last.'
+            f'have second pick and {users[2]} will be last. Please remember '
+            'not to pick Bardur, Luxidoor or Kickoo.'
         )
 
 
