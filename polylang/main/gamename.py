@@ -48,7 +48,7 @@ natures = [
 ]
 
 
-def game(crazy=False):
+def single_game(crazy=False):
     name = random.choice(templates)
     if crazy and random.randrange(2):
         action = random.choice(actions_crazy)
@@ -66,6 +66,10 @@ def game(crazy=False):
     name = name.replace('[action]', action).replace('[place]', place)
     name = name.replace('[super]', superl).replace('[nature]', nature)
     return name
+
+
+def game(crazy=False, number=1):
+    return '\n'.join(single_game(crazy) for _ in range(number))
 
 
 def word():
