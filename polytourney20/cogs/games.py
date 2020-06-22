@@ -116,10 +116,10 @@ class Games(commands.Cog):
         brief='Record a loss.', aliases=['eliminate', 'elim', 'loss']
     )
     @admin()
-    async def loose(
+    async def lose(
             self, ctx, game: game_id, player: StaticPlayerConverter):
         """Mark a player as having lost a game (admin only)."""
-        await games.loose_command(ctx, game, player)
+        await games.lose(ctx, game, player)
 
     @commands.command(brief='Record a win.')
     @admin()
