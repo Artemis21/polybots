@@ -192,7 +192,7 @@ async def rematch_check_command(
     await ctx.send(message)
 
 
-async def loose_command(
+async def lose(
         ctx: Context, game: typing.Tuple[int], player: sheetsapi.StaticPlayer
         ):
     """Command to eliminate a player from a game."""

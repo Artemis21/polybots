@@ -41,11 +41,14 @@ async def get_code_command(ctx: Context, player: sheetsapi.StaticPlayer):
     await ctx.send(f'`{player.friend_code}`')
 
 
-def list_players(check: typing.Callable) -> typing.List[str]:
+def list_players(
+        check: typing.Callable,
+        sort: typing.Callable = lambda p: (-p.wins, p.losses)
+        ) -> typing.List[str]:
     """List all players, with an optional filter."""
     players = sheetsapi.get_players()
     players = list(filter(check, players))
-    players.sort(key=lambda player: (-player.wins, player.losses))
+    players.sort(key=sort)
     lines = []
     for n, player in enumerate(players):
         lines.append(
@@ -75,7 +78,8 @@ async def all_on_level_command(ctx: Context, level: int):
 async def on_level_needs_game_command(ctx: Context, level: int):
     async with ctx.typing():
         lines = list_players(
-            lambda p: p.needs_games and (p.wins == level)
+            lambda p: p.needs_games and (p.wins == level),
+            sort=lambda p: p.games_in_progress
         )
     await TextPaginator(
         ctx, lines, f'**__Level {level} players needing games__**',

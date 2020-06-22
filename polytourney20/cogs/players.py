@@ -47,7 +47,7 @@ class Players(commands.Cog):
         await players.all_on_level_command(ctx, level)
 
     @commands.command(
-        brief='See who needs games.', name='need-games', aliases=['waiting']
+        brief='See who needs games.', name='needs-games', aliases=['waiting']
     )
     @admin()
     async def needs_games(self, ctx, level: level_id):
