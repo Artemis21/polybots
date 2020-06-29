@@ -45,12 +45,12 @@ class StaticPlayerConverter(MemberConverter):
             possible = search_player(searches, self.static_only)
         if not possible:
             raise BadArgument(
-                f'Could not find player `{argument}`. Try being less '
+                f'Could not find player "{argument}". Try being less '
                 'specific, or mentioning a user.'
             )
         elif len(possible) > 1:
             raise BadArgument(
-                f'Found multiple players by search `{argument}`. Try being '
+                f'Found multiple players by search "{argument}". Try being '
                 'more specific, or mentioning a user.'
             )
         return possible[0]
