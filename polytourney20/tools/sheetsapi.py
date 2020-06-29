@@ -16,7 +16,7 @@ SCOPE = [
 
 CREDS = ServiceAccountCredentials.from_json_keyfile_name('creds.json', SCOPE)
 client = gspread.authorize(CREDS)
-spread_sheet = client.open('ffatourney1')
+spread_sheet = client.open('Polytopia Supreme Summer Skirmish Sheet')
 
 Player = namedtuple(
     'Player',
