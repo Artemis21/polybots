@@ -52,8 +52,8 @@ class Config:
 
     @admins.setter
     def admins(self, admins: typing.List[discord.User]):
-        """Set the list of admin roles."""
-        raw = [role.id for role in admins]
+        """Set the list of admin users."""
+        raw = [user.id for user in admins]
         ConfigModel.set_admins(raw)
 
     @property

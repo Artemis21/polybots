@@ -108,3 +108,11 @@ class Meta(commands.Cog):
                 await ctx.send('Done!')
                 return
         await ctx.send(f'{user} is not an admin anyway.')
+
+    @commands.command(brief='Get a list of admins.')
+    async def admins(self, ctx):
+        """Get a list of admins."""
+        await ctx.send(embed=discord.Embed(
+            title='Admins', colour=0x7289DA,
+            description=', '.join(a.mention for a in config.admins)
+        ))
