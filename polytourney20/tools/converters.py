@@ -57,7 +57,7 @@ class StaticPlayerConverter(IDConverter):
             possible = search_player(searches, self.static_only)
         if not possible:
             raise BadArgument(
-                f'Could not find player "{argument}"". Try being less '
+                f'Could not find player "{argument}". Try being less '
                 'specific, or mentioning a user.'
             )
         elif len(possible) > 1:

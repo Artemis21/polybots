@@ -6,6 +6,10 @@ from discord.ext.commands import Context
 
 from tools import sheetsapi
 from tools.paginator import TextPaginator
+from tools.config import Config
+
+
+config = Config()
 
 
 async def search_command(ctx: Context, player: sheetsapi.Player):
@@ -85,3 +89,32 @@ async def on_level_needs_game_command(ctx: Context, level: int):
         ctx, lines, f'**__Level {level} players needing games__**',
         per_page=20
     ).setup()
+
+
+async def give_all_role(ctx: Context, role: discord.Role):
+    """Give all players a role."""
+    async with ctx.typing():
+        players = sheetsapi.get_players()
+        added = 0
+        already = 0
+        not_found = 0
+        for player in players:
+            main_name = '#'.join(
+                player.discord_name.split('#')[:-1]
+            ) or player.discord_name
+            user = discord.utils.get(
+                config.guild.members, name=main_name
+            )
+            if user:
+                if role in user.roles:
+                    already += 1
+                else:
+                    await user.add_roles(role)
+                    added += 1
+            else:
+                not_found += 1
+        await ctx.send(
+            f'Gave role to {added} participants(s), {already} '
+            f'participants(s) already had it and {not_found} participant(s) '
+            'could not be found on Discord.'
+        )

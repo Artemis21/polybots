@@ -53,3 +53,9 @@ class Players(commands.Cog):
     async def needs_games(self, ctx, level: level_id):
         """See who is waiting for games on some level."""
         await players.on_level_needs_game_command(ctx, level)
+
+    @commands.command(brief='Award a participant role.', aliases=['role'])
+    @admin()
+    async def participants(self, ctx, *, role: discord.Role):
+        """Give all tournament participants a role."""
+        await players.give_all_role(ctx, role)
