@@ -102,9 +102,15 @@ async def give_all_role(ctx: Context, role: discord.Role):
             main_name = '#'.join(
                 player.discord_name.split('#')[:-1]
             ) or player.discord_name
-            user = discord.utils.get(
-                config.guild.members, name=main_name
-            )
+            alt_1 = main_name.strip()
+            alt_2 = main_name[0].upper() + main_name[1:]
+            alt_3 = main_name[0].lower() + main_name[1:]
+            for name in (main_name, alt_1, alt_2, alt_3):
+                user = discord.utils.get(
+                    config.guild.members, name=name
+                )
+                if user:
+                    break
             if user:
                 if role in user.roles:
                     already += 1
