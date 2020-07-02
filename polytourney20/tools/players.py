@@ -4,7 +4,7 @@ import typing
 import discord
 from discord.ext.commands import Context
 
-from tools import sheetsapi
+from tools import sheetsapi, hastebin
 from tools.paginator import TextPaginator
 from tools.config import Config
 
@@ -97,7 +97,7 @@ async def give_all_role(ctx: Context, role: discord.Role):
         players = sheetsapi.get_players()
         added = 0
         already = 0
-        not_found = 0
+        not_found = []
         for player in players:
             main_name = '#'.join(
                 player.discord_name.split('#')[:-1]
@@ -112,9 +112,11 @@ async def give_all_role(ctx: Context, role: discord.Role):
                     await user.add_roles(role)
                     added += 1
             else:
-                not_found += 1
+                not_found.append(player.discord_name)
+        url = hastebin.upload('\n'.join(not_found))
         await ctx.send(
             f'Gave role to {added} participants(s), {already} '
-            f'participants(s) already had it and {not_found} participant(s) '
-            'could not be found on Discord.'
+            f'participants(s) already had it and {len(not_found)} '
+            f'participant(s) could not be found on Discord (list here: '
+            f'{url}).'
         )
