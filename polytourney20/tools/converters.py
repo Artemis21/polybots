@@ -103,11 +103,22 @@ def search_player(
         players = sheetsapi.get_players()
     for player in players:
         if strict:
-            if player.discord_name == search:
+            fields = (
+                player.discord_name,
+                player.discord_name.replace(' #', '#'),
+                player.discord_name[0].upper() + player.discord_name[1:],
+                player.discord_name[0].lower() + player.discord_name[1:]
+            )
+            if search in fields:
                 return player
         else:
             fields = (
-                player.discord_name, player.polytopia_name, player.friend_code
+                player.discord_name,
+                player.discord_name.replace(' #', '#'),
+                player.discord_name[0].upper() + player.discord_name[1:],
+                player.discord_name[0].lower() + player.discord_name[1:],
+                player.polytopia_name,
+                player.friend_code
             )
             for field in fields:
                 added = False
