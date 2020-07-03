@@ -113,10 +113,10 @@ async def give_all_role(ctx: Context, role: discord.Role):
                     break
             if user:
                 if role in user.roles:
-                    already.append(user)
+                    already.append(str(user))
                 else:
                     await user.add_roles(role)
-                    added.append(user)
+                    added.append(str(user))
             else:
                 not_found.append(player.discord_name)
         not_found_url = pastebin.upload('\n'.join(not_found))
