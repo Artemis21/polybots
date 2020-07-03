@@ -9,7 +9,7 @@ from tools import datautils
 import discord
 
 
-COGS = [Players, Games, Tag, Meta]
+COGS = [Players, Games, Tags, Meta]
 
 
 def setup(bot: discord.Client):
