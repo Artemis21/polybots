@@ -13,10 +13,6 @@ ABOUT = (
     '[here](https://polytopia.fun). The bot mostly acts as an interface to '
     'the Google spreadsheet.'
 )
-INVITE = (
-    'https://discord.com/api/oauth2/authorize?client_id=715154552600526920&'
-    'permissions=379969&scope=bot'
-)
 config = Config()
 
 
@@ -51,7 +47,6 @@ class Meta(commands.Cog):
             description=ABOUT.format(bot_name=self.bot.user.name),
             colour=0x45b3e0
         )
-        embed.add_field(name='Invite', value=f'**[Click Here]({INVITE})**')
         embed.set_footer(
             text='artybot.xyz',
             icon_url='https://artybot.xyz/static/icon.png'
