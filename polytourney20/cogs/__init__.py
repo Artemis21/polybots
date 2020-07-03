@@ -2,7 +2,7 @@
 from cogs.meta import Meta
 from cogs.players import Players
 from cogs.games import Games
-from cogs.tags import Tag
+from cogs.tags import Tags
 
 from tools import datautils
 
