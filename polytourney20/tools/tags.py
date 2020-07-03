@@ -6,7 +6,8 @@ import os
 FILE = 'data/tags.json'
 
 if not os.path.exists(FILE):
-    open(FILE, 'w').close()
+    with open(FILE, 'w') as f:
+        f.write('{}')
 
 
 def _get_data():
