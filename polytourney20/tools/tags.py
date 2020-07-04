@@ -27,3 +27,8 @@ def create_tag(name: str, content: str):
 def get_tag(name: str):
     """Get a tag."""
     return _get_data().get(name.lower(), 'Tag not found.')
+
+
+def all_tags():
+    """Get a list of tags."""
+    return list(_get_data())
