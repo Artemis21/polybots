@@ -21,6 +21,16 @@ class Tags(commands.Cog):
         await ctx.message.delete()
         await ctx.send(tags.get_tag(name))
 
+    @commands.command(brief='Get a list of tags.')
+    async def tags(self, ctx):
+        """Get the list of tags.
+
+        Example: `{{pre}}tags`
+        """
+        await ctx.send(
+            'Tags: `{tags}`'.format(tags='`, `'.join(tags.all_tags()))
+        )
+
     @commands.command(brief='Create a tag.', name='create-tag')
     @admin()
     async def create_tag(self, ctx, name: str, *, content: str):
