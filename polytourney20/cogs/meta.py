@@ -65,10 +65,19 @@ class Meta(commands.Cog):
     @commands.command(brief='Set announcement channel.')
     @admin()
     async def announcements(self, ctx, channel: discord.TextChannel):
-        """Set the command prefix."""
+        """Set the announcement channel."""
         config.log_channel = channel
         await ctx.send(
             f'Announcements will now be made in {channel.mention}.'
+        )
+
+    @commands.command(brief='Set commands channel.')
+    @admin()
+    async def commands(self, ctx, channel: discord.TextChannel):
+        """Set the bot commands channel."""
+        config.commands_channel = channel
+        await ctx.send(
+            f'Bot commands will now be restricted to  {channel.mention}.'
         )
 
     @commands.command(
