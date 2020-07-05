@@ -42,7 +42,7 @@ async def search_command(ctx: Context, player: sheetsapi.Player):
 async def get_code_command(ctx: Context, player: sheetsapi.StaticPlayer):
     """Command to find a player's code."""
     await ctx.send(f'Code for **{player.discord_name}**:')
-    await ctx.send(f'`{player.friend_code}`')
+    await ctx.send(f'{player.friend_code}')
 
 
 def list_players(
