@@ -73,7 +73,7 @@ class Meta(commands.Cog):
 
     @commands.command(brief='Set commands channel.', name='bot-commands')
     @admin()
-    async def bot_commands(self, ctx, channel: discord.TextChannel):
+    async def _bot_commands(self, ctx, channel: discord.TextChannel):
         """Set the bot commands channel."""
         config.commands_channel = channel
         await ctx.send(
