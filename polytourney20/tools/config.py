@@ -68,3 +68,16 @@ class Config:
     def log_channel(self, channel: discord.TextChannel):
         """Set the log channel."""
         ConfigModel.set_log_channel(channel.id)
+
+    @property
+    def commands_channel(self) -> typing.Optional[discord.TextChannel]:
+        """Get the commands channel."""
+        channel_id = ConfigModel.get_commands_channel()
+        guild = self.guild
+        if guild:
+            return guild.get_channel(channel_id)
+
+    @commands_channel.setter
+    def commands_channel(self, channel: discord.TextChannel):
+        """Set the commands channel."""
+        ConfigModel.set_commands_channel(channel.id)

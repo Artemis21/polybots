@@ -5,7 +5,7 @@ from discord.ext import commands
 import discord
 
 from tools import players
-from tools.checks import admin
+from tools.checks import admin, commands_channel
 from tools.converters import PlayerConverter, StaticPlayerConverter, level_id
 
 
@@ -17,6 +17,7 @@ class Players(commands.Cog):
         self.bot = bot
 
     @commands.command(brief='Look up a player.')
+    @commands_channel()
     async def player(self, ctx, *, player: PlayerConverter):
         """Look up a player.
 
@@ -29,11 +30,13 @@ class Players(commands.Cog):
         brief='Get someone\'s friend code.', name='friend-code',
         aliases=['code']
     )
+    @commands_channel()
     async def friend_code(self, ctx, *, player: StaticPlayerConverter):
         """Get a player's friend code."""
         await players.get_code_command(ctx, player)
 
     @commands.command(brief='View the leaderboard.', aliases=['lb'])
+    @commands_channel()
     async def leaderboard(self, ctx):
         """View the leaderboard."""
         await players.leaderboard_command(ctx)
@@ -42,6 +45,7 @@ class Players(commands.Cog):
         brief='View players on a level.', name='players-on-level',
         aliases=['level']
     )
+    @commands_channel()
     async def players_on_level(self, ctx, level: level_id):
         """Get a list of players currently on some level."""
         await players.all_on_level_command(ctx, level)

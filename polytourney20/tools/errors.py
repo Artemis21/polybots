@@ -3,11 +3,15 @@ import re
 import traceback
 
 import discord
-from discord.ext.commands import Context
+from discord.ext import commands
 
 
-async def on_command_error(ctx: Context, error: Exception):
+async def on_command_error(ctx: commands.Context, error: Exception):
     """Handle an error."""
+    if isinstance(error, commands.CommandNotFound):
+        return
+    if isinstance(error, commands.CheckFailure):
+        return
     rawtitle = type(error).__name__
     rawtitle = re.sub('([a-z])([A-Z])', r'\1 \2', rawtitle)
     title = rawtitle[0].upper() + rawtitle[1:].lower()
