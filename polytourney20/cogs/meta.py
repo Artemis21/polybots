@@ -71,9 +71,9 @@ class Meta(commands.Cog):
             f'Announcements will now be made in {channel.mention}.'
         )
 
-    @commands.command(brief='Set commands channel.')
+    @commands.command(brief='Set commands channel.', name='bot-commands')
     @admin()
-    async def commands(self, ctx, channel: discord.TextChannel):
+    async def bot_commands(self, ctx, channel: discord.TextChannel):
         """Set the bot commands channel."""
         config.commands_channel = channel
         await ctx.send(
