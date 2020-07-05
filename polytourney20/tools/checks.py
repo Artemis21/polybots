@@ -28,3 +28,18 @@ def is_admin(user: discord.Member) -> bool:
 def admin() -> commands.check:
     """Check for admin-only commands."""
     return commands.check(lambda ctx: is_admin(ctx.author))
+
+
+def commands_channel() -> commands.check:
+    """Check for commands channel-only commands."""
+    async def check(ctx):
+        if ctx.channel == config.commands_channel:
+            return True
+        await ctx.send(
+            f'{ctx.author.mention}, this command should only be used in '
+            f'{config.commands_channel.mention}.',
+            delete_after=3
+        )
+        await ctx.message.delete(delay=3)
+        return False
+    return commands.check(check)

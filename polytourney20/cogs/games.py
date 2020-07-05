@@ -5,7 +5,7 @@ from discord.ext import commands
 import discord
 
 from tools import games
-from tools.checks import admin
+from tools.checks import admin, commands_channel
 from tools.converters import (
     PlayerConverter, StaticPlayerConverter, level_id, game_id, ManyConverter
 )
@@ -22,6 +22,7 @@ class Games(commands.Cog):
         brief='View incomplete games.', aliases=['incomplete'],
         name='incomplete-games'
     )
+    @commands_channel()
     async def incomplete_games(
             self, ctx, level: level_id,
             player1: typing.Optional[StaticPlayerConverter],
@@ -31,9 +32,10 @@ class Games(commands.Cog):
         await games.incomplete_games_cmd(ctx, level, player1, player2)
 
     @commands.command(
-            brief='View complete games.', aliases=['complete'],
-            name='complete-games'
-        )
+        brief='View complete games.', aliases=['complete'],
+        name='complete-games'
+    )
+    @commands_channel()
     async def complete_games(
             self, ctx, level: level_id,
             player1: typing.Optional[StaticPlayerConverter],
@@ -45,6 +47,7 @@ class Games(commands.Cog):
     @commands.command(
         brief='View all games.', aliases=['games'], name='all-games'
     )
+    @commands_channel()
     async def all_games(
             self, ctx, level: level_id,
             player1: typing.Optional[StaticPlayerConverter],
@@ -54,6 +57,7 @@ class Games(commands.Cog):
         await games.all_games_cmd(ctx, level, player1, player2)
 
     @commands.command(brief='View a game.')
+    @commands_channel()
     async def game(self, ctx, game: game_id):
         """View details on a specific game."""
         await games.get_game_command(ctx, game)
@@ -61,6 +65,7 @@ class Games(commands.Cog):
     @commands.command(
         brief='Search for a game.', name='search-game', aliases=['search']
     )
+    @commands_channel()
     async def search_game(
             self, ctx, level: level_id,
             player1: StaticPlayerConverter,

@@ -2,7 +2,7 @@
 from discord.ext import commands
 
 from tools import tags
-from tools.checks import admin
+from tools.checks import admin, commands_channel
 
 
 class Tags(commands.Cog):
@@ -22,6 +22,7 @@ class Tags(commands.Cog):
         await ctx.send(tags.get_tag(name))
 
     @commands.command(brief='Get a list of tags.')
+    @commands_channel()
     async def tags(self, ctx):
         """Get the list of tags.
 

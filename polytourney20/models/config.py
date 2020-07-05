@@ -66,3 +66,15 @@ class Config:
     def get_log_channel(data: typing.Dict, cls) -> int:
         """Get the log channel."""
         return data.get('log_channel', None)
+
+    @classmethod
+    @configdata
+    def set_commands_channel(data: typing.Dict, cls, channel: int):
+        """Set the commands channel."""
+        data['commands_channel'] = channel
+
+    @classmethod
+    @configdata
+    def get_commands_channel(data: typing.Dict, cls) -> int:
+        """Get the commands channel."""
+        return data.get('commands_channel', None)

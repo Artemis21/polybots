@@ -4,7 +4,7 @@ from discord.ext import commands
 
 from tools.config import Config
 from tools.errors import on_command_error
-from tools.checks import admin
+from tools.checks import admin, commands_channel
 
 
 ABOUT = (
@@ -40,6 +40,7 @@ class Meta(commands.Cog):
         await on_command_error(ctx, error)
 
     @commands.command(brief='About the bot.')
+    @commands_channel()
     async def about(self, ctx):    # noqa: ANN001
         """Get some information about the bot."""
         embed = discord.Embed(
@@ -105,6 +106,7 @@ class Meta(commands.Cog):
         await ctx.send(f'{user} is not an admin anyway.')
 
     @commands.command(brief='Get a list of admins.')
+    @commands_channel()
     async def admins(self, ctx):
         """Get a list of admins."""
         await ctx.send(embed=discord.Embed(
