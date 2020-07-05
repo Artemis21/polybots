@@ -31,7 +31,11 @@ class Meta(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
         """Send prefix if bot is mentioned."""
-        if message.guild.me in message.mentions:
+        if message.guild:
+            me = message.guild.me
+        else:
+            me = self.bot.user
+        if me in message.mentions:
             await message.channel.send(f'My prefix is `{config.prefix}`.')
 
     @commands.Cog.listener()
