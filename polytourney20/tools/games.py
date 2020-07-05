@@ -112,13 +112,16 @@ async def _log_game(level, *players):
                 users.append(None)
                 names.append(f'**@{player.discord_name}**')
         if users[0]:
-            await users[0].send(
-                f'You have a level {level} game against {names[1]} and '
-                f'{names[2]} to host. Here are their codes, in the order you '
-                'should add them:'
-            )
-            await users[0].send(players[1].friend_code)
-            await users[0].send(players[2].friend_code)
+            try:
+                await users[0].send(
+                    f'You have a level {level} game against {names[1]} and '
+                    f'{names[2]} to host. Here are their codes, in the order '
+                    'you should add them:'
+                )
+                await users[0].send(players[1].friend_code)
+                await users[0].send(players[2].friend_code)
+            except discord.Forbidden:
+                pass
         await config.log_channel.send(
             f'New level {level} game!\n{names[0]} will host, {names[1]} will '
             f'have second pick and {names[2]} will be last. Please remember '
