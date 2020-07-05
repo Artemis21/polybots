@@ -90,6 +90,7 @@ async def all_games_cmd(
 async def _log_game(level, *players):
     """Announce the opening of a game."""
     if config.log_channel:
+        names = []
         users = []
         for player in players:
             main_name = '#'.join(
@@ -105,12 +106,22 @@ async def _log_game(level, *players):
                 if user:
                     break
             if user:
-                users.append(user.mention)
+                users.append(user)
+                names.append(user.mention)
             else:
-                users.append(f'**@{player.discord_name}**')
+                users.append(None)
+                names.append(f'**@{player.discord_name}**')
+        if users[0]:
+            await users[0].send(
+                f'You have a level {level} game against {names[1]} and '
+                f'{names[2]} to host. Here are their codes, in the order you '
+                'should add them:'
+            )
+            await users[0].send(players[1].friend_code)
+            await users[0].send(players[2].friend_code)
         await config.log_channel.send(
-            f'New level {level} game!\n{users[0]} will host, {users[1]} will '
-            f'have second pick and {users[2]} will be last. Please remember '
+            f'New level {level} game!\n{names[0]} will host, {names[1]} will '
+            f'have second pick and {names[2]} will be last. Please remember '
             'not to pick Bardur, Luxidoor or Kickoo.'
         )
 
