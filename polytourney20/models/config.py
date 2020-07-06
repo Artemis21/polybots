@@ -72,7 +72,7 @@ class Config:
     def set_commands_channels(
             data: typing.Dict, cls, channels: typing.List[int]):
         """Add a commands channel."""
-        data['commands_channels'] = ' '.join(channels)
+        data['commands_channels'] = ' '.join(map(str, channels))
 
     @classmethod
     @configdata
