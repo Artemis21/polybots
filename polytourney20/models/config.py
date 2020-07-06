@@ -69,12 +69,13 @@ class Config:
 
     @classmethod
     @configdata
-    def set_commands_channel(data: typing.Dict, cls, channel: int):
-        """Set the commands channel."""
-        data['commands_channel'] = channel
+    def set_commands_channels(
+            data: typing.Dict, cls, channels: typing.List[int]):
+        """Add a commands channel."""
+        data['commands_channels'] = ' '.join(channels)
 
     @classmethod
     @configdata
-    def get_commands_channel(data: typing.Dict, cls) -> int:
-        """Get the commands channel."""
-        return data.get('commands_channel', None)
+    def get_commands_channels(data: typing.Dict, cls) -> int:
+        """Get the commands channels."""
+        return map(int, data.get('commands_channel', '').split())
