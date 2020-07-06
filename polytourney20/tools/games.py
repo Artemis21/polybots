@@ -96,12 +96,13 @@ async def _log_game(level, *players):
             main_name = '#'.join(
                 player.discord_name.split('#')[:-1]
             ) or player.discord_name
+            discrim = player.discord_name.split('#')[-1].strip()
             alt_1 = main_name.strip()
             alt_2 = main_name[0].upper() + main_name[1:]
             alt_3 = main_name[0].lower() + main_name[1:]
             for name in (main_name, alt_1, alt_2, alt_3):
                 user = discord.utils.get(
-                    config.guild.members, name=name
+                    config.guild.members, name=name, discriminator=discrim
                 )
                 if user:
                     break
