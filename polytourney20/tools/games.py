@@ -157,7 +157,7 @@ async def open_game_command(
     async with ctx.typing():
         host = min(
             players, key=lambda player: (
-                player.host / player.total_games,
+                player.host / max(player.total_games, 1),
                 player.elo,
                 random.randrange(1000)
             )
