@@ -165,7 +165,7 @@ async def open_game_command(
         second = min(
             [player for player in players if player != host],
             key=lambda player: (
-                player.second / player.total_games,
+                player.second / max(player.total_games, 1),
                 player.elo,
                 random.randrange(1000)
             )
