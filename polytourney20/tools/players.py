@@ -1,5 +1,6 @@
 """Interface between the players cog and the sheets API wrapper."""
 import typing
+import re
 
 import discord
 from discord.ext.commands import Context
@@ -45,6 +46,11 @@ async def get_code_command(ctx: Context, player: sheetsapi.StaticPlayer):
     await ctx.send(f'{player.friend_code}')
 
 
+def escape_md(raw: str) -> str:
+    """Escape Discord markdown."""
+    return re.sub(r'[_*|`~\\]', lambda m: '\\' + m.group(0), raw)
+
+
 def list_players(
         check: typing.Callable,
         sort: typing.Callable = lambda p: (-p.wins, p.losses)
@@ -56,8 +62,9 @@ def list_players(
     lines = []
     for n, player in enumerate(players):
         lines.append(
-            f'**#{n + 1}:** {player.discord_name} *({player.wins}W/'
-            f'{player.losses}L)*'
+            f'**#{n + 1}:** {escape_md(player.discord_name)} '
+            f'*({player.wins}W/{player.losses}L/'
+            f'{player.games_in_progress}IP)*'
         )
     return lines
 
@@ -83,7 +90,7 @@ async def on_level_needs_game_command(ctx: Context, level: int):
     async with ctx.typing():
         lines = list_players(
             lambda p: p.needs_games and (p.wins == level),
-            sort=lambda p: p.games_in_progress
+            sort=lambda p: p.total_games
         )
     await TextPaginator(
         ctx, lines, f'**__Level {level} players needing games__**',
