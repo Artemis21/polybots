@@ -5,6 +5,7 @@ from discord.ext.commands import Context
 import discord
 
 from tools import sheetsapi
+from tools.players import get_user
 from tools.paginator import TextPaginator
 from tools.config import Config
 
@@ -93,19 +94,7 @@ async def _log_game(level, *players):
         names = []
         users = []
         for player in players:
-            main_name = '#'.join(
-                player.discord_name.split('#')[:-1]
-            ) or player.discord_name
-            discrim = player.discord_name.split('#')[-1].strip()
-            alt_1 = main_name.strip()
-            alt_2 = main_name[0].upper() + main_name[1:]
-            alt_3 = main_name[0].lower() + main_name[1:]
-            for name in (main_name, alt_1, alt_2, alt_3):
-                user = discord.utils.get(
-                    config.guild.members, name=name, discriminator=discrim
-                )
-                if user:
-                    break
+            user = get_user(player)
             if user:
                 users.append(user)
                 names.append(user.mention)

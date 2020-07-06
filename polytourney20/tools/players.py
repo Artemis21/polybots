@@ -80,18 +80,41 @@ async def leaderboard_command(ctx: Context):
 
 async def all_on_level_command(ctx: Context, level: int):
     async with ctx.typing():
-        lines = list_players(lambda p: p.wins == level)
+        lines = list_players(lambda p: p.level == level)
     await TextPaginator(
         ctx, lines, f'**__Level {level} Players__**', per_page=20
     ).setup()
 
 
-async def on_level_needs_game_command(ctx: Context, level: int):
-    async with ctx.typing():
-        lines = list_players(
-            lambda p: p.needs_games and (p.wins == level),
-            sort=lambda p: p.total_games
+def get_user(player: sheetsapi.StaticPlayer) -> discord.Member:
+    """Get a member from a player."""
+    main_name = '#'.join(
+        player.discord_name.split('#')[:-1]
+    ) or player.discord_name
+    discrim = player.discord_name.split('#')[-1].strip()
+    alt_1 = main_name.strip()
+    alt_2 = main_name[0].upper() + main_name[1:]
+    alt_3 = main_name[0].lower() + main_name[1:]
+    for name in (main_name, alt_1, alt_2, alt_3):
+        user = discord.utils.get(
+            config.guild.members, name=name, discriminator=discrim
         )
+        if user:
+            break
+    return user
+
+
+async def on_level_needs_game_command(ctx: Context, level: int):
+    def check_player(player):
+        """Check if a player should be included."""
+        if not player.needs_games:
+            return False
+        if player.level != level:
+            return False
+        return bool(get_user(player))
+
+    async with ctx.typing():
+        lines = list_players(check_player, lambda p: p.total_games)
     await TextPaginator(
         ctx, lines, f'**__Level {level} players needing games__**',
         per_page=20
@@ -106,18 +129,7 @@ async def give_all_role(ctx: Context, role: discord.Role):
         already = []
         not_found = []
         for player in players:
-            main_name = '#'.join(
-                player.discord_name.split('#')[:-1]
-            ) or player.discord_name
-            alt_1 = main_name.strip()
-            alt_2 = main_name[0].upper() + main_name[1:]
-            alt_3 = main_name[0].lower() + main_name[1:]
-            for name in (main_name, alt_1, alt_2, alt_3):
-                user = discord.utils.get(
-                    config.guild.members, name=name
-                )
-                if user:
-                    break
+            user = get_user(player)
             if user:
                 if role in user.roles:
                     already.append(str(user))
