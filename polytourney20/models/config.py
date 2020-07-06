@@ -78,4 +78,4 @@ class Config:
     @configdata
     def get_commands_channels(data: typing.Dict, cls) -> int:
         """Get the commands channels."""
-        return map(int, data.get('commands_channel', '').split())
+        return map(int, data.get('commands_channels', '').split())
