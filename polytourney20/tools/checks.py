@@ -33,11 +33,11 @@ def admin() -> commands.check:
 def commands_channel() -> commands.check:
     """Check for commands channel-only commands."""
     async def check(ctx):
-        if ctx.channel == config.commands_channel:
+        if ctx.channel in config.commands_channels:
             return True
         await ctx.send(
             f'{ctx.author.mention}, this command should only be used in '
-            f'{config.commands_channel.mention}.',
+            f'{config.commands_channels[0].mention}.',
             delete_after=3
         )
         await ctx.message.delete(delay=3)

@@ -70,14 +70,24 @@ class Config:
         ConfigModel.set_log_channel(channel.id)
 
     @property
-    def commands_channel(self) -> typing.Optional[discord.TextChannel]:
-        """Get the commands channel."""
-        channel_id = ConfigModel.get_commands_channel()
+    def commands_channels(self) -> typing.List[discord.TextChannel]:
+        """Get the commands channels."""
+        channel_ids = ConfigModel.get_commands_channels()
         guild = self.guild
+        channels = []
         if guild:
-            return guild.get_channel(channel_id)
+            for cid in channel_ids:
+                channels.append(guild.get_channel(cid))
+        return channels
 
-    @commands_channel.setter
-    def commands_channel(self, channel: discord.TextChannel):
-        """Set the commands channel."""
-        ConfigModel.set_commands_channel(channel.id)
+    def add_commands_channel(self, channel: discord.TextChannel):
+        """Add a commands channel."""
+        channel_ids = ConfigModel.get_commands_channels()
+        channel_ids.append(channel.id)
+        ConfigModel.set_commands_channels(channel_ids)
+
+    def remove_commands_channel(self, channel: discord.TextChannel):
+        """Remove a commands channel."""
+        channel_ids = ConfigModel.get_commands_channels()
+        channel_ids = [cid for cid in channel_ids if cid != channel.id]
+        ConfigModel.set_commands_channels(channel_ids)

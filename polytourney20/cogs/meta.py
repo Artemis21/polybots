@@ -75,13 +75,28 @@ class Meta(commands.Cog):
             f'Announcements will now be made in {channel.mention}.'
         )
 
-    @commands.command(brief='Set commands channel.', name='bot-commands')
+    @commands.command(
+        brief='Add a commands channel.', name='add-bot-channel',
+        aliases=['abc']
+    )
     @admin()
-    async def _bot_commands(self, ctx, channel: discord.TextChannel):
-        """Set the bot commands channel."""
-        config.commands_channel = channel
+    async def add_bot_commands(self, ctx, channel: discord.TextChannel):
+        """Add a bot commands channel."""
+        config.add_commands_channel(channel)
         await ctx.send(
-            f'Bot commands will now be restricted to  {channel.mention}.'
+            f'Bot commands will now be allowed in {channel.mention}.'
+        )
+
+    @commands.command(
+        brief='Remove a commands channel.', name='remove-bot-channel',
+        aliases=['rbc']
+    )
+    @admin()
+    async def remove_bot_commands(self, ctx, channel: discord.TextChannel):
+        """Remove a bot commands channel."""
+        config.remove_commands_channel(channel)
+        await ctx.send(
+            f'Bot commands will no longer allowed in {channel.mention}.'
         )
 
     @commands.command(
