@@ -16,7 +16,7 @@ SCOPE = [
 
 CREDS = ServiceAccountCredentials.from_json_keyfile_name('creds.json', SCOPE)
 client = gspread.authorize(CREDS)
-spread_sheet = client.open('Polytopia Supreme Summer Skirmish Sheet')
+spread_sheet = client.open('Summer Skirmish Testing')
 
 Player = namedtuple(
     'Player',
@@ -164,18 +164,24 @@ def all_games(level: int) -> typing.List[Game]:
     return games
 
 
+def find_next_empty(sheet: gspread.Worksheet, needed: int = 1) -> int:
+    """Find the next empty row on a level sheet."""
+    grid = sheet.get_all_values()
+    for n, row in enumerate(grid):
+        if not any(row[:3]):
+            if needed + n <= len(grid):
+                return n + 1
+            n -= 1
+            break
+    empty = len(grid) - n - 1
+    sheet.add_rows(needed - empty)
+    return n + 2
+
+
 def create_game(level: int, player1: str, player2: str, player3: str) -> str:
     """Create a game."""
     sheet = get_sheet(level=level)
-    empty = False
-    for row, names in enumerate(zip(map(sheet.col_values, range(1, 4)))):
-        if not any(names):
-            empty = True
-            break
-    row += 1    # we want it to be 1 based
-    if not empty:
-        row += 1
-        sheet.add_rows(1)
+    row = find_next_empty(sheet)
     # pylint: disable=too-many-function-args
     cells = sheet.range(row, 1, row, 3)
     players = [player1, player2, player3]
@@ -188,16 +194,7 @@ def create_game(level: int, player1: str, player2: str, player3: str) -> str:
 def create_games(level: int, games: typing.List[typing.List[str]]):
     """Create multiple games."""
     sheet = get_sheet(level=level)
-    column = sheet.col_values(1)
-    for row, host_name in enumerate(column):
-        if not host_name:
-            break
-    row += 2    # we want it to be 1 based, and not overwrite last
-    rows = len(column)
-    if row + len(games) < rows:
-        sheet.add_rows(rows - (row + len(games)))
-        if row == rows:
-            row += 1
+    row = find_next_empty(sheet, len(games))
     # pylint: disable=too-many-function-args
     cells = sheet.range(row, 1, row + len(games), 3)
     cell_num = 0
@@ -273,12 +270,12 @@ def get_game(level: int, row: int):
     sheet = get_sheet(level=level)
     # pylint: disable=too-many-function-args
     cells = sheet.range(row, 1, row, 7)
-    if not cells[0].value:
+    if not any(cell.value for cell in cells[:3]):
         return None
     return Game(
-        player1=cells[0].value,
-        player2=cells[1].value,
-        player3=cells[2].value,
+        player1=cells[0].value or '-',
+        player2=cells[1].value or '-',
+        player3=cells[2].value or '-',
         winner=cells[-3].value if cells[-3].value != 'UNFINISHED' else '',
         loser1=cells[-2].value,
         loser2=cells[-1].value,
