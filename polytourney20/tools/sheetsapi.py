@@ -168,8 +168,8 @@ def create_game(level: int, player1: str, player2: str, player3: str) -> str:
     """Create a game."""
     sheet = get_sheet(level=level)
     empty = False
-    for row, host_name in enumerate(sheet.col_values(1)):
-        if not host_name:
+    for row, names in enumerate(zip(map(sheet.col_values, range(1, 4)))):
+        if not any(names):
             empty = True
             break
     row += 1    # we want it to be 1 based
