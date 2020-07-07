@@ -5,7 +5,7 @@ from discord.ext import commands
 import discord
 
 from tools import games
-from tools.checks import admin, commands_channel, disabled
+from tools.checks import admin, commands_channel
 from tools.converters import (
     PlayerConverter, StaticPlayerConverter, level_id, game_id, ManyConverter
 )
@@ -90,7 +90,6 @@ class Games(commands.Cog):
         brief='Open a game.', name='open-game', aliases=['open']
     )
     @admin()
-    @disabled()
     async def open_game(
             self, ctx, level: level_id,
             player1: PlayerConverter,
@@ -101,7 +100,6 @@ class Games(commands.Cog):
 
     @commands.command(brief='Open many games.', name='mass-open')
     @admin()
-    @disabled()
     async def mass_open(
             self, ctx, level: level_id, *, all_players: ManyConverter(
                 host=StaticPlayerConverter,
