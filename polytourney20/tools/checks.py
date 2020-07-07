@@ -43,3 +43,14 @@ def commands_channel() -> commands.check:
         await ctx.message.delete(delay=3)
         return False
     return commands.check(check)
+
+
+def disabled() -> commands.check:
+    """Check for disabled commands."""
+    async def check(ctx):
+        await ctx.send(
+            'This command is temporarily disabled due to techinal issues. '
+            'Sorry.'
+        )
+        return False
+    return commands.check(check)
