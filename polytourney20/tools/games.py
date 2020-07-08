@@ -96,7 +96,7 @@ async def _log_game(level, *players):
         for player in players:
             user = get_user(player)
             if user:
-                names.append(user.mention)
+                users.append(user)
             else:
                 users.append(None)
             names.append(f'**@{player.discord_name}**')
