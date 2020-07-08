@@ -94,13 +94,7 @@ async def _log_game(level, *players):
         names = []
         users = []
         for player in players:
-            user = get_user(player)
-            if user:
-                users.append(user)
-                names.append(user.mention)
-            else:
-                users.append(None)
-                names.append(f'**@{player.discord_name}**')
+            names.append(f'**@{player.discord_name}**')
         if users[0]:
             try:
                 await users[0].send(
