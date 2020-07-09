@@ -262,30 +262,27 @@ async def search_game_command(
 
 async def get_submitted_result(ctx: Context, channel: discord.TextChannel):
     """Get all results submitted that don't have a reaction."""
-    found = False
-    async for message in channel.history(limint=None, oldest_first=True):
+    async for message in channel.history(limit=None, oldest_first=True):
         if not message.reactions:
-            found = True
-            break
-    if not found:
-        return await ctx.send('No unprocessed results :thumbsup:')
-    response = await ctx.send(
-        e=discord.Embed(
-            description=message.content
-        ).set_author(
-            name=str(message.author),
-            url=message.jump_url,
-            icon_url=str(message.author.avatar_url)
-        )
-    )
-    await response.add_reaction('✅')
+            response = await ctx.send(
+                e=discord.Embed(
+                    description=message.content
+                ).set_author(
+                    name=str(message.author),
+                    url=message.jump_url,
+                    icon_url=str(message.author.avatar_url)
+                )
+            )
+            await response.add_reaction('✅')
 
-    def check(reaction, user):
-        return (
-            reaction.emoji == '✅' and reaction.message.id == response.id 
-            and not user.bot
-        )
+            def check(reaction, user):
+                return (
+                    reaction.emoji == '✅'
+                    and reaction.message.id == response.id
+                    and not user.bot
+                )
 
-    await ctx.bot.wait_for('reaction_add', check=check)
-    await message.add_reaction('✅')
-    await get_submitted_result(ctx, channel)
+            await ctx.bot.wait_for('reaction_add', check=check)
+            await message.add_reaction('✅')
+            await get_submitted_result(ctx, channel)
+    await ctx.send('No unprocessed results :thumbsup:')
