@@ -132,3 +132,9 @@ class Games(commands.Cog):
             self, ctx, game: game_id, player: StaticPlayerConverter):
         """Mark a player as having won a game (admin only)."""
         await games.win_command(ctx, game, player)
+
+    @commands.command(brief='Get unprocessed results.')
+    @admin()
+    async def results(self, ctx, *, channel: discord.TextChannel):
+        """Get unprocessed results from a text channel (admin only)."""
+        await games.get_submitted_result(ctx, channel)
