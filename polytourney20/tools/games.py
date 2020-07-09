@@ -116,7 +116,7 @@ async def _log_game(level, *players):
                 pass
         await config.log_channel.send(
             f'New level {level} game!\n{mentions[0]} will host, '
-            f'{mentions[1]} will have second pick and {names[2]} will be '
+            f'{mentions[1]} will have second pick and {mentions[2]} will be '
             'last. Please remember not to pick Bardur, Luxidoor or Kickoo.'
         )
 
