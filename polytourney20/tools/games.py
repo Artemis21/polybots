@@ -280,7 +280,8 @@ async def get_submitted_result(ctx: Context, channel: discord.TextChannel):
             response = await ctx.send(
                 embed=discord.Embed(
                     description=content,
-                    timestamp=message.created_at
+                    timestamp=message.created_at,
+                    footer='✅ when done or ⏩ to skip'
                 ).set_author(
                     name=str(message.author),
                     url=message.jump_url,
@@ -288,15 +289,19 @@ async def get_submitted_result(ctx: Context, channel: discord.TextChannel):
                 )
             )
             await response.add_reaction('✅')
+            await response.add_reaction('⏩')
 
             def check(reaction, user):
                 return (
-                    reaction.emoji == '✅'
+                    reaction.emoji in '✅⏩'
                     and reaction.message.id == response.id
                     and not user.bot
                 )
 
-            await ctx.bot.wait_for('reaction_add', check=check)
-            await message.add_reaction('✅')
-            await get_submitted_result(ctx, channel)
+            reaction, _ = await ctx.bot.wait_for('reaction_add', check=check)
+            if reaction.emoji == '✅':
+                await message.add_reaction('✅')
+                await get_submitted_result(ctx, channel)
+            else:
+                await ctx.send('Skipped')
     await ctx.send('No unprocessed results :thumbsup:')
