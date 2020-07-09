@@ -263,8 +263,10 @@ async def search_game_command(
 async def get_submitted_result(ctx: Context, channel: discord.TextChannel):
     """Get all results submitted that don't have a reaction."""
     async for message in channel.history(limit=None, oldest_first=True):
-        print(message.content)
         if not message.reactions:
+            content = message.content
+            for mention in message.mentions:
+                content = mention.replace(mention.mention, str(mention))
             response = await ctx.send(
                 embed=discord.Embed(
                     description=message.content
