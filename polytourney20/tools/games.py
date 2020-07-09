@@ -266,10 +266,10 @@ async def get_submitted_result(ctx: Context, channel: discord.TextChannel):
         if not message.reactions:
             content = message.content
             for mention in message.mentions:
-                content = mention.replace(mention.mention, str(mention))
+                content = content.replace(mention.mention, str(mention))
             response = await ctx.send(
                 embed=discord.Embed(
-                    description=message.content
+                    description=content
                 ).set_author(
                     name=str(message.author),
                     url=message.jump_url,
