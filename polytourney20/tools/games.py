@@ -280,12 +280,13 @@ async def get_submitted_result(ctx: Context, channel: discord.TextChannel):
             response = await ctx.send(
                 embed=discord.Embed(
                     description=content,
-                    timestamp=message.created_at,
-                    footer='✅ when done or ⏩ to skip'
+                    timestamp=message.created_at
                 ).set_author(
                     name=str(message.author),
                     url=message.jump_url,
                     icon_url=str(message.author.avatar_url)
+                ).set_footer(
+                    text='✅ when done or ⏩ to skip'
                 )
             )
             await response.add_reaction('✅')
