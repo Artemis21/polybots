@@ -6,6 +6,7 @@ import discord
 
 from tools import sheetsapi
 from tools.players import get_user
+from tools.converters import search_player
 from tools.paginator import TextPaginator
 from tools.config import Config
 
@@ -265,11 +266,21 @@ async def get_submitted_result(ctx: Context, channel: discord.TextChannel):
     async for message in channel.history(limit=None, oldest_first=True):
         if not message.reactions:
             content = message.content
+            # players = []
             for mention in message.mentions:
                 content = content.replace(mention.mention, str(mention))
+                # player = search_player(
+                #     str(mention), static_only=True, strict=True
+                # )
+                # if player and player not in players:
+                #     players.append(player)
+                content = content.replace(
+                    mention.mention, str(mention).replace('@', '@!')
+                )
             response = await ctx.send(
                 embed=discord.Embed(
-                    description=content
+                    description=content,
+                    timestamp=message.created_at
                 ).set_author(
                     name=str(message.author),
                     url=message.jump_url,
