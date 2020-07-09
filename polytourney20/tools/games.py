@@ -91,15 +91,18 @@ async def all_games_cmd(
 async def _log_game(level, *players):
     """Announce the opening of a game."""
     if config.log_channel:
+        mentions = []
         names = []
         users = []
         for player in players:
             user = get_user(player)
             if user:
                 users.append(user)
+                mentions.append(user.mention)
             else:
                 users.append(None)
-            names.append(f'**@{player.discord_name}**')
+                mentions.append(f'**@{player.discord_name}**')
+            names.append(f'**{player.discord_name}**')
         if users[0]:
             try:
                 await users[0].send(
@@ -112,9 +115,9 @@ async def _log_game(level, *players):
             except discord.Forbidden:
                 pass
         await config.log_channel.send(
-            f'New level {level} game!\n{names[0]} will host, {names[1]} will '
-            f'have second pick and {names[2]} will be last. Please remember '
-            'not to pick Bardur, Luxidoor or Kickoo.'
+            f'New level {level} game!\n{mentions[0]} will host, '
+            f'{mentions[1]} will have second pick and {names[2]} will be '
+            'last. Please remember not to pick Bardur, Luxidoor or Kickoo.'
         )
 
 
