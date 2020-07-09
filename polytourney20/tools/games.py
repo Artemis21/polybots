@@ -265,7 +265,7 @@ async def get_submitted_result(ctx: Context, channel: discord.TextChannel):
     async for message in channel.history(limit=None, oldest_first=True):
         if not message.reactions:
             response = await ctx.send(
-                e=discord.Embed(
+                embed=discord.Embed(
                     description=message.content
                 ).set_author(
                     name=str(message.author),
