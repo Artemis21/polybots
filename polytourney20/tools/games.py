@@ -290,7 +290,7 @@ async def get_submitted_result(ctx: Context, channel: discord.TextChannel):
                 # if player and player not in players:
                 #     players.append(player)
                 content = content.replace(
-                    mention.mention, str(mention).replace('@', '@!')
+                    mention.mention.replace('@', '@!'), str(mention)
                 )
             response = await ctx.send(
                 embed=discord.Embed(
@@ -298,7 +298,7 @@ async def get_submitted_result(ctx: Context, channel: discord.TextChannel):
                     timestamp=message.created_at
                 ).set_author(
                     name=str(message.author),
-                    url=message.jump_url,
+                    url=message.jump_url.replace('discordapp', 'discord'),
                     icon_url=str(message.author.avatar_url)
                 ).set_footer(
                     text='✅ when done or ⏩ to skip'
