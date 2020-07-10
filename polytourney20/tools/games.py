@@ -138,24 +138,39 @@ def _rematch_check(
         return f'That would be a rematch from levels {str_levels}.', True
 
 
+async def confirm(ctx: Context, warning: str):
+    """Get a user to dismiss (or not dismiss) a warning."""
+    await ctx.send(
+        f'{warning} Are you sure you want to continue? (`yes` to'
+        ' continue, anything else to cancel)'
+    )
+    response = await ctx.bot.wait_for(
+        'message',
+        check=lambda m: (
+            m.author.id == ctx.author.id and m.channel.id == ctx.channel.id
+        )
+    )
+    if response.content.lower() != 'yes':
+        await ctx.send('Cancelling.')
+        return False
+    return True
+
+
 async def open_game_command(
         ctx: Context, level: int, players: typing.List[sheetsapi.Player]):
     """Command to open a game."""
+    for player in players:
+        if player.games_in_progress >= 3:
+            warning = (
+                f'{player.discord_name} already has '
+                f'{player.games_in_progress} games in progress.'
+            )
+            if not await confirm(ctx, warning):
+                return
     async with ctx.typing():
         message, is_rematch = _rematch_check(*players)
     if is_rematch:
-        await ctx.send(
-            f'{message} Are you sure you want to continue? (`yes` to'
-            ' continue, anything else to cancel)'
-        )
-        response = await ctx.bot.wait_for(
-            'message',
-            check=lambda m: (
-                m.author.id == ctx.author.id and m.channel.id == ctx.channel.id
-            )
-        )
-        if response.content.lower() != 'yes':
-            await ctx.send('Cancelling.')
+        if not await confirm(ctx, message):
             return
     async with ctx.typing():
         host = min(
@@ -294,13 +309,13 @@ async def get_submitted_result(ctx: Context, channel: discord.TextChannel):
 
             def check(reaction, user):
                 return (
-                    reaction.emoji in '✅⏩'
+                    reaction.emoji.name in '✅⏩'
                     and reaction.message.id == response.id
                     and not user.bot
                 )
 
             reaction, _ = await ctx.bot.wait_for('reaction_add', check=check)
-            if reaction.emoji == '✅':
+            if reaction.emoji.name == '✅':
                 await message.add_reaction('✅')
                 await get_submitted_result(ctx, channel)
             else:
