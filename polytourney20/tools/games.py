@@ -316,7 +316,7 @@ async def get_submitted_result(ctx: Context, channel: discord.TextChannel):
                 )
 
             reaction, _ = await ctx.bot.wait_for('reaction_add', check=check)
-                emoji = getattr(reaction.emoji, 'name', reaction.emoji)
+            emoji = getattr(reaction.emoji, 'name', reaction.emoji)
             if emoji == '✅':
                 await message.add_reaction('✅')
                 await get_submitted_result(ctx, channel)
