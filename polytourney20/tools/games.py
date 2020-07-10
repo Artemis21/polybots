@@ -308,14 +308,16 @@ async def get_submitted_result(ctx: Context, channel: discord.TextChannel):
             await response.add_reaction('⏩')
 
             def check(reaction, user):
+                emoji = getattr(reaction.emoji, 'name', reaction.emoji)
                 return (
-                    reaction.emoji in '✅⏩'
+                    emoji in '✅⏩'
                     and reaction.message.id == response.id
                     and not user.bot
                 )
 
             reaction, _ = await ctx.bot.wait_for('reaction_add', check=check)
-            if reaction.emoji == '✅':
+                emoji = getattr(reaction.emoji, 'name', reaction.emoji)
+            if emoji == '✅':
                 await message.add_reaction('✅')
                 await get_submitted_result(ctx, channel)
             else:
