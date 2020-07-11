@@ -110,7 +110,7 @@ def search_player(
                 player.discord_name[0].lower() + player.discord_name[1:]
             )
             if search in fields:
-                return player
+                return player, DONT_CACHE
         else:
             fields = (
                 player.discord_name,
