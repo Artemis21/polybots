@@ -72,7 +72,7 @@ def list_players(
 async def leaderboard_command(ctx: Context):
     """Command to view the leaderboard."""
     async with ctx.typing():
-        lines = list_players(lambda p: True)
+        lines = list_players(lambda p: p.wins or p.losses)
     await TextPaginator(
         ctx, lines, '**__Leaderboard__**', per_page=20
     ).setup()
