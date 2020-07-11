@@ -114,7 +114,9 @@ async def on_level_needs_game_command(ctx: Context, level: int):
         return bool(get_user(player))
 
     async with ctx.typing():
-        lines = list_players(check_player, lambda p: p.total_games)
+        lines = list_players(
+            check_player, lambda p: (p.total_games, p.games_in_progress)
+        )
     await TextPaginator(
         ctx, lines, f'**__Level {level} players needing games__**',
         per_page=20
