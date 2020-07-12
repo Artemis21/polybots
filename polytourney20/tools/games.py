@@ -326,4 +326,4 @@ async def get_submitted_result(ctx: Context, channel: discord.TextChannel):
 
 
 def convert_to_references():
-    
+    pass
