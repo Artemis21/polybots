@@ -323,3 +323,7 @@ async def get_submitted_result(ctx: Context, channel: discord.TextChannel):
             else:
                 await ctx.send('Skipped')
     await ctx.send('No unprocessed results :thumbsup:')
+
+
+def convert_to_references():
+    
