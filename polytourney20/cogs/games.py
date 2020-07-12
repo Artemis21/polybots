@@ -19,7 +19,7 @@ class Games(commands.Cog):
         self.bot = bot
 
     @commands.command(
-        brief='View incomplete games.', aliases=['incomplete'],
+        brief='View incomplete games.', aliases=['incomplete', 'inc'],
         name='incomplete-games'
     )
     @commands_channel()
