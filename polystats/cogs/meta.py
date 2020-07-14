@@ -21,7 +21,7 @@ class Meta(commands.Cog):
         bot.help_command.cog = self
 
     @commands.command(brief='About the bot.')
-    def about(self, ctx: commands.Context):
+    async def about(self, ctx: commands.Context):
         """Show some information about the bot."""
         await ctx.send(embed=discord.Embed(
             title='About', description=ABOUT, colour=0xff67be

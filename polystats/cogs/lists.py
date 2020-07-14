@@ -12,7 +12,7 @@ class Lists(commands.Cog):
         self.bot = bot
 
     @commands.command(brief='Lists of units.', aliases=['us'])
-    def units(self, ctx: commands.Context):
+    async def units(self, ctx: commands.Context):
         """Show a list of units.
 
         Examples:
