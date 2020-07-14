@@ -26,10 +26,14 @@ class Meta(commands.Cog):
         await ctx.send(embed=discord.Embed(
             title='About', description=ABOUT, colour=0xff67be
         ).add_field(
-            name='Source', value=LINK.format(SOURCE)
+            name='Source', value=LINK.format(url=SOURCE)
         ).add_field(
             name='Invite', value=LINK.format(
-                discord.utils.oauth2_url(self.bot.user.id)
+                url=discord.utils.oauth_url(
+                    self.bot.user.id, permissions=discord.Permissions(
+                        send_messages=True, read_messages=True
+                    )
+                )
             )
         ).add_field(
             name='Servers', value=len(self.bot.guilds)
