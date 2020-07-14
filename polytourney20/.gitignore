@@ -4,4 +4,4 @@ creds.json
 *.pyc
 *.mypy_cache/*
 /run
-
+data/
