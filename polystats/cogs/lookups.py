@@ -12,7 +12,7 @@ class Lookups(commands.Cog):
         self.bot = bot
 
     @commands.command(brief='Lookup a unit.', aliases=['u'])
-    def unit(self, ctx: commands.Context, *, search: units.lookup):
+    async def unit(self, ctx: commands.Context, *, search: units.lookup):
         """Search for a unit to show stats.
 
         Examples:
