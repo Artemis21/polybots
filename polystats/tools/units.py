@@ -28,11 +28,7 @@ def embed(unit_name: str) -> discord.Embed:
     """Create an embed to display unit information."""
     unit = load_data()[unit_name]
     return discord.Embed(
-        title=unit['name'], description=unit['about']
-    ).add_field(
-        name='Skills',
-        value=', '.join(skill.title() for skill in unit['skills']) or 'None',
-        inline=False
+        title=unit['name'], description=unit['about'], colour=0xff67be
     ).add_field(
         name='Health', value=unit['health']
     ).add_field(
@@ -45,8 +41,14 @@ def embed(unit_name: str) -> discord.Embed:
         name='Defence', value=unit['defence']
     ).add_field(
         name='Range', value=unit['range']
+    ).add_field(
+        name='Skills',
+        value=', '.join(skill.title() for skill in unit['skills']) or 'None'
+    ).add_field(
+        name='Tech',
+        value=unit['tech'].title()
     ).set_thumbnail(url=unit['image']).set_footer(
-        text=f"Tech required: {unit['tech'].title()}"
+        text=f"Type: {unit['type']}"
     )
 
 
