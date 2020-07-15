@@ -1,7 +1,10 @@
 """Object lookups."""
 from discord.ext import commands
 
-from tools import units
+from tools.objects import embed, ObjectConverter
+
+
+Ctx = commands.Context
 
 
 class Lookups(commands.Cog):
@@ -12,7 +15,7 @@ class Lookups(commands.Cog):
         self.bot = bot
 
     @commands.command(brief='Lookup a unit.', aliases=['u'])
-    async def unit(self, ctx: commands.Context, *, search: units.lookup):
+    async def unit(self, ctx: Ctx, *, unit: ObjectConverter('unit')):
         """Search for a unit to show stats.
 
         Examples:
@@ -21,4 +24,16 @@ class Lookups(commands.Cog):
         `{{pre}}unit fire dragon`
         `{{pre}}u dr`
         """
-        await ctx.send(embed=units.embed(search))
+        await ctx.send(embed=unit)
+
+    @commands.command(brief='Lookup a skill.', aliases=['s'])
+    async def skill(self, ctx: Ctx, *, skill: ObjectConverter('skill')):
+        """Search for a skill to show information.
+
+        Examples:
+        `{{pre}}skill freeze area`
+        `{{pre}}s fa`
+        `{{pre}}skill dash`
+        `{{pre}}s da`
+        """
+        await ctx.send(embed=skill)

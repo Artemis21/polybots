@@ -1,7 +1,7 @@
 """Lists of objects."""
 from discord.ext import commands
 
-from tools import units
+from tools.objects import list_all
 
 
 class Lists(commands.Cog):
@@ -19,4 +19,14 @@ class Lists(commands.Cog):
         `{{pre}}units`
         `{{pre}}us`
         """
-        await ctx.send(units.list_all())
+        await ctx.send(list_all('unit'))
+
+    @commands.command(brief='Lists of skills.', aliases=['ss'])
+    async def skills(self, ctx: commands.Context):
+        """Show a list of skills.
+
+        Examples:
+        `{{pre}}skills`
+        `{{pre}}ss`
+        """
+        await ctx.send(list_all('skill'))
