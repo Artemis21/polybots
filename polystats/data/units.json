@@ -205,7 +205,7 @@
         "range": 1,
         "cost": 5,
         "tech": "riding",
-        "skills": ["dash", "escape", "swim"],
+        "skills": ["dash", "escape", "swim", "fortify"],
         "image": "https://i.ibb.co/WyqXWXc/amphibian.png",
         "about": "Amphibians are amphibious melee units unique to Aquarion. They can be used in a similar way to riders, with the bonus that they can travel on water. They replace the rider."
     },
@@ -220,7 +220,7 @@
         "range": 2,
         "cost": 8,
         "tech": "spearing",
-        "skills": ["dash", "escape", "swim"],
+        "skills": ["dash", "escape", "swim", "fortify"],
         "image": "https://i.ibb.co/WWmvhqm/tridention.png",
         "about": "Tridentions are amphibious ranged units unique to Aquarion. They replace knights, but are used more like ships or battleships."
     },
@@ -250,7 +250,7 @@
         "range": 1,
         "cost": 2,
         "tech": "forest magic",
-        "skills": ["dash"],
+        "skills": ["dash", "fortify"],
         "image": "https://i.ibb.co/nw0vvNX/polytaur.png",
         "about": "Polytaurs are created by converting animals within your territory for 2 stars. This can only be done as Elyrion. Polytaurs can be effectively spammed using multiple sanctuaries. They are melee units, in between warriors and swordsmen for strength."
     },
