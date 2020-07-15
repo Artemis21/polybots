@@ -23,6 +23,19 @@ class Help(commands.DefaultHelpCommand):
         'in it, do `"some text"`.'
     )
 
+    def get_command_signature(
+            self, command: commands.Command,
+            ignore_aliases: bool = False) -> str:
+        """Get a command signature, but optionally ignore aliases."""
+        if command.aliases and not ignore_aliases:
+            aliases = '|'.join(command.aliases)
+            name = f'[{command.name}|{aliases}]'
+        else:
+            name = command.name
+        if command.parent:
+            name = f'{command.full_parent_name} {name}'
+        return f'{self.clean_prefix}{name} {command.signature}'
+
     async def send_bot_help(self, cogs: typing.Dict[
             commands.Cog, typing.Iterable[
                 commands.Command
@@ -34,10 +47,13 @@ class Help(commands.DefaultHelpCommand):
                 continue
             lines = []
             for command in await self.filter_commands(cog.walk_commands()):
-                line = '**{cmd}** *{brief}*'.format(
-                    cmd=self.get_command_signature(command),
-                    brief=command.brief or Help.brief
+                if command.hidden:
+                    continue
+                signature = self.get_command_signature(
+                    command, ignore_aliases=True
                 )
+                brief = command.brief or Help.brief
+                line = f'**{signature}** *{brief}*'
                 if line not in lines:     # known bug where commands with
                     lines.append(line)    # aliases are duplicated
             text = '\n'.join(lines)
