@@ -37,3 +37,15 @@ class Lookups(commands.Cog):
         `{{pre}}s da`
         """
         await ctx.send(embed=skill)
+
+    @commands.command(brief='Lookup a task.', aliases=['t'])
+    async def task(self, ctx: Ctx, *, task: ObjectConverter('task')):
+        """Search for a task to show details.
+
+        Examples:
+        `{{pre}}task killer`
+        `{{pre}}t ki`
+        `{{pre}}task pacifist`
+        `{{pre}}s pa`
+        """
+        await ctx.send(embed=task)

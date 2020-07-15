@@ -30,3 +30,15 @@ class Lists(commands.Cog):
         `{{pre}}ss`
         """
         await ctx.send(list_all('skill'))
+
+    @commands.command(brief='Lists of tasks.', aliases=['ts'])
+    async def tasks(self, ctx: commands.Context):
+        """Show a list of tasks.
+
+        Examples:
+        `{{pre}}tasks`
+        `{{pre}}ts`
+        """
+        await ctx.send(list_all('task'))
+
+    
