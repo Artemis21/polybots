@@ -37,18 +37,21 @@ def embed(
     if 'image' in obj:
         e.set_thumbnail(url=obj['image'])
     footer_fields = ['code', *footer_fields]
-    e.set_footer(text=[
+    e.set_footer(text=' | '.join(
         f'{field.title()}: {obj[field]}' for field in footer_fields
-    ])
+    ))
     ignore_fields = [*footer_fields, 'name', 'description', 'image']
-    for field in ignore_fields:
-        value = obj[field]
-        if isinstance(value, list):
-            parts = value or ['None']
-        else:
-            parts = [value]
-        value = ', '.join(str(part).title() for part in parts)
-        e.add_field(name=field.title(), value=value)
+    for field in obj:
+        if field not in ignore_fields:
+            value = obj[field]
+            if isinstance(value, list):
+                parts = value or ['None']
+            else:
+                parts = [value]
+            value = ', '.join(
+                str(part).title().replace('_', ' ') for part in parts
+            )
+            e.add_field(name=field.title(), value=value)
     return e
 
 
@@ -81,12 +84,22 @@ def lookup(object_type: str, search: str) -> typing.Optional[str]:
 class ObjectConverter(commands.Converter):
     """A discord.py converter for looking up and displaying objects."""
 
+    embed_opts = {
+        'unit': {
+            'footer_fields': ('type',)
+        },
+        'skill': {}
+    }
+
     def __init__(self, object_type: str):
         """Define the type of object this converter will convert."""
         self.object_type = object_type
 
-    def convert(
+    async def convert(
             self, ctx: commands.Context, argument: str
             ) -> typing.Optional[discord.Embed]:
         """Convert an argument."""
-        return embed(self.object_type, lookup(self.object_type, argument))
+        return embed(
+            self.object_type, lookup(self.object_type, argument),
+            **type(self).embed_opts[self.object_type]
+        )
