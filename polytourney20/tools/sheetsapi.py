@@ -226,8 +226,10 @@ def eliminate_player(level: int, row: int, player: str) -> str:
     sheet = get_sheet(level=level)
     # pylint: disable=too-many-function-args
     cells = sheet.range(row, 1, row, 7)
+    if player not in (cell.value for cell in cells[:3]):
+        return f'"{player}" is not in that game.'
     if not cells[0].value:
-        return f'That game does not exist.'
+        return 'That game does not exist.'
     if cells[-1].value:
         cells[-2].value = player
     else:
@@ -241,8 +243,10 @@ def award_win(level: int, row: int, player: str) -> bool:
     sheet = get_sheet(level=level)
     # pylint: disable=too-many-function-args
     cells = sheet.range(row, 1, row, 7)
+    if player not in (cell.value for cell in cells[:3]):
+        return f'"{player}" is not in that game.'
     if not cells[0].value:
-        return f'That game does not exist.'
+        return 'That game does not exist.'
     cells[-3].value = player
     sheet.update_cells(cells)
     return f'{player} has won!'
