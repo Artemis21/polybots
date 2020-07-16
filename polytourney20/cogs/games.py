@@ -5,9 +5,10 @@ from discord.ext import commands
 import discord
 
 from tools import games
-from tools.checks import admin, commands_channel
+from tools.checks import admin, commands_channel, is_admin
 from tools.converters import (
-    PlayerConverter, StaticPlayerConverter, level_id, game_id, ManyConverter
+    PlayerConverter, StaticPlayerConverter, level_id, game_id, ManyConverter,
+    search_player
 )
 
 
@@ -120,10 +121,27 @@ class Games(commands.Cog):
     @commands.command(
         brief='Record a loss.', aliases=['eliminate', 'elim', 'loss']
     )
-    @admin()
     async def lose(
-            self, ctx, game: game_id, player: StaticPlayerConverter):
-        """Mark a player as having lost a game (admin only)."""
+            self, ctx, game: game_id,
+            player: typing.Optional[StaticPlayerConverter]):
+        """Mark yourself as having lost a game."""
+        author_player = search_player(
+            str(ctx.author), static_only=True, strict=True
+        )
+        if not player:
+            if author_player:
+                player = author_player
+            else:
+                return await ctx.send(
+                    'You are not registered for the tournament (if you have '
+                    'changed your Discord username since registering, please '
+                    'alert a director.).'
+                )
+        if player.discord_name != author_player.discord_name:
+            if not is_admin(ctx.author):
+                return await ctx.send(
+                    'Only directors may report losses on behalf of others.'
+                )
         await games.lose(ctx, game, player)
 
     @commands.command(brief='Record a win.')
