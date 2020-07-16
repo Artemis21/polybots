@@ -38,14 +38,26 @@ class Lookups(commands.Cog):
         """
         await ctx.send(embed=skill)
 
-    @commands.command(brief='Lookup a task.', aliases=['t'])
+    @commands.command(brief='Lookup a task.', aliases=['tk'])
     async def task(self, ctx: Ctx, *, task: ObjectConverter('task')):
         """Search for a task to show details.
 
         Examples:
         `{{pre}}task killer`
-        `{{pre}}t ki`
+        `{{pre}}tk ki`
         `{{pre}}task pacifist`
-        `{{pre}}s pa`
+        `{{pre}}tk pa`
         """
         await ctx.send(embed=task)
+
+    @commands.command(brief='Lookup a tech.', aliases=['technology', 't'])
+    async def tech(self, ctx: Ctx, *, tech: ObjectConverter('tech')):
+        """Search for a technology to show details.
+
+        Examples:
+        `{{pre}}tech mathematics`
+        `{{pre}}t ma`
+        `{{pre}}tech aquatism`
+        `{{pre}}t aq`
+        """
+        await ctx.send(embed=tech)
