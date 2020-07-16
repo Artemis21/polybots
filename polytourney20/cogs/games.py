@@ -122,7 +122,7 @@ class Games(commands.Cog):
         brief='Record a loss.', aliases=['eliminate', 'elim', 'loss']
     )
     async def lose(
-            self, ctx, game: game_id,
+            self, ctx, game: game_id, *,
             player: typing.Optional[StaticPlayerConverter]):
         """Mark yourself as having lost a game."""
         author_player = search_player(
@@ -147,7 +147,7 @@ class Games(commands.Cog):
     @commands.command(brief='Record a win.')
     @admin()
     async def win(
-            self, ctx, game: game_id, player: StaticPlayerConverter):
+            self, ctx, game: game_id, *, player: StaticPlayerConverter):
         """Mark a player as having won a game (admin only)."""
         await games.win_command(ctx, game, player)
 
