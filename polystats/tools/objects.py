@@ -53,7 +53,7 @@ def embed(
         e.set_thumbnail(url=obj['image'])
     footer_fields = ['code', *footer_fields]
     e.set_footer(text=' | '.join(
-        f'{field.title()}: {obj[field]}' for field in footer_fields
+        f'{neaten(field)}: {obj[field]}' for field in footer_fields
     ))
     ignore_fields = [
         *footer_fields, 'name', 'description', 'image', 'alt_code',
@@ -67,7 +67,7 @@ def embed(
             else:
                 parts = [value]
             value = ', '.join(neaten(part) for part in parts)
-            e.add_field(name=field.title(), value=value)
+            e.add_field(name=neaten(field), value=value)
     return e
 
 

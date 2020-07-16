@@ -31,14 +31,23 @@ class Lists(commands.Cog):
         """
         await ctx.send(list_all('skill'))
 
-    @commands.command(brief='Lists of tasks.', aliases=['ts'])
+    @commands.command(brief='Lists of tasks.', aliases=['tks'])
     async def tasks(self, ctx: commands.Context):
         """Show a list of tasks.
 
         Examples:
         `{{pre}}tasks`
-        `{{pre}}ts`
+        `{{pre}}tks`
         """
         await ctx.send(list_all('task'))
 
+    @commands.command(brief='Lists of techs.', aliases=['ts'])
+    async def techs(self, ctx: commands.Context):
+        """Show a list of technologies.
+
+        Examples:
+        `{{pre}}techs`
+        `{{pre}}ts`
+        """
+        await ctx.send(list_all('tech'))
     
