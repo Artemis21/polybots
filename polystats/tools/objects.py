@@ -84,7 +84,7 @@ def lookup(object_type: str, search: str) -> typing.Optional[str]:
     for full_name in data:
         if search in full_name.replace('_', ''):
             possible.append(full_name)
-        elif search in data[full_name]['alt_search'].replace('_', ''):
+        elif search in data[full_name].get('alt_search', '').replace('_', ''):
             possible.append(full_name)
     if len(possible) == 1:
         return possible[0]
