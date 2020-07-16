@@ -5,6 +5,7 @@ import typing
 from collections import namedtuple
 from tools.cache import cache, DONT_CACHE
 import string
+import json
 
 
 SCOPE = [
@@ -16,7 +17,12 @@ SCOPE = [
 
 CREDS = ServiceAccountCredentials.from_json_keyfile_name('creds.json', SCOPE)
 client = gspread.authorize(CREDS)
-spread_sheet = client.open('Polytopia Supreme Summer Skirmish Sheet')
+
+with open('config.json') as f:
+    data = json.load(f)
+    sheet_name = data['sheet']
+
+spread_sheet = client.open(sheet_name)
 
 Player = namedtuple(
     'Player',
@@ -231,7 +237,7 @@ def eliminate_player(level: int, row: int, player: str) -> str:
     if not cells[0].value:
         return 'That game does not exist.'
     if player in (cell.value for cell in cells[-2:]):
-        return f'"{player} already has a loss reported for that game.'
+        return f'"{player}" already has a loss reported for that game.'
     if cells[-1].value:
         cells[-2].value = player
     else:
