@@ -230,6 +230,8 @@ def eliminate_player(level: int, row: int, player: str) -> str:
         return f'"{player}" is not in that game.'
     if not cells[0].value:
         return 'That game does not exist.'
+    if player in (cell.value for cell in cells[-2:]):
+        return f'"{player} already has a loss reported for that game.'
     if cells[-1].value:
         cells[-2].value = player
     else:
