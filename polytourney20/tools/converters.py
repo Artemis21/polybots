@@ -37,6 +37,7 @@ class StaticPlayerConverter(IDConverter):
 
     async def convert(self, ctx: Context, argument: str) -> sheetsapi.Player:
         """Convert a player search argument."""
+        argument = argument.strip('"\'')
         match = (
             self._get_id_match(argument)
             or re.match(r'<@!?([0-9]+)>$', argument)
