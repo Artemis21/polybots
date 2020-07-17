@@ -13,7 +13,7 @@ config = Config()
 def _is_in_list(
         user: discord.User, users: typing.List[discord.Member]
         ) -> bool:
-    """Check if a user has any of a list of roles."""
+    """Check if a user is in a list of users."""
     for authorised in users:
         if user.id == authorised.id:
             return True
@@ -35,6 +35,8 @@ def commands_channel() -> commands.check:
     async def check(ctx):
         if ctx.channel in config.commands_channels:
             return True
+        if ctx.help_command_check:
+            return False
         await ctx.send(
             f'{ctx.author.mention}, this command should only be used in '
             f'{config.commands_channels[0].mention}.',
@@ -48,6 +50,8 @@ def commands_channel() -> commands.check:
 def disabled() -> commands.check:
     """Check for disabled commands."""
     async def check(ctx):
+        if ctx.help_command_check:
+            return False
         await ctx.send(
             'This command is temporarily disabled due to techinal issues. '
             'Sorry.'
