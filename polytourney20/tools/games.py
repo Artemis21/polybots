@@ -55,6 +55,22 @@ async def incomplete_games_cmd(
     await TextPaginator(ctx, lines, name, per_page=20).setup()
 
 
+async def in_progress_games_cmd(
+        ctx: Context, level: int, player: sheetsapi.StaticPlayer):
+    """Command to view in progress games for some player on some level."""
+    def check(game: sheetsapi.Game):
+        """Check if a game is in progress for the player."""
+        return player.discord_name not in (
+            game.winner, game.loser1, game.loser2
+        )
+
+    lines = list_games(level, check, player)
+    name = '**__In progress games for {} on level {}__**'.format(
+        player.discord_name, level
+    )
+    await TextPaginator(ctx, lines, name, per_page=20).setup()
+
+
 async def complete_games_cmd(
         ctx: Context, level: int,
         player1: typing.Optional[sheetsapi.StaticPlayer],

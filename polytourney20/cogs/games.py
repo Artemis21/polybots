@@ -5,7 +5,7 @@ from discord.ext import commands
 import discord
 
 from tools import games
-from tools.checks import admin, commands_channel, is_admin
+from tools.checks import admin, commands_channel, is_admin, deprecated
 from tools.converters import (
     PlayerConverter, StaticPlayerConverter, level_id, game_id, ManyConverter,
     search_player
@@ -20,10 +20,33 @@ class Games(commands.Cog):
         self.bot = bot
 
     @commands.command(
+        brief='View in progress games.', aliases=['in-progress', 'ip'],
+        name='in-progress-games'
+    )
+    @commands_channel()
+    async def in_progress_games(
+            self, ctx, level: level_id,
+            player: typing.Optional[StaticPlayerConverter]
+            ):
+        """View all in progress games for a player on a level."""
+        if not player:
+            player = search_player(
+                str(ctx.author), static_only=True, strict=True
+            )
+            if not player:
+                return await ctx.send(
+                    'You are not registered for the tournament (if you have '
+                    'changed your Discord username since registering, please '
+                    'alert a director.).'
+                )
+        await games.in_progress_games_cmd(ctx, level, player)
+
+    @commands.command(
         brief='View incomplete games.', aliases=['incomplete', 'inc'],
         name='incomplete-games'
     )
     @commands_channel()
+    @deprecated(replace='in-progress')
     async def incomplete_games(
             self, ctx, level: level_id,
             player1: typing.Optional[StaticPlayerConverter],
@@ -121,6 +144,7 @@ class Games(commands.Cog):
     @commands.command(
         brief='Record a loss.', aliases=['eliminate', 'elim', 'loss']
     )
+    @commands_channel()
     async def lose(
             self, ctx, game: game_id, *,
             player: typing.Optional[StaticPlayerConverter]):

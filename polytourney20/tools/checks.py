@@ -35,8 +35,8 @@ def commands_channel() -> commands.check:
     async def check(ctx):
         if ctx.channel in config.commands_channels:
             return True
-        if ctx.help_command_check:
-            return False
+        if getattr(ctx, 'help_command_check', False):
+            return True
         await ctx.send(
             f'{ctx.author.mention}, this command should only be used in '
             f'{config.commands_channels[0].mention}.',
@@ -50,11 +50,28 @@ def commands_channel() -> commands.check:
 def disabled() -> commands.check:
     """Check for disabled commands."""
     async def check(ctx):
-        if ctx.help_command_check:
+        if getattr(ctx, 'help_command_check', False):
             return False
         await ctx.send(
             'This command is temporarily disabled due to techinal issues. '
             'Sorry.'
         )
         return False
+    return commands.check(check)
+
+
+def deprecated(replace: str = None) -> commands.check:
+    """Check for deprecated commands."""
+    if replace:
+        replace = f' in favour of `{{prefix}}{replace}`'
+    else:
+        replace = ''
+    message = f'Warning: this command is deprecated{replace}.'
+
+    async def check(ctx):
+        if getattr(ctx, 'help_command_check', False):
+            return True
+        await ctx.send(message.format(prefix=ctx.prefix))
+        return True
+
     return commands.check(check)
