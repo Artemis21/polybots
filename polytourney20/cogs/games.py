@@ -161,7 +161,7 @@ class Games(commands.Cog):
                     'changed your Discord username since registering, please '
                     'alert a director.).'
                 )
-        if player.discord_name != author_player.discord_name:
+        if author_player and player.discord_name != author_player.discord_name:
             if not is_admin(ctx.author):
                 return await ctx.send(
                     'Only directors may report losses on behalf of others.'
