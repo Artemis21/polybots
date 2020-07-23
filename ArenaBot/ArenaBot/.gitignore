@@ -1,6 +1,9 @@
 # Keys etc.
 SECRETS.json
+TOKEN
 
+# data saves
+data/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

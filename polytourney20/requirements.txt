@@ -1,2 +1,4 @@
 gspread
 oauth2client
+requests
+youtube-dl

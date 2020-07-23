@@ -52,8 +52,8 @@ class Config:
 
     @admins.setter
     def admins(self, admins: typing.List[discord.User]):
-        """Set the list of admin roles."""
-        raw = [role.id for role in admins]
+        """Set the list of admin users."""
+        raw = [user.id for user in admins]
         ConfigModel.set_admins(raw)
 
     @property
@@ -68,3 +68,26 @@ class Config:
     def log_channel(self, channel: discord.TextChannel):
         """Set the log channel."""
         ConfigModel.set_log_channel(channel.id)
+
+    @property
+    def commands_channels(self) -> typing.List[discord.TextChannel]:
+        """Get the commands channels."""
+        channel_ids = ConfigModel.get_commands_channels()
+        guild = self.guild
+        channels = []
+        if guild:
+            for cid in channel_ids:
+                channels.append(guild.get_channel(cid))
+        return channels
+
+    def add_commands_channel(self, channel: discord.TextChannel):
+        """Add a commands channel."""
+        channel_ids = ConfigModel.get_commands_channels()
+        channel_ids.append(channel.id)
+        ConfigModel.set_commands_channels(channel_ids)
+
+    def remove_commands_channel(self, channel: discord.TextChannel):
+        """Remove a commands channel."""
+        channel_ids = ConfigModel.get_commands_channels()
+        channel_ids = [cid for cid in channel_ids if cid != channel.id]
+        ConfigModel.set_commands_channels(channel_ids)

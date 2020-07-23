@@ -1,7 +1,7 @@
 import string
 
 
-ALPHABET = 'ao#Δ∑₼þţiƒš∫mŋȱπ¦r^Ŧ₺‡~eỹΩ'
+ALPHABET = 'ao#Δ∑₼þţiƒ§∫mŋȱπ¦r^Ŧ₺‡~eỹΩ'
 TABLE = str.maketrans(
     string.ascii_lowercase+string.ascii_uppercase, ALPHABET*2
 )

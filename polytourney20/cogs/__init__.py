@@ -2,13 +2,14 @@
 from cogs.meta import Meta
 from cogs.players import Players
 from cogs.games import Games
+from cogs.tags import Tags
 
 from tools import datautils
 
 import discord
 
 
-COGS = [Players, Games, Meta]
+COGS = [Players, Games, Tags, Meta]
 
 
 def setup(bot: discord.Client):

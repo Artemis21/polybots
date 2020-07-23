@@ -220,7 +220,7 @@ async def code(ctx, *, user: discord.Member):
         await ctx.send(f'{user} has not set a code.')
 
 
-@bot.command(brief='Set your friend code.', name='set-code')
+@bot.command(brief='Set your friend code.', name='set-code', aliases=['setcode'])
 async def set_code_cmd(ctx, code):
     """Set your friend code."""
     set_user_attr(ctx.author.id, 'code', code)

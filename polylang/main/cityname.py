@@ -57,17 +57,22 @@ LANGS = {
 
 def alphabet(lang=''):
     name, lang = getlang(lang)
-    return name + ': ' + ''.join(sorted(set(''.join(lang))))
+    letters = ''.join(sorted(set(''.join(lang))))
+    syllables = ', '.join(sorted(lang))
+    return f'{name} letters: {letters}\n{name} syllables: {syllables}'
 
 
-def city(lang=''):
-    name = ''
+def city(lang='', number=1):
     tribe, lang = getlang(lang)
-    while len(name) < random.randrange(3, 8):
-        name += random.choice(lang)
-        if name[0] in (' ', '-'):
-            name = ''
-    return tribe + ': ' + name[0].upper() + name[1:]
+    names = []
+    for _ in range(number):
+        name = ''
+        while len(name) < random.randrange(3, 8):
+            name += random.choice(lang)
+            if name[0] in (' ', '-'):
+                name = ''
+        names.append(f'{tribe}: {name[0].upper()}{name[1:]}')
+    return '\n'.join(names)
 
 
 def getlang(search):

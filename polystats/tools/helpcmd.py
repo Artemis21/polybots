@@ -41,8 +41,7 @@ class Help(commands.DefaultHelpCommand):
                 commands.Command
             ]]):
         """Send help for the entire bot."""
-        self.context.help_command_check = True
-        e = discord.Embed(title='Help', color=0x50C878)
+        e = discord.Embed(title='Help', color=0xf4e393)
         for cog in cogs:
             if not cog:
                 continue
@@ -58,8 +57,7 @@ class Help(commands.DefaultHelpCommand):
                 if line not in lines:     # known bug where commands with
                     lines.append(line)    # aliases are duplicated
             text = '\n'.join(lines)
-            if text:
-                e.add_field(name=cog.qualified_name, value=text, inline=False)
+            e.add_field(name=cog.qualified_name, value=text, inline=False)
         await self.get_destination().send(embed=e)
 
     async def send_command_help(self, command: commands.Command):
@@ -70,7 +68,7 @@ class Help(commands.DefaultHelpCommand):
             desc = command.help
         desc = desc.replace('{{pre}}', self.context.prefix)
         title = self.get_command_signature(command)
-        e = discord.Embed(title=title, color=0x50C878, description=desc)
+        e = discord.Embed(title=title, color=0xf4e393, description=desc)
         await self.get_destination().send(embed=e)
 
     async def send_cog_help(self, cog: commands.Cog):

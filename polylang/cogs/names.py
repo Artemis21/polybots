@@ -48,42 +48,46 @@ async def imitate(ctx, text, original):
 
 
 class Names(commands.Cog):
-    '''Generate names for cities and games. Copies original game logic.
-    '''
+    """Generate names for cities and games. Copies original game logic.
+    """
     def __init__(self, bot):
         self.bot = bot
 
     @commands.command(brief='Get a city name.')
-    async def city(self, ctx, tribe=''):
-        '''Generate a city name. You may provide a tribe to search for. If no \
+    async def city(self, ctx, tribe='', number: int = 1):
+        """
+        Generate a city name. You may provide a tribe to search for. If no \
         tribe is provided, a random one will be chosen.
         Examples:
         `{{pre}}city` --> a random city name
         `{{pre}}city lux` --> a luxidoor city name
-        '''
-        await ctx.send(city(tribe))
+        `{{pre}}city hood 10` --> 10 hoodrick city names
+        """
+        await ctx.send(city(tribe, number))
 
     @commands.command(brief='Get a game name.')
-    async def game(self, ctx, crazy: bool=False):
-        '''Generate a game name. Set crazy to true for crazy game names. As \
+    async def game(self, ctx, crazy: bool = False, number: int = 1):
+        """
+        Generate a game name. Set crazy to true for crazy game names. As \
         per the game, setting crazy to true does bot *guaruntee* craziness, \
         only gives a possibilty.
         Exampels:
         `{{pre}}game` --> generate a normal game name
         `{{pre}}game true` --> generate a crazy game name
-        '''
-        await ctx.send(game(crazy))
+        `{{pre}}game false 5` --> get 5 normal game names
+        """
+        await ctx.send(game(crazy, number))
 
     @commands.command(brief='Get an alphabet.')
     async def letters(self, ctx, tribe=''):
-        '''Get a tribe's alphabet. You may provide a tribe to search for. If \
+        """
+        Get a tribe's alphabet. You may provide a tribe to search for. If \
         no tribe is provided, a random one will be chosen.
         Examples:
         `{{pre}}letters` --> a tribe's alphabet
         `{{pre}}letters lux` --> the luxidoorian alphabet
-        '''
+        """
         await ctx.send(alphabet(tribe))
-
 
     @commands.command(brief='Translate to Elyrion.')
     async def elyrion(self, ctx, *, english):
@@ -96,10 +100,8 @@ class Names(commands.Cog):
         text = eng_to_ely(english)
         if ctx.guild:
             await imitate(ctx, text, english)
-
         else:
             await ctx.send(text)
-
 
     @commands.command(brief='Translate from Elyrion.')
     async def english(self, ctx, *, elyrion):

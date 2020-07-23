@@ -1,0 +1,223 @@
+{
+    "climbing": {
+        "name": "Climbing",
+        "description": "Allows movement on mountain tiles and allows you to see ore on mountains. The starting tech for Xin-xi.",
+        "image": "https://i.ibb.co/g4zb875/climbing.png",
+        "code": "cl",
+        "tier": 1,
+        "requires": "none",
+        "required_by": ["meditation", "mining"]
+    },
+    "fishing": {
+        "name": "Fishing",
+        "description": "Allows fishing fish and seeing whales. The starting tech for Kickoo.",
+        "image": "https://i.ibb.co/KVggR4M/fishing.png",
+        "code": "fi",
+        "tier": 1,
+        "requires": "none",
+        "required_by": ["sailing", "whaling"]
+    },
+    "hunting": {
+        "name": "Hunting",
+        "description": "Allows hunting animals. The starting tech for Bardur. This is replaced with Forest Magic for Elyrion, which is their starting tech, and allows enchanting animals into Polytaurs instead of hunting them.",
+        "image": "https://i.ibb.co/r2KXrL4/hunting.png",
+        "code": "hu",
+        "alt_code": "fm",
+        "alt_search": "forest_magic",
+        "tier": 1,
+        "requires": "none",
+        "required_by": ["forestry", "archery"]
+    },
+    "organization": {
+        "name": "Organization",
+        "description": "Allows gathering fruit and seeing crops. The starting tech for Imperius.",
+        "image": "https://i.ibb.co/86PDdNn/organization.png",
+        "code": "or",
+        "tier": 1,
+        "requires": "none",
+        "required_by": ["farming", "shields"]
+    },
+    "riding": {
+        "name": "Riding",
+        "description": "Allows training riders. The starting tech for Oumaji. For Aquarion, this tech allows training amphibians instead of Riders, and allows movement on shallow water.",
+        "image": "https://i.ibb.co/gm69gSq/riding.png",
+        "code": "ri",
+        "tier": 1,
+        "requires": "none",
+        "required_by": ["roads", "free spirit"]
+    },
+    "archery": {
+        "name": "Archery",
+        "description": "Allows training archers and gives a defence bonus in forests. The starting tech for Hoodrick. For Polaris, this allows training Ice Archers instead of archers.",
+        "image": "https://i.ibb.co/Z1Cytmk/archery.png",
+        "code": "ar",
+        "tier": 2,
+        "requires": "hunting",
+        "required_by": ["spiritualism"]
+    },
+    "farming": {
+        "name": "Farming",
+        "description": "Allows farming crops. The starting tech for Zebasi.",
+        "image": "https://i.ibb.co/QK6JTnZ/farming.png",
+        "code": "fa",
+        "tier": 2,
+        "requires": "organization",
+        "required_by": ["construction"]
+    },
+    "forestry": {
+        "name": "Forestry",
+        "description": "Allows building lumber huts and chopping forests. For Elyrion, this allows buiding sanctuaries instead of chopping forests.",
+        "image": "https://i.ibb.co/MB5QSrg/forestry.png",
+        "code": "fo",
+        "tier": 2,
+        "requires": "hunting",
+        "required_by": ["mathematics"]
+    },
+    "free_spirit": {
+        "name": "Free Spirit",
+        "description": "Allows building temples on fields and disbanding units. For Aquarion, this tech is replaced with Free Diving, which allows movement in ocean tiles.",
+        "image": "https://i.ibb.co/dW2pVsc/free-spirit.png",
+        "code": "fs",
+        "alt_code": "fd",
+        "alt_search": "free_diving",
+        "tier": 2,
+        "requires": "riding",
+        "required_by": ["chivalry"]
+    },
+    "meditation": {
+        "name": "Meditation",
+        "description": "Allows building mountain temples, gives a defence bonus on mountain tiles and triggers the Pacifist task. The starting tech for Ai-mo.",
+        "image": "https://i.ibb.co/v14vnGk/meditation.png",
+        "code": "me",
+        "tier": 2,
+        "requires": "climbing",
+        "required_by": ["philosophy"]
+    },
+    "mining": {
+        "name": "Mining",
+        "description": "Allows mining ore.",
+        "image": "https://i.ibb.co/9mDsvjG/mining.png",
+        "code": "mi",
+        "tier": 2,
+        "requires": "climbing",
+        "required_by": ["smithery"]
+    },
+    "roads": {
+        "name": "Roads",
+        "description": "Allows building roads and triggers the Network task. The starting tech for Yaddak.",
+        "image": "https://i.ibb.co/XLvNrmT/roads.png",
+        "code": "ro",
+        "tier": 2,
+        "requires": "riding",
+        "required_by": ["trade"]
+    },
+    "sailing": {
+        "name": "Sailing",
+        "description": "Allows building ports, upgrading boats to ships, and moving on shallow water tiles (only for water units and explorers). This is replaced with Frostwork for Polaris, which is their starting tech. Frostwork instead allows training Moonies and building outposts.",
+        "image": "https://i.ibb.co/1rjcz80/sailing.png",
+        "code": "sa",
+        "alt_code": "fr",
+        "alt_search": "frostwork",
+        "tier": 2,
+        "requires": "fishing",
+        "required_by": ["navigation"]
+    },
+    "shields": {
+        "name": "Shields",
+        "description": "Allows training defenders. The only tier 2 technology without another technology after it, though one is promised. The starting tech for Quetzali.",
+        "image": "https://i.ibb.co/QXMNBQB/shields.png",
+        "code": "sh",
+        "tier": 2,
+        "requires": "organization",
+        "required_by": []
+    },
+    "whaling": {
+        "name": "Whaling",
+        "description": "Allows hunting whales. This is replaced with Water Magic for Elyrion, which allows them to enchant whales into Navalons instead of hunting them.",
+        "image": "https://i.ibb.co/zr9qhM5/whaling.png",
+        "code": "wh",
+        "alt_code": "wm",
+        "alt_search": "water_magic",
+        "tier": 2,
+        "requires": "fishing",
+        "required_by": ["aquatism"]
+    },
+    "aquatism": {
+        "name": "Aquatism",
+        "description": "Allows building water temples, and gives a defence bonus on water and ocean tiles. For Polaris, this tech is replaced with Polarism, which instead allows building ice temples, and unlocks the glide ability, which gives land units an extra movement point when moving onto ice for the first time.",
+        "image": "https://i.ibb.co/5L12KBG/aquatism.png",
+        "code": "aq",
+        "alt_code": "po",
+        "alt_search": "polarism",
+        "tier": 3,
+        "requires": "whaling",
+        "required_by": []
+    },
+    "chivalry": {
+        "name": "Chivalry",
+        "description": "Allows training knights and burning forests. For Aquarion, this tech is replaced with Spearing, and allows training tridentions instead of knights.",
+        "image": "https://i.ibb.co/MNYgk8Q/chivalry.png",
+        "code": "ch",
+        "alt_code": "sp",
+        "alt_search": "spearing",
+        "tier": 3,
+        "requires": "free_spirit",
+        "required_by": []
+    },
+    "construction": {
+        "name": "Construction",
+        "description": "Allows building windmills and destroying buildings.",
+        "image": "https://i.ibb.co/9qFpRkm/construction.png",
+        "code": "co",
+        "tier": 3,
+        "requires": "farming",
+        "required_by": []
+    },
+    "mathematics": {
+        "name": "Mathematics",
+        "description": "Allows building sawmills and training catapults.",
+        "image": "https://i.ibb.co/VYGyvZY/mathematics.png",
+        "code": "ma",
+        "tier": 3,
+        "requires": "forestry",
+        "required_by": []
+    },
+    "navigation": {
+        "name": "Navigation",
+        "description": "Allows training battleships, movement on ocean (for water units and explorers) and activates the Explorer task. For Polaris, this tech is replaced with Polar Warfare. Polar Warfare instead allows training Battle Sleds and Ice Fortresses.",
+        "image": "https://i.ibb.co/4TBk9sp/navigation.png",
+        "code": "na",
+        "alt_code": "pw",
+        "alt_search": "polar_warfare",
+        "tier": 3,
+        "requires": "sailing",
+        "required_by": []
+    },
+    "smithery": {
+        "name": "Smithery",
+        "description": "Allows building forges and training swordsmen. The starting tech for Vengir",
+        "image": "https://i.ibb.co/kxKJD9F/smithery.png",
+        "code": "sm",
+        "tier": 3,
+        "requires": "mining",
+        "required_by": []
+    },
+    "trade": {
+        "name": "Trade",
+        "description": "Allows building customs houses, and triggers the Wealth task. For Polaris, this allows building the Ice Bank instead of custom houses.",
+        "image": "https://i.ibb.co/Zm7HYF0/trade.png",
+        "code": "tr",
+        "tier": 3,
+        "requires": "roads",
+        "required_by": []
+    },
+    "philosophy": {
+        "name": "Philosophy",
+        "description": "Allows training mind benders, unlocks the literacy bonus (reducing the cost of all techs by 20%) and triggers the Genius task.",
+        "image": "https://i.ibb.co/S63ZStk/philosophy.png",
+        "code": "ph",
+        "tier": 3,
+        "requires": "meditation",
+        "required_by": []
+    }
+}

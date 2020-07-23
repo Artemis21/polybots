@@ -4,7 +4,7 @@ from discord.ext import commands
 
 from tools.config import Config
 from tools.errors import on_command_error
-from tools.checks import admin
+from tools.checks import admin, commands_channel
 
 
 ABOUT = (
@@ -12,10 +12,6 @@ ABOUT = (
     'Skirmish. You can find more information about the tournament '
     '[here](https://polytopia.fun). The bot mostly acts as an interface to '
     'the Google spreadsheet.'
-)
-INVITE = (
-    'https://discord.com/api/oauth2/authorize?client_id=715154552600526920&'
-    'permissions=379969&scope=bot'
 )
 config = Config()
 
@@ -35,7 +31,11 @@ class Meta(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
         """Send prefix if bot is mentioned."""
-        if message.guild.me in message.mentions:
+        if message.guild:
+            me = message.guild.me
+        else:
+            me = self.bot.user
+        if me in message.mentions:
             await message.channel.send(f'My prefix is `{config.prefix}`.')
 
     @commands.Cog.listener()
@@ -44,6 +44,7 @@ class Meta(commands.Cog):
         await on_command_error(ctx, error)
 
     @commands.command(brief='About the bot.')
+    @commands_channel()
     async def about(self, ctx):    # noqa: ANN001
         """Get some information about the bot."""
         embed = discord.Embed(
@@ -51,7 +52,6 @@ class Meta(commands.Cog):
             description=ABOUT.format(bot_name=self.bot.user.name),
             colour=0x45b3e0
         )
-        embed.add_field(name='Invite', value=f'**[Click Here]({INVITE})**')
         embed.set_footer(
             text='artybot.xyz',
             icon_url='https://artybot.xyz/static/icon.png'
@@ -69,10 +69,34 @@ class Meta(commands.Cog):
     @commands.command(brief='Set announcement channel.')
     @admin()
     async def announcements(self, ctx, channel: discord.TextChannel):
-        """Set the command prefix."""
+        """Set the announcement channel."""
         config.log_channel = channel
         await ctx.send(
             f'Announcements will now be made in {channel.mention}.'
+        )
+
+    @commands.command(
+        brief='Add a commands channel.', name='add-bot-channel',
+        aliases=['abc']
+    )
+    @admin()
+    async def add_bot_commands(self, ctx, channel: discord.TextChannel):
+        """Add a bot commands channel."""
+        config.add_commands_channel(channel)
+        await ctx.send(
+            f'Bot commands will now be allowed in {channel.mention}.'
+        )
+
+    @commands.command(
+        brief='Remove a commands channel.', name='remove-bot-channel',
+        aliases=['rbc']
+    )
+    @admin()
+    async def remove_bot_commands(self, ctx, channel: discord.TextChannel):
+        """Remove a bot commands channel."""
+        config.remove_commands_channel(channel)
+        await ctx.send(
+            f'Bot commands will no longer allowed in {channel.mention}.'
         )
 
     @commands.command(
@@ -108,3 +132,12 @@ class Meta(commands.Cog):
                 await ctx.send('Done!')
                 return
         await ctx.send(f'{user} is not an admin anyway.')
+
+    @commands.command(brief='Get a list of admins.')
+    @commands_channel()
+    async def admins(self, ctx):
+        """Get a list of admins."""
+        await ctx.send(embed=discord.Embed(
+            title='Admins', colour=0x7289DA,
+            description=', '.join(a.mention for a in config.admins)
+        ))

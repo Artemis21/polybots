@@ -11,7 +11,7 @@ async def on_command_error(ctx: commands.Context, error: Exception):
     if isinstance(error, commands.CommandNotFound):
         return
     if isinstance(error, commands.CheckFailure):
-        return
+        return await ctx.send('You are not allowed to run this command.')
     rawtitle = type(error).__name__
     rawtitle = re.sub('([a-z])([A-Z])', r'\1 \2', rawtitle)
     title = rawtitle[0].upper() + rawtitle[1:].lower()
