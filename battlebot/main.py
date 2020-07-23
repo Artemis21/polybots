@@ -168,7 +168,7 @@ class Help(commands.DefaultHelpCommand):
 
 
 logging.basicConfig(level=logging.INFO)
-bot = commands.Bot(command_prefix='!')
+bot = commands.Bot(command_prefix='?')
 bot.help_command = Help()
 
 
