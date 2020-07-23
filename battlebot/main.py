@@ -141,15 +141,17 @@ class Help(commands.DefaultHelpCommand):
     help = 'Provides help on a command.'
 
     async def send_bot_help(self, cogs):
-        text = ''
+        lines = []
         for cog in cogs:
             for command in cogs[cog]:
-                text += '**{}** *{}*\n'.format(
+                line = '**{}** *{}*\n'.format(
                     self.get_command_signature(command),
                     command.brief or Help.brief
                 )
+                if line not in lines:
+                    lines.append(line)
         e = discord.Embed(
-            title='Help', colour=COLOURS['good'], description=text
+            title='Help', colour=COLOURS['good'], description='\n'.join(lines)
         )
         await self.get_destination().send(embed=e)
 
