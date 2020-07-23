@@ -144,7 +144,7 @@ class Help(commands.DefaultHelpCommand):
         lines = []
         for cog in cogs:
             for command in cogs[cog]:
-                line = '**{}** *{}*\n'.format(
+                line = '**{}** *{}*'.format(
                     self.get_command_signature(command),
                     command.brief or Help.brief
                 )
