@@ -64,7 +64,7 @@ def list_players(
     last_level = -1
     for n, player in enumerate(players):
         if level_markers and player.level != last_level:
-            lines.append(f'__**--- Level {player.level} ---**__')
+            lines.append(f'__**Level {player.level}**__')
         last_level = player.level
         lines.append(
             f'**#{n + 1}:** {escape_md(player.discord_name)} '
