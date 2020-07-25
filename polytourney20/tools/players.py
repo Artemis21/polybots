@@ -53,14 +53,19 @@ def escape_md(raw: str) -> str:
 
 def list_players(
         check: typing.Callable,
-        sort: typing.Callable = lambda p: (-p.wins, p.losses)
+        sort: typing.Callable = lambda p: (-p.wins, p.losses),
+        level_markers: bool = False
         ) -> typing.List[str]:
     """List all players, with an optional filter."""
     players = sheetsapi.get_players()
     players = list(filter(check, players))
     players.sort(key=sort)
     lines = []
+    last_level = -1
     for n, player in enumerate(players):
+        if level_markers and player.level != last_level:
+            lines.append(f'__**--- Level {player.level} ---**__')
+        last_level = player.level
         lines.append(
             f'**#{n + 1}:** {escape_md(player.discord_name)} '
             f'*({player.wins}W/{player.losses}L/'
@@ -72,7 +77,7 @@ def list_players(
 async def leaderboard_command(ctx: Context):
     """Command to view the leaderboard."""
     async with ctx.typing():
-        lines = list_players(lambda p: p.wins or p.losses)
+        lines = list_players(lambda p: p.wins or p.losses, level_markers=True)
     await TextPaginator(
         ctx, lines, '**__Leaderboard__**', per_page=20
     ).setup()
