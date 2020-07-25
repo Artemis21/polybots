@@ -3,7 +3,7 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import typing
 from collections import namedtuple
-from tools.cache import cache, DONT_CACHE
+from tools.cache import cache, DONT_CACHE, BYPASS_CACHE
 import string
 import json
 
@@ -104,10 +104,18 @@ def get_sheet(
 
 
 @cache
-def get_players_static() -> typing.List[StaticPlayer]:
+def get_player_records() -> typing.List[typing.Dict[str, typing.Any]]:
+    """Get raw player records."""
+    return get_sheet('Player Hub').get_all_records(head=6)
+
+
+@cache
+def get_players_static(no_cache: bool = False) -> typing.List[StaticPlayer]:
     """Get a list of users, but only static attributes (for caching)."""
-    sheet = get_sheet('Player Hub')
-    records = sheet.get_all_records(head=6)
+    if no_cache:
+        records = get_player_records(BYPASS_CACHE)
+    else:
+        records = get_player_records()
     players = []
     for row, record in enumerate(records):
         if not record['Discord Name:']:
@@ -124,8 +132,7 @@ def get_players_static() -> typing.List[StaticPlayer]:
 
 def get_players() -> typing.List[Player]:
     """Get a list of every user."""
-    sheet = get_sheet('Player Hub')
-    records = sheet.get_all_records(head=6)
+    records = get_player_records(BYPASS_CACHE)
     players = []
     for row, record in enumerate(records):
         if not record['Discord Name:']:

@@ -97,7 +97,7 @@ def search_player(
     if static_only:
         if bypass_cache:
             # pylint: disable=too-many-function-args
-            players = sheetsapi.get_players_static(BYPASS_CACHE)
+            players = sheetsapi.get_players_static(no_cache=True)
         else:
             players = sheetsapi.get_players_static()
     else:
