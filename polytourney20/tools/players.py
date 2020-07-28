@@ -53,7 +53,7 @@ def escape_md(raw: str) -> str:
 
 def list_players(
         check: typing.Callable,
-        sort: typing.Callable = lambda p: (-p.wins, p.losses),
+        sort: typing.Callable = lambda p: (-p.level, p.losses),
         level_markers: bool = False
         ) -> typing.List[str]:
     """List all players, with an optional filter."""
