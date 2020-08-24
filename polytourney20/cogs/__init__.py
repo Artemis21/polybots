@@ -2,6 +2,7 @@
 from cogs.meta import Meta
 from cogs.players import Players
 from cogs.games import Games
+from cogs.other import Other
 from cogs.tags import Tags
 
 from tools import datautils
@@ -9,7 +10,7 @@ from tools import datautils
 import discord
 
 
-COGS = [Players, Games, Tags, Meta]
+COGS = [Meta, Players, Games, Tags, Other]
 
 
 def setup(bot: discord.Client):
