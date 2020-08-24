@@ -26,5 +26,6 @@ class Other(commands.Cog):
 
         Example: `{{pre}}archive #c0unse1-finalist @c0unse1`
         """
-        html = await archiver.archive_channel(channel, user)
-        await ctx.send(pastebin.upload(html))
+        async with ctx.typing():
+            html = await archiver.archive_channel(channel, user)
+            await ctx.send(pastebin.upload(html))
