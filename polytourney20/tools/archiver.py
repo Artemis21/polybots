@@ -69,6 +69,6 @@ async def archive_channels(search: str):
                 lambda u: u.name.lower() in channel.name.split('-'),
                 CONFIG.guild.members
             )
-            link = await archive_channel(channel, member))
+            link = await archive_channel(channel, member)
             lines.append(f'{channel.mention}: {link}')
     return '\n'.join(lines)
