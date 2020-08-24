@@ -4,7 +4,7 @@ import typing
 from discord.ext import commands
 import discord
 
-from tools import archiver, pastebin
+from tools import archiver
 from tools.checks import admin
 
 
@@ -15,17 +15,16 @@ class Other(commands.Cog):
         """Store the bot."""
         self.bot = bot
 
-    @commands.command(brief='Archive a channel.')
+    @commands.command(brief='Archive channel.')
     @admin()
-    async def archive(
-            self, ctx, channel: discord.TextChannel, user: discord.Member):
-        """Archive messages in a channel from a user.
+    async def archive(self, ctx, search: str):
+        """Archive channels by search.
 
-        Returns a link to an HTML file. Uploads any images to Imgur so they
+        Returns a links to HTML files. Uploads any images to Imgur so they
         won't be lost if the channel is deleted.
 
-        Example: `{{pre}}archive #c0unse1-finalist @c0unse1`
+        Example: `{{pre}}archive -finalists`
         """
         async with ctx.typing():
-            html = await archiver.archive_channel(channel, user)
-            await ctx.send(pastebin.upload(html))
+            links = await archiver.archive_channels(search)
+            await ctx.send(links)
