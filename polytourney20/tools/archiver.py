@@ -65,10 +65,12 @@ async def archive_channels(search: str):
     lines = []
     for channel in CONFIG.guild.text_channels:
         if search in channel.name:
+            print(channel.name)
             member = discord.utils.find(
                 lambda u: u.name.lower() in channel.name.split('-'),
                 CONFIG.guild.members
             )
+            print(f'{channel} / {member}')
             link = await archive_channel(channel, member)
             lines.append(f'{channel.mention}: {link}')
     return '\n'.join(lines)
