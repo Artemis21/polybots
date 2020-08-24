@@ -7,21 +7,21 @@ import discord
 import jinja2
 
 
-TEMPLATE = jinja2.Template('''
-{% for piece in pieces %}
-    {% if piece.type == 'text' %}
+env = jinja2.Environment(autoescape=jinja2.select_autoescape())
+TEMPLATE = env.from_string('''
+{%- for piece in pieces -%}
+    {%- if piece.type == 'text' -%}
         <p>{{ piece.value }}</p>
-    {% elif piece.type == 'image' %}
+    {%- elif piece.type == 'image' -%}
         <img src="{{ piece.value }}"/>
-    {% else %}
+    {%- else -%}
         WARNING: Unrecognised piece type "{{ piece.type }}"!
         Value: "{{ piece.value }}".
-    {% endif %}
-{% endfor %}
+    {%- endif -%}
+{%- endfor -%}
 ''')
 
 IMGUR_API = 'https://api.imgur.com/3/'
-
 with open('config.json') as f:
     IMGUR_ID = json.load(f)['imgur_id']
 
@@ -35,7 +35,8 @@ async def imgur_upload(url: str) -> str:
             headers={'Authorization': 'Client-ID ' + IMGUR_ID},
             data={'image': url, 'type': 'url'}
             ) as resp:
-        return resp.json(['data']['link']
+        data = await resp.json()
+        return data['data']['link']
 
 
 async def archive_channel(
@@ -49,4 +50,4 @@ async def archive_channel(
             for attachment in message.attachments:
                 url = await imgur_upload(attachment.url)
                 pieces.append({'type': 'image', 'value': url})
-    return template.render(pieces=pieces)
+    return TEMPLATE.render(pieces=pieces)
