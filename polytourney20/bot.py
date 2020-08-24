@@ -32,5 +32,3 @@ with open('config.json') as f:
     token = json.load(f)['token']
 
 bot.run(token)
-
-
