@@ -42,6 +42,7 @@ async def imgur_upload(url: str) -> str:
             data={'image': url, 'type': 'url'}
             ) as resp:
         data = await resp.json()
+        print(json.dumps(data, indent=4))
         return data['data']['link']
 
 
