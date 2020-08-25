@@ -1,5 +1,6 @@
 """Tool to archive finalists channels."""
 import aiohttp
+import base64
 import json
 
 import discord
@@ -46,6 +47,14 @@ async def imgur_upload(url: str) -> str:
         return data['data']['link']
 
 
+async def download_image(attachment: discord.Attachment) -> str:
+    """Download an image from Discord and convert to b64."""
+    data = await attachment.read()
+    data = base64.b64encode(data)
+    typ = attachment.filename.split('.')[-1]
+    return f'data:image/{typ};base64{data.decode()}'
+
+
 async def archive_channel(
         channel: discord.TextChannel, member: discord.Member) -> str:
     """Archive messages from a user in a text channel."""
@@ -55,7 +64,9 @@ async def archive_channel(
             if message.content:
                 pieces.append({'type': 'text', 'value': message.content})
             for attachment in message.attachments:
-                url = await imgur_upload(attachment.url)
+                # url = await imgur_upload(attachment.url)
+                # Imgur ratelimits are too high, so download instead
+                url = await download_image(attachment)
                 pieces.append({'type': 'image', 'value': url})
     title = channel.name.replace('-', ' ').title()
     return pastebin.upload(TEMPLATE.render(pieces=pieces, title=title))
