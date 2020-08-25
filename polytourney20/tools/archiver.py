@@ -58,7 +58,7 @@ async def download_image_b64(attachment: discord.Attachment) -> str:
 
 async def download_image(attachment: discord.Attachment) -> str:
     """Download and save an image."""
-    filename = 'images/' + attachment.id + attachment.filename
+    filename = 'images/' + str(attachment.id) + attachment.filename
     await attachment.save('data/archives/' + filename)
     return filename
 
