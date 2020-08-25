@@ -1,4 +1,5 @@
 """Tool to archive finalists channels."""
+import aiofiles
 import aiohttp
 import base64
 import json
@@ -52,7 +53,7 @@ async def download_image(attachment: discord.Attachment) -> str:
     data = await attachment.read()
     data = base64.b64encode(data)
     typ = attachment.filename.split('.')[-1]
-    return f'data:image/{typ};base64{data.decode()}'
+    return f'data:image/{typ};base64,{data.decode()}'
 
 
 async def archive_channel(
@@ -69,12 +70,13 @@ async def archive_channel(
                 url = await download_image(attachment)
                 pieces.append({'type': 'image', 'value': url})
     title = channel.name.replace('-', ' ').title()
-    return pastebin.upload(TEMPLATE.render(pieces=pieces, title=title))
+    html = TEMPLATE.render(pieces=pieces, title=title)
+    return channel.name.replace('-', '_') + '.html', html
 
 
 async def archive_channels(search: str):
     """Archive a set of channels by search."""
-    lines = []
+    channels = []
     for channel in CONFIG.guild.text_channels:
         if search in channel.name:
             print(channel.name)
@@ -83,6 +85,8 @@ async def archive_channels(search: str):
                 CONFIG.guild.members
             )
             print(f'{channel} / {member}')
-            link = await archive_channel(channel, member)
-            lines.append(f'{channel.mention}: {link}')
-    return '\n'.join(lines)
+            file, html = await archive_channel(channel, member)
+            async with aiofiles.open('data/archives/' + file, 'w') as f:
+                await f.write(html)
+            channels.append(channel.mention)
+    return 'Archived the following: ' + ' '.join(channels)

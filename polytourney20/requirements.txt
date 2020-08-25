@@ -1,6 +1,6 @@
 gspread
 oauth2client
 requests
-youtube-dl
 aiohttp
 jinja2
+aiofiles
