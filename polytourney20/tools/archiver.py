@@ -48,12 +48,19 @@ async def imgur_upload(url: str) -> str:
         return data['data']['link']
 
 
-async def download_image(attachment: discord.Attachment) -> str:
+async def download_image_b64(attachment: discord.Attachment) -> str:
     """Download an image from Discord and convert to b64."""
     data = await attachment.read()
     data = base64.b64encode(data)
     typ = attachment.filename.split('.')[-1]
     return f'data:image/{typ};base64,{data.decode()}'
+
+
+async def download_image(attachment: discord.Attachment) -> str:
+    """Download and save an image."""
+    filename = 'images/' + attachment.id + attachment.filename
+    await attachment.save('data/archives/' + filename)
+    return filename
 
 
 async def archive_channel(
