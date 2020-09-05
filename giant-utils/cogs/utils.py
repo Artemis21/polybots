@@ -26,6 +26,7 @@ class Utils(commands.Cog):
         """
         await ctx.send(await nameedit.rename(ctx.channel, name))
 
+    @commands.has_permissions(manage_channels=True)
     @commands.command(brief='Reset a division category.')
     async def reset(self, ctx: Ctx):
         """Reset a division category.
