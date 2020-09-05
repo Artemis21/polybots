@@ -85,3 +85,19 @@ async def rename(channel: discord.TextChannel, new_name: str) -> str:
         )
     await channel.edit(name=new_name)
     return 'Channel renamed :thumbsup:'
+
+
+async def reset(channel: discord.TextChannel) -> str:
+    """Reset all channels in a category."""
+    if not _is_renameable(channel):
+        return 'This is not a division category!'
+    overwrites = channel.overwrites
+    category = channel.category
+    for channel in category.channels:
+        await channel.delete()
+    new_names = [
+        'time-out-glitches-and-breaks', 'general',
+        *['game-' + str(i) for i in range(1, 9)]
+    ]
+    for name in new_names:
+        await category.create_text_channel(name, overwrites=overwrites)

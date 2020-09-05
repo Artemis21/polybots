@@ -4,7 +4,7 @@ import discord
 
 import typing
 
-from tools import nameedit, massrole
+from tools import nameedit, roles
 
 
 Ctx = commands.Context
@@ -26,6 +26,22 @@ class Utils(commands.Cog):
         """
         await ctx.send(await nameedit.rename(ctx.channel, name))
 
+    @commands.command(brief='Reset a division category.')
+    async def reset(self, ctx: Ctx):
+        """Reset a division category.
+
+        This will delete every channel in this category, and add channels
+        named #time-out-glitches-and-breaks, #general, #game-1, #game-2...
+        #game-8.
+
+        Example: `{{pre}}reset`
+        """
+        async with ctx.typing():
+            error = await nameedit.reset(ctx.channel)
+        if error:
+            await ctx.send(error)
+        # no success message since a success means we have deleted the channel
+
     @commands.command(
         brief='Award a role to many people.', name='mass-role'
     )
@@ -37,7 +53,7 @@ class Utils(commands.Cog):
         Example: `{{pre}}mass-role @Division C @member1 @member2 @member3`
         """
         async with ctx.typing():
-            await massrole.massrole(role, users)
+            await roles.mass_role(role, users)
         await ctx.send('Done :thumbsup:')
 
     @commands.command(brief='How many members a role has.')
@@ -47,3 +63,16 @@ class Utils(commands.Cog):
         Example: `{{pre}}members @some-role`.
         """
         await ctx.send(f'{len(role.members)} people have that role.')
+
+    @commands.command(
+        brief='Clear a role from people.', name='clear-role'
+    )
+    @commands.has_permissions(manage_roles=True)
+    async def clear_role(self, ctx: Ctx, role: discord.Role):
+        """Remove every user from a role.
+
+        Example: `{{pre}}clear-role @Division E`
+        """
+        async with ctx.typing():
+            await roles.mass_un_role(role)
+        await ctx.send('Done :thumbsup:')
