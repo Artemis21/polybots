@@ -3,6 +3,8 @@ import re
 
 import discord
 
+from .roles import mass_un_role
+
 
 LANGUAGE = [
     'po', 'ly', 'lu', 'mi', 'lo', 'da', 'bi', 'oo', 'sa', 'ko', 'me', 'da',
@@ -92,9 +94,10 @@ async def rename(channel: discord.TextChannel, new_name: str) -> str:
     return 'Channel renamed :thumbsup:'
 
 
-async def reset(channel: discord.TextChannel) -> str:
+async def reset(
+        channel: discord.TextChannel, any_channel: bool = False) -> str:
     """Reset all channels in a category."""
-    if not _is_renameable(channel):
+    if not (any_channel or _is_renameable(channel)):
         return 'This is not a division category!'
     overwrites = channel.overwrites
     category = channel.category
@@ -106,3 +109,31 @@ async def reset(channel: discord.TextChannel) -> str:
     ]
     for name in new_names:
         await category.create_text_channel(name, overwrites=overwrites)
+
+
+async def reset_guild(guild: discord.Guild) -> str:
+    """Reset all division categories, and some other channels/roles."""
+    cat_count = 0
+    role_count = 0
+    # In case guild.categories changes during iteration.
+    categories = list(guild.categories)
+    for cat in categories:
+        if cat.text_channels:
+            # reset will return error if not division cat, no need to check.
+            error = await reset(cat.text_channels[0])
+            if not error:
+                role = discord.utils.get(guild.roles, name=f'Division {cat}')
+                if role:
+                    await mass_un_role(role)
+                    role_count += 1
+                cat_count += 1
+    follow_up_cat = guild.get_channel(749979803150712965)
+    await reset(follow_up_cat, any_channel=True)
+    extra_roles = [685862261150973994, 754208236734906379, 751867341809254402]
+    for role_id in extra_roles:
+        role = guild.get_role(role_id)
+        await mass_un_role(role)
+    return (
+        f'Reset {cat_count} division categories, {role_count} division '
+        f'roles, the FOLLOW-UP category and {len(extra_roles)} extra roles.'
+    )

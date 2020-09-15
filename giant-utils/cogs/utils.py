@@ -43,6 +43,22 @@ class Utils(commands.Cog):
             await ctx.send(error)
         # no success message since a success means we have deleted the channel
 
+    @commands.has_permissions(manage_channels=True)
+    @commands.command(
+        brief='Reset the **entire** server.', name='reset-server'
+    )
+    async def reset_server(self, ctx: Ctx):
+        """Resets the entire server - use with extreme caution.
+
+        This will reset every division category, every division role, the
+        follow-up category, the participant role, the kick out on sight role
+        and the in break role.
+
+        Example: `{{pre}}reset-server`
+        """
+        async with ctx.typing():
+            await nameedit.reset_guild(ctx.guild)
+
     @commands.command(
         brief='Award a role to many people.', name='mass-role'
     )
