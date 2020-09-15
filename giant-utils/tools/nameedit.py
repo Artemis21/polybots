@@ -10,7 +10,7 @@ LANGUAGE = [
 ]
 ACTIONS = [
     'Clowns', 'Bongo', 'Duh!', 'Squeal', 'Squirrel', 'Confusion', 'Gruff',
-    'Moan', 'Chickens', 'Spunge', 'Gnomes', 'Bell boys', 'Gurkins',
+    'Moan', 'Chickens', 'Spunge', 'Gnomes', 'Bell-boys', 'Gurkins',
     'Commotion', 'LOL', 'Shenanigans', 'Hullabaloo', 'Papercuts', 'Eggs',
     'Mooni', 'Gaami', 'War', 'Spirit', 'Faith', 'Glory', 'Blood', 'Empires',
     'Songs', 'Dawn', 'Prophecy', 'Gold', 'Fire', 'Swords', 'Queens',
@@ -53,6 +53,11 @@ def _place_is_valid(place: str) -> bool:
 
 def _name_is_valid(name: str) -> bool:
     """Check if a game name is real."""
+    # Bell boys is the only component with a space in, but we store it with a
+    # dash instead since we use spaces to split up components.
+    if 'Bell-boys' in name:
+        return False
+    name = name.replace('Bell boys', 'Bell-boys')
     parts = name.split()
     if parts[0] == 'The':
         if len(parts) == 3:
