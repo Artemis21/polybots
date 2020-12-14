@@ -133,8 +133,13 @@ async def reset_guild(guild: discord.Guild) -> str:
                     await mass_un_role(role)
                     role_count += 1
                 cat_count += 1
-    follow_up_cat = guild.get_channel(749979803150712965).text_channels[0]
-    await reset(follow_up_cat, any_channel=True)
+    follow_up_cat = guild.get_channel(749979803150712965)
+    overwrites = follow_up_cat.text_channels[0].overwrites
+    for channel in follow_up_cat.channels:
+        await channel.delete()
+    new_names = ['breaks', 'kick-out-on-sight', 'penalties']
+    for name in new_names:
+        await follow_up_cat.create_text_channel(name, overwrites=overwrites)
     extra_roles = [685862261150973994, 754208236734906379, 751867341809254402]
     for role_id in extra_roles:
         role = guild.get_role(role_id)
