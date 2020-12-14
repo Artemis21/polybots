@@ -95,7 +95,8 @@ async def rename(channel: discord.TextChannel, new_name: str) -> str:
 
 
 async def reset(
-        channel: discord.TextChannel, any_channel: bool = False) -> str:
+        channel: discord.TextChannel, any_channel: bool = False,
+        topic: str = '') -> str:
     """Reset all channels in a category."""
     if not (any_channel or _is_renameable(channel)):
         return 'This is not a division category!'
@@ -108,7 +109,9 @@ async def reset(
         *['game-' + str(i) for i in range(1, 9)]
     ]
     for name in new_names:
-        await category.create_text_channel(name, overwrites=overwrites)
+        await category.create_text_channel(
+            name, overwrites=overwrites, topic=topic
+        )
 
 
 async def reset_guild(guild: discord.Guild) -> str:
@@ -120,7 +123,10 @@ async def reset_guild(guild: discord.Guild) -> str:
     for cat in categories:
         if cat.text_channels:
             # reset will return error if not division cat, no need to check.
-            error = await reset(cat.text_channels[0])
+            error = await reset(
+                cat.text_channels[0],
+                topic='https://www.youtube.com/watch?v=oHg5SJYRHA0'
+            )
             if not error:
                 role = discord.utils.get(guild.roles, name=f'Division {cat}')
                 if role:
