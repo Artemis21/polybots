@@ -1,5 +1,6 @@
 """Discord.py command error handler."""
 import re
+import sys
 import traceback
 
 import discord
@@ -19,5 +20,5 @@ async def on_command_error(ctx: Context, error: Exception):
     await ctx.send(embed=e)
     if hasattr(error, 'original'):
         err = error.original
-        traceback.print_tb(err.__traceback__)
-        print(f'{type(err).__name__}: {err}.')
+        traceback.print_tb(err.__traceback__, file=sys.stderr)
+        print(f'{type(err).__name__}: {err}.', file=sys.stderr)
