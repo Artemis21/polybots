@@ -55,6 +55,8 @@ def _place_is_valid(place: str) -> bool:
 
 def _name_is_valid(name: str) -> bool:
     """Check if a game name is real."""
+    return True    # Naming changed since Moonrise and I haven't had a chance
+                   # to update.
     # Bell boys is the only component with a space in, but we store it with a
     # dash instead since we use spaces to split up components.
     if 'Bell-boys' in name:
