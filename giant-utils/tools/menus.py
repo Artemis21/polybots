@@ -61,19 +61,33 @@ class Menu():
         """Send the menu so that it can be used."""
         if self.message:
             await self.message.edit(embed=self.embed)
-            self.message = await self.message.channel.fetch_message(
-                self.message.id
-            )
-            for reaction in self.message.reactions:
-                if reaction.emoji not in self.emojis:
-                    await reaction.clear()
-                else:
-                    async for user in reaction.users():
-                        if self.user == user or not self.user:
-                            await reaction.remove(user)
+            await self.ensure_correct_reactions()
         else:
             self.message = await self.channel.send(embed=self.embed)
-        for emoji in self.emojis:
+            for emoji in self.emojis:
+                await self.message.add_reaction(emoji)
+
+    async def ensure_correct_reactions(self):
+        """Find the shortest way to switch to some set of reactions."""
+        self.message = await self.message.channel.fetch_message(
+            self.message.id)
+        current = {i.emoji for i in self.message.reactions if i.me}
+        target = set(self.emojis)
+        to_remove = current - target
+        to_add = target - current
+        if len(target) < len(to_remove):
+            await self.message.clear_reactions()
+            for emoji in self.emojis:
+                await self.message.add_reaction(emoji)
+            return
+        for emoji in to_remove:
+            await self.message.clear_reaction(emoji)
+        for reaction in self.message.reactions:
+            if reaction.emoji in self.emojis:
+                async for user in reaction.users():
+                    if user == self.user or not self.user:
+                        await reaction.remove(user)
+        for emoji in sorted(to_add):
             await self.message.add_reaction(emoji)
 
     async def on_reaction_add(self,

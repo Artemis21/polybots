@@ -84,12 +84,12 @@ class Rules(commands.Cog):
 
     async def on_rule_select(self, event: menus.MenuEvent):
         """Display a selected rule."""
+        event.menu.stop_listening()
         if event.option == 'back':
             await self.full_rule_list(
                 message=event.menu.message, user=event.user
             )
             return
-        event.menu.stop_listening()
         await self.display_rule(
             event.option, message=event.menu.message, user=event.user
         )
