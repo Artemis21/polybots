@@ -8,8 +8,7 @@ from tools import colours
 
 ABOUT = (
     'GiantBot is a utility bot for the Discord Polytopia Giants League. '
-    'Currently, it only features a couple of utilities, but in future '
-    'seasons it may even control the league!!!'
+    'It provides utilities for the mods and quick access to the rules.'
 )
 
 
