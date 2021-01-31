@@ -143,6 +143,7 @@ class Games(commands.Cog):
         brief='Re-open a game.', name='open-game',
         aliases=['open', 'reopen', 'reopen-game', 'o']
     )
+    @commands.has_guild_permissions(administrator=True)
     async def open_game(self, ctx: commands.Context, game: models.Game):
         """Re-open a game (can be used to make a game with over 14 members!).
 
@@ -158,6 +159,7 @@ class Games(commands.Cog):
     @commands.command(
         brief='Close a game.', name='close-game', aliases=['close', 'c']
     )
+    @commands.has_guild_permissions(administrator=True)
     async def close_game(self, ctx: commands.Context, game: models.Game):
         """Close a game (eg. for a game smaller than 14 members).
 
