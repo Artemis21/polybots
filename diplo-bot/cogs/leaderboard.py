@@ -32,7 +32,7 @@ class Leaderboard(commands.Cog):
             else:
                 joint_count += 1
             previous_score = wins
-            lines.append(f'**#{n}** <@{discord_id}> *({wins}) wins*')
+            lines.append(f'**#{n}** <@{discord_id}> *({wins} wins)*')
         await ctx.send(embed=discord.Embed(
             title='Diplotopia Leaderboard',
             description='\n'.join(lines) or '*There\'s nothing here!*',

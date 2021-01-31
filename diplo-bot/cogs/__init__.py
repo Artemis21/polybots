@@ -2,11 +2,12 @@
 """Load the cogs."""
 import discord
 
+from .games import Games
 from .leaderboard import Leaderboard
 from .meta import Meta
 
 
-COGS = [Leaderboard, Meta]
+COGS = [Games, Leaderboard, Meta]
 
 
 def setup(bot: discord.Client):
