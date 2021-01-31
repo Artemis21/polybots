@@ -1,4 +1,6 @@
 """The meta cog."""
+import datetime
+
 import discord
 from discord.ext import commands
 
@@ -6,6 +8,11 @@ from main import config, errors
 
 
 ABOUT = 'A simple bot for tracking Diplotopia wins.'
+
+
+def timedelta_to_ms(time: datetime.timedelta) -> int:
+    """Get the number of miliseconds in a timedelta (ignoring days)."""
+    return round(time.seconds * 1e3 + time.microseconds / 1e3)
 
 
 class Meta(commands.Cog):
@@ -38,3 +45,21 @@ class Meta(commands.Cog):
         )
         embed.set_thumbnail(url=ctx.bot.user.avatar_url)
         await ctx.send(embed=embed)
+
+    @commands.command(brief='Get a pong.')
+    async def ping(self, ctx: commands.Context):
+        """See how fast the bot can respond."""
+        now = datetime.datetime.now()
+        recieve_time = timedelta_to_ms(now - ctx.message.created_at)
+        response = await ctx.send(
+            f'Pong!\nRecieve time: `{recieve_time}ms`'
+        )
+        initial_recieve = now
+        now = datetime.datetime.now()
+        roundtrip_time = timedelta_to_ms(now - initial_recieve)
+        response_time = timedelta_to_ms(response.created_at - initial_recieve)
+        await response.edit(content=(
+            f'Pong!\nRecieve time: `{recieve_time}ms`'
+            f'\nResponse time: `{response_time}ms`'
+            f'\nResponse roundtrip: `{roundtrip_time}ms`'
+        ))
