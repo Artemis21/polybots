@@ -5,9 +5,6 @@ from discord.ext import commands
 from main import models
 
 
-MAX_MEMBERS = 5
-
-
 class Games(commands.Cog):
     """Commands for creating and viewing games."""
 
@@ -19,12 +16,12 @@ class Games(commands.Cog):
         brief='Create a game.', name='new-game', aliases=['ng', 'new']
     )
     @commands.has_guild_permissions(administrator=True)
-    async def new_game(self, ctx: commands.Context):
-        """Create a new game.
+    async def new_game(self, ctx: commands.Context, limit: int = 14):
+        """Create a new game, with an optional player limit (default 14).
 
-        Example: `{{pre}}new-game`
+        Example: `{{pre}}new-game 8`
         """
-        game = models.Game.create()
+        game = models.Game.create(limit=limit)
         role = await ctx.guild.create_role(name=game.name)
         category = await ctx.guild.create_category(name=game.name, overwrites={
             ctx.guild.default_role: discord.PermissionOverwrite(
@@ -55,7 +52,7 @@ class Games(commands.Cog):
             role = ctx.guild.get_role(game.role_id)
             await ctx.author.add_roles(role)
             await ctx.send(f'Added you to game {game.id}.')
-            if game.member_count >= MAX_MEMBERS:
+            if game.member_count >= game.limit:
                 game.open = False
                 game.save()
                 await ctx.send(f'{game.name} full. Game closed.')
@@ -104,7 +101,7 @@ class Games(commands.Cog):
             role = ctx.guild.get_role(game.role_id)
             await user.add_roles(role)
             await ctx.send(f'Added {user.display_name} to game {game.id}.')
-            if game.member_count >= MAX_MEMBERS:
+            if game.member_count >= game.limit:
                 game.open = False
                 game.save()
                 await ctx.send(f'{game.name} full. Game closed.')
@@ -145,7 +142,7 @@ class Games(commands.Cog):
     )
     @commands.has_guild_permissions(administrator=True)
     async def open_game(self, ctx: commands.Context, game: models.Game):
-        """Re-open a game (can be used to make a game with over 14 members!).
+        """Re-open a game.
 
         Example: `{{pre}}reopen 54`
         """
@@ -161,7 +158,7 @@ class Games(commands.Cog):
     )
     @commands.has_guild_permissions(administrator=True)
     async def close_game(self, ctx: commands.Context, game: models.Game):
-        """Close a game (eg. for a game smaller than 14 members).
+        """Close a game.
 
         Example: `{{pre}}close 29`
         """
@@ -194,7 +191,7 @@ class Games(commands.Cog):
         await ctx.send(embed=discord.Embed(
             title=game.name,
             description=(
-                f'{game.member_count}/{MAX_MEMBERS} players, {open_status}.'
+                f'{game.member_count}/{game.limit} players, {open_status}.'
             )
         ))
 
