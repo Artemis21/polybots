@@ -61,6 +61,7 @@ class Game(BaseModel):
     role_id = peewee.IntegerField(null=True)
     category_id = peewee.IntegerField(null=True)
     open = peewee.BooleanField(default=True)
+    limit = peewee.IntegerField(default=14)
 
     @classmethod
     async def convert(cls, ctx: commands.Context, raw_argument: str) -> Game:
