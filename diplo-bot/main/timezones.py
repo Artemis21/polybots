@@ -16,9 +16,11 @@ class Timezone:
     async def convert(cls, ctx: commands.Context, argument: str) -> Timezone:
         """Parse a Discord.py argument as a UTC offset."""
         argument = argument.upper()
-        if argument == 'UTC':
+        if argument in ('GMT', 'UTC'):
             return cls(False, 0, 0)
-        argument = argument.removeprefix('UTC').removeprefix('+')
+        argument = argument.removeprefix('UTC').removeprefix(
+            'GMT'
+        ).removeprefix('+')
         negative = argument.startswith('-')
         argument = argument.removeprefix('-')
         if re.match('[0-9]+$', argument):
