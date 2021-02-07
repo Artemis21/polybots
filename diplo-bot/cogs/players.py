@@ -76,7 +76,9 @@ class Players(commands.Cog):
     async def add_tribes(self, ctx: commands.Context, *, tribes: TribeList):
         """Add to the list of tribes you own.
 
-        Example: `{{pre}}add-tribes elyrion yad ven l k p`
+        Examples:
+        `{{pre}}add-tribes elyrion yad ven l k p`
+        `{{pre}}at all`
         """
         player = models.Player.get_player(ctx.author.id)
         player.tribes += tribes

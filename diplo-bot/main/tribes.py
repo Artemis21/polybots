@@ -72,6 +72,8 @@ class TribeList:
         tribes = []
         raw_tribes = raw_argument.split(' ')
         for raw_tribe in raw_tribes:
+            if raw_tribe.lower() == 'all':
+                return cls(Tribe)
             tribe = await Tribe.convert(ctx, raw_tribe)
             tribes.append(tribe)
         return cls(tribes)
