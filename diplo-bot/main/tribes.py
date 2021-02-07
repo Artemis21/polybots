@@ -9,6 +9,8 @@ from discord.ext import commands
 
 import peewee
 
+from . import config
+
 
 class Tribe(enum.Enum):
     """An enum for each in-game tribe."""
@@ -56,6 +58,16 @@ class Tribe(enum.Enum):
             f'No tribe found matching `{raw_argument}`.'
         )
 
+    @property
+    def emoji(self) -> str:
+        """Get the emoji representing the tribe."""
+        emoji_id = config.TRIBE_EMOJI_IDS.get(
+            self.name.lower().replace('_', '-')
+        )
+        if emoji_id:
+            return f'<:{self.name}:{emoji_id}>'
+        return ':interrobang:'
+
 
 class TribeList:
     """A list of tribes that allows updating with += and -=.
@@ -84,10 +96,7 @@ class TribeList:
 
     def __str__(self) -> str:
         """Represent the list as a human-readable string."""
-        return ', '.join(
-            tribe.name.replace('_', '-').title()
-            for tribe in self.tribes
-        )
+        return ', '.join(tribe.emoji for tribe in self.tribes)
 
     def __iadd__(self, other: Union[Tribe, Iterable[Tribe]]) -> TribeList:
         """Add a tribe or tribes to the list."""
