@@ -22,7 +22,7 @@ class Tribe(enum.Enum):
     VENGIR = enum.auto()
     ZEBASI = enum.auto()
     KICKOO = enum.auto()
-    YADDAK = enum.auto()
+    YADAKK = enum.auto()
     SECRET_BUG_TRIBE = enum.auto()
     ELYRION = enum.auto()
     POLARIS = enum.auto()
