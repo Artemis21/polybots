@@ -10,3 +10,5 @@ with open(str(BASE_PATH / 'config.json')) as f:
 
 PREFIX = _data['prefix']
 TOKEN = _data['token']
+
+OBSERVER_ROLE_ID = _data['observer_role']

@@ -2,7 +2,7 @@
 import discord
 from discord.ext import commands
 
-from main import models
+from main import config, models
 
 
 class Games(commands.Cog):
@@ -22,11 +22,16 @@ class Games(commands.Cog):
         Example: `{{pre}}new-game 8`
         """
         game = models.Game.create(limit=limit)
-        role = await ctx.guild.create_role(name=game.name)
+        role = await ctx.guild.create_role(
+            name=game.name, colour=0xe4b400, mentionable=True
+        )
+        observer_role = ctx.guild.get_role(config.OBSERVER_ROLE_ID)
         category = await ctx.guild.create_category(name=game.name, overwrites={
             ctx.guild.default_role: discord.PermissionOverwrite(
-                read_messages=False),
-            role: discord.PermissionOverwrite(read_messages=True)
+                read_messages=False, send_messages=False),
+            observer_role: discord.PermissionOverwrite(read_messages=True),
+            role: discord.PermissionOverwrite(
+                read_messages=True, send_messages=True)
         })
         for channel in ('chat', 'role-play', 'policies', 'newsstand'):
             await category.create_text_channel(name=channel)
@@ -210,3 +215,15 @@ class Games(commands.Cog):
                 f'Game `{game.id:>3}`, `{game.member_count:>2}` players.'
             )
         await ctx.send('\n'.join(lines) or '*There\'s nothing here.*')
+
+    @commands.command(brief='Award a win.', aliases=['w', 'winner', 'winners'])
+    @commands.has_guild_permissions(administrator=True)
+    async def win(
+            self, ctx: commands.Context,
+            *users: commands.Greedy[discord.Member]):
+        """Award a win to one or more users.
+
+        Example: `{{pre}}win @Artemis @Dorian @JBHoTep`
+        """
+        models.Player.give_many_wins([user.id for user in users])
+        await ctx.send('Done!')

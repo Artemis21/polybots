@@ -3,11 +3,11 @@
 import discord
 
 from .games import Games
-from .leaderboard import Leaderboard
 from .meta import Meta
+from .players import Players
 
 
-COGS = [Games, Leaderboard, Meta]
+COGS = [Players, Games, Meta]
 
 
 def setup(bot: discord.Client):

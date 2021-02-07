@@ -5,7 +5,8 @@ from discord.ext import commands
 
 import peewee
 
-from . import config
+from . import config, timezones
+from .tribes import Tribe, TribeListField
 
 
 db = peewee.SqliteDatabase(str(config.BASE_PATH / 'db.sqlite3'))
@@ -26,6 +27,11 @@ class Player(BaseModel):
 
     discord_id = peewee.IntegerField(primary_key=True)
     wins = peewee.IntegerField(default=0)
+    in_game_name = peewee.TextField(null=True)
+    utc_offset = timezones.TimezoneField(null=True)
+    tribes = TribeListField(default=[
+        Tribe.XIN_XI, Tribe.BARDUR, Tribe.OUMAJI, Tribe.IMPERIUS
+    ])
 
     @classmethod
     def get_player(cls, discord_id: int) -> Player:
