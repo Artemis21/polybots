@@ -21,7 +21,7 @@ class Tribe(enum.Enum):
     ZEBASI = enum.auto()
     KICKOO = enum.auto()
     YADDAK = enum.auto()
-    CYMANTI = enum.auto()
+    SECRET_BUG_TRIBE = enum.auto()
     ELYRION = enum.auto()
     POLARIS = enum.auto()
     LUXIDOOR = enum.auto()
