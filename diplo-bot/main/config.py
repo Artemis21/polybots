@@ -12,4 +12,5 @@ PREFIX = _data['prefix']
 TOKEN = _data['token']
 
 OBSERVER_ROLE_ID = _data['observer_role']
+ADMIN_ROLE_IDS = _data.get('admin_roles', [])
 TRIBE_EMOJI_IDS = _data.get('tribe_emojis', {})

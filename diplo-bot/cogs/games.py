@@ -2,7 +2,7 @@
 import discord
 from discord.ext import commands
 
-from main import config, models
+from main import checks, config, models
 
 
 class Games(commands.Cog):
@@ -15,7 +15,7 @@ class Games(commands.Cog):
     @commands.command(
         brief='Create a game.', name='new-game', aliases=['ng', 'new']
     )
-    @commands.has_guild_permissions(administrator=True)
+    @checks.admin
     async def new_game(self, ctx: commands.Context, limit: int = 14):
         """Create a new game, with an optional player limit (default 14).
 
@@ -89,7 +89,7 @@ class Games(commands.Cog):
     @commands.command(
         brief='Add a user to a game.', name='add-member', aliases=['a', 'add']
     )
-    @commands.has_guild_permissions(administrator=True)
+    @checks.admin
     async def add_member(
             self, ctx: commands.Context, user: discord.Member,
             game: models.Game):
@@ -119,7 +119,7 @@ class Games(commands.Cog):
         brief='Remove a user from a game.', name='remove-member',
         aliases=['r', 'remove']
     )
-    @commands.has_guild_permissions(administrator=True)
+    @checks.admin
     async def remove_member(
             self, ctx: commands.Context, user: discord.Member,
             game: models.Game):
@@ -145,7 +145,7 @@ class Games(commands.Cog):
         brief='Re-open a game.', name='open-game',
         aliases=['open', 'reopen', 'reopen-game', 'o']
     )
-    @commands.has_guild_permissions(administrator=True)
+    @checks.admin
     async def open_game(self, ctx: commands.Context, game: models.Game):
         """Re-open a game.
 
@@ -161,7 +161,7 @@ class Games(commands.Cog):
     @commands.command(
         brief='Close a game.', name='close-game', aliases=['close', 'c']
     )
-    @commands.has_guild_permissions(administrator=True)
+    @checks.admin
     async def close_game(self, ctx: commands.Context, game: models.Game):
         """Close a game.
 
@@ -217,7 +217,7 @@ class Games(commands.Cog):
         await ctx.send('\n'.join(lines) or '*There\'s nothing here.*')
 
     @commands.command(brief='Award a win.', aliases=['w', 'winner', 'winners'])
-    @commands.has_guild_permissions(administrator=True)
+    @checks.admin
     async def win(
             self, ctx: commands.Context,
             *users: commands.Greedy[discord.Member]):
