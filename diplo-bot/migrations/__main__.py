@@ -11,7 +11,8 @@ from main.models import db
 migrator = SqliteMigrator(db)
 
 MIGRATIONS = [
-    '001_extend_profiles'
+    '001_extend_profiles',
+    '002_add_member_limit'
 ]
 
 
