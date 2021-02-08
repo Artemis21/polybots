@@ -1,6 +1,9 @@
 """Peewee ORM models."""
 from __future__ import annotations
 
+from collections import namedtuple
+
+import discord
 from discord.ext import commands
 
 import peewee
@@ -8,6 +11,8 @@ import peewee
 from . import config, timezones
 from .tribes import Tribe, TribeList, TribeListField
 
+
+UserData = namedtuple('UserData', ['name', 'to_be', 'user'])
 
 db = peewee.SqliteDatabase(str(config.BASE_PATH / 'db.sqlite3'))
 
@@ -99,6 +104,49 @@ class Game(BaseModel):
             GameMember.game == self,
             GameMember.player == player
         )
+
+    def user_info(
+            self, ctx: commands.Context,
+            user: discord.Member = None) -> UserData:
+        """Get the name, ID and conjugation of 'to be' to refer to a user."""
+        if user:
+            return UserData(user.display_name, 'is', user)
+        else:
+            return UserData('you', 'are', ctx.author)
+
+    async def add_player(
+            self, ctx: commands.Context, user: discord.Member = None):
+        """Add a player to the game."""
+        user = self.user_info(ctx, user)
+        player = Player.get_player(user.user.id)
+        if self.get_member(player):
+            ctx.logger.log(
+                f'Error: {user.name} {user.to_be} already in game {self.id}.'
+            )
+        else:
+            GameMember.create(player=player, game=self)
+            role = ctx.guild.get_role(self.role_id)
+            await user.user.add_roles(role)
+            ctx.logger.log(f'Added {user.name} to game {self.id}.')
+            if self.member_count >= self.limit:
+                self.open = False
+                self.save()
+                ctx.logger.log(f'{self.name} full. Game closed.')
+
+    async def remove_player(
+            self, ctx: commands.Context, user: discord.Member = None):
+        """Remove a player from the game."""
+        user = self.user_info(ctx, user)
+        player = Player.get_player(user.user.id)
+        if member := self.get_member(player):
+            member.delete_instance()
+            role = ctx.guild.get_role(self.role_id)
+            await user.user.remove_roles(role)
+            ctx.logger.log(f'Removed {user.name} from game {self.id}.')
+        else:
+            ctx.logger.log(
+                f'Error: {user.name} {user.to_be} not in game {self.id}.'
+            )
 
 
 class GameMember(BaseModel):

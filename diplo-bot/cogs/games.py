@@ -48,21 +48,10 @@ class Games(commands.Cog):
 
         Example: `{{pre}}join 30`
         """
-        if not game.open:
-            await ctx.send(f'{game.name} is already closed, sorry.')
-            return
-        player = models.Player.get_player(ctx.author.id)
-        if not game.get_member(player):
-            models.GameMember.create(player=player, game=game)
-            role = ctx.guild.get_role(game.role_id)
-            await ctx.author.add_roles(role)
-            await ctx.send(f'Added you to game {game.id}.')
-            if game.member_count >= game.limit:
-                game.open = False
-                game.save()
-                await ctx.send(f'{game.name} full. Game closed.')
+        if game.open:
+            await game.add_player(ctx)
         else:
-            await ctx.send(f'You are already in game {game.id}.')
+            await ctx.send(f'{game.name} is already closed, sorry.')
 
     @commands.command(
         brief='Leave a game.', name='leave-game', aliases=['l', 'leave']
@@ -72,19 +61,12 @@ class Games(commands.Cog):
 
         Example: `{{pre}}leave 45`
         """
-        if not game.open:
+        if game.open:
+            await game.remove_player(ctx)
+        else:
             await ctx.send(
                 f'{game.name} is closed. Contact an admin to remove you.'
             )
-            return
-        player = models.Player.get_player(ctx.author.id)
-        if member := game.get_member(player):
-            member.delete_instance()
-            role = ctx.guild.get_role(game.role_id)
-            await ctx.author.remove_roles(role)
-            await ctx.send(f'Removed you from game {game.id}.')
-        else:
-            await ctx.send(f'You are not in game {game.id}.')
 
     @commands.command(
         brief='Add a user to a game.', name='add-member', aliases=['a', 'add']
@@ -98,22 +80,8 @@ class Games(commands.Cog):
         Example: `{{pre}}add @Artemis 35`
         """
         if not game.open:
-            await ctx.send(f'Warning: {game.name} is closed.')
-            return
-        player = models.Player.get_player(user.id)
-        if not game.get_member(player):
-            models.GameMember.create(player=player, game=game)
-            role = ctx.guild.get_role(game.role_id)
-            await user.add_roles(role)
-            await ctx.send(f'Added {user.display_name} to game {game.id}.')
-            if game.member_count >= game.limit:
-                game.open = False
-                game.save()
-                await ctx.send(f'{game.name} full. Game closed.')
-        else:
-            await ctx.send(
-                f'{user.display_name} is already in game {game.id}.'
-            )
+            ctx.logger.log(f'Warning: {game.name} is closed.')
+        await game.add_player(ctx, user)
 
     @commands.command(
         brief='Remove a user from a game.', name='remove-member',
@@ -128,18 +96,8 @@ class Games(commands.Cog):
         Example: `{{pre}}remove @Artemis 31`
         """
         if not game.open:
-            await ctx.send(f'Warning: {game.name} is closed.')
-            return
-        player = models.Player.get_player(user.id)
-        if member := game.get_member(player):
-            member.delete_instance()
-            role = ctx.guild.get_role(game.role_id)
-            await user.remove_roles(role)
-            await ctx.send(f'Removed {user.display_name} from game {game.id}.')
-        else:
-            await ctx.send(
-                f'{user.display_name} isn\'t in game {game.id}.'
-            )
+            ctx.logger.log(f'Warning: {game.name} is closed.')
+        await game.remove_player(ctx, user)
 
     @commands.command(
         brief='Re-open a game.', name='open-game',
