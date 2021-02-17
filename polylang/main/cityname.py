@@ -10,7 +10,8 @@ LANGS = {
     'bardur': (
         'gu', 'lak', 'rø', 'bu', 'tof', 'fla', 'ork', 'gru', 'lin', 'ark', 'ur'
         ),
-    'oumaji': ('on', 'dor', 'ye', 'ke', 'ba', 'ji', 'ha', 'la', 'si', 'gh',
+    'oumaji': (
+        'on', 'dor', 'ye', 'ke', 'ba', 'ji', 'ha', 'la', 'si', 'gh',
         'lim', 'mu'
         ),
     'kickoo': (
@@ -51,7 +52,13 @@ LANGS = {
         'tja', 'ge', 'urk', 'ark', 'az', 'gy', 'ug', 'sh', 'kă', 'kol', 'sam',
         'ez'
         ),
-    'polaris': ('pol', "'il", 'iq', 'aa', 'nuu', 'pi', 'do', 'ta', 'an', 'to')
+    'polaris': ('pol', "'il", 'iq', 'aa', 'nuu', 'pi', 'do', 'ta', 'an', 'to'),
+    'cymanti': (
+        'cy', 'ly', 'phy', 'dio', 'bio', 'tic', 'sy', 'ca', 'zi', 'um', 'sis',
+        'ci', 'hex', 'pod', 'ea', 'rhi', 'the', 'exo', 'neo', 'ner', 'seg',
+        'ho', 'lo', 'chy', 'my', 'ce', 'li', 'co', 'ta', 'ia', 'aph', 'ich',
+        'zo', 'di', 'bo'
+    )
 }
 
 
