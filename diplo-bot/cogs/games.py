@@ -23,7 +23,7 @@ class Games(commands.Cog):
         """
         game = models.Game.create(limit=limit)
         role = await ctx.guild.create_role(
-            name=game.name, colour=0xe4b400, mentionable=True
+            name=game.name, colour=discord.Colour(0xe4b400), mentionable=True
         )
         observer_role = ctx.guild.get_role(config.OBSERVER_ROLE_ID)
         category = await ctx.guild.create_category(name=game.name, overwrites={
