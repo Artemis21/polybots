@@ -130,3 +130,24 @@ class Players(commands.Cog):
         player.utc_offset = timezone
         player.save()
         await ctx.send('Updated your timezone :thumbsup:')
+
+    @commands.command(
+        brief='Search a player by ign.', aliases=['lookup', 's']
+    )
+    async def search(self, ctx: commands.Context, *, in_game_name: str):
+        """Search for a player by their in-game name.
+
+        Example: `{{pre}}search artemisdev`
+        """
+        matches = list(models.Player.select().where(
+            models.Player.in_game_name ** f'%{in_game_name}%'
+        ))
+        if not matches:
+            await ctx.send(
+                f'No player found by in-game name `{in_game_name}`.'
+            )
+            return
+        lines = ['**Possible matches:**\n']
+        for match in matches:
+            lines.append(f'<@{match.discord_id}> - `{match.in_game_name}`')
+        await ctx.send('\n'.join(lines))
