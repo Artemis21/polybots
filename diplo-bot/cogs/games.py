@@ -151,12 +151,21 @@ class Games(commands.Cog):
                 )
                 return
         open_status = 'still open' if game.open else 'closed'
+        players = models.GameMember.select().join(models.Player).where(
+            models.GameMember.game == game
+        )
+        player_lines = []
+        for player in players:
+            player_lines.append(
+                f'<@{player.discord_id}> - `{player.in_game_name}`'
+            )
+        players = '\n'.join(player_lines) or '*No-one yet*'
         await ctx.send(embed=discord.Embed(
             title=game.name,
             description=(
                 f'{game.member_count}/{game.limit} players, {open_status}.'
             )
-        ))
+        ).add_field(name='players', value=players))
 
     @commands.command(
         brief='View open games.', name='open-games', aliases=['games', 'gs']
