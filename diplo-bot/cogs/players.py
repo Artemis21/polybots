@@ -56,12 +56,13 @@ class Players(commands.Cog):
             models.GameMember.player == player
         ))
         tz = player.utc_offset or 'Unknown'
-        ign = player.in_game_name or 'Unknown'
+        steam = player.steam_name or 'Unknown'
+        mobile = player.mobile_name or 'Unkown'
         embed = discord.Embed(
             title=user.display_name,
             description=(
-                f'In-game name: {ign}\nTimezone: {tz}\n'
-                f'Tribes: {player.tribes}\nGames: {games}\n'
+                f'Steam name: {steam}\nMobile name: {mobile}\n'
+                f'Timezone: {tz}\nTribes: {player.tribes}\nGames: {games}\n'
                 f'Wins: {player.wins}'
             ),
             colour=0xF58F29
@@ -100,17 +101,32 @@ class Players(commands.Cog):
         await ctx.send('Removed from your tribes :thumbsup:')
 
     @commands.command(
-        brief='Set your name.', name='set-name', aliases=['name', 'ign']
+        brief='Set your mobile name.', name='mobile-name',
+        aliases=['mn']
     )
-    async def set_name(self, ctx: commands.Context, *, name: str):
-        """Set your in-game name.
+    async def mobile_name(self, ctx: commands.Context, *, name: str):
+        """Set your in-game name for mobile.
 
-        Example: `{{pre}}ign artemisdev`
+        Example: `{{pre}}mn artemisdev`
         """
         player = models.Player.get_player(ctx.author.id)
-        player.in_game_name = name
+        player.mobile_name = name
         player.save()
-        await ctx.send('Updated your in-game name :thumbsup:')
+        await ctx.send('Updated your mobile name :thumbsup:')
+
+    @commands.command(
+        brief='Set your steam name.', name='steam-name',
+        aliases=['sn']
+    )
+    async def steam_name(self, ctx: commands.Context, *, name: str):
+        """Set your in-game name for steam.
+
+        Example: `{{pre}}sn artemisdev`
+        """
+        player = models.Player.get_player(ctx.author.id)
+        player.steam_name = name
+        player.save()
+        await ctx.send('Updated your steam name :thumbsup:')
 
     @commands.command(
         brief='Set your timezone.', name='set-timezone',
@@ -135,19 +151,31 @@ class Players(commands.Cog):
         brief='Search a player by ign.', aliases=['lookup', 's']
     )
     async def search(self, ctx: commands.Context, *, in_game_name: str):
-        """Search for a player by their in-game name.
+        """Search for a player by their in-game name (steam or mobile).
 
         Example: `{{pre}}search artemisdev`
         """
+        search = in_game_name.lower()
         matches = list(models.Player.select().where(
-            models.Player.in_game_name ** f'%{in_game_name}%'
+            (models.Player.mobile_name ** f'%{search}%')
+            | (models.Player.steam_name ** f'%{search}%')
         ))
         if not matches:
             await ctx.send(
                 f'No player found by in-game name `{in_game_name}`.'
             )
             return
-        lines = ['**Possible matches:**\n']
+        lines = []
         for match in matches:
-            lines.append(f'<@{match.discord_id}> - `{match.in_game_name}`')
-        await ctx.send('\n'.join(lines))
+            name_matches = []
+            if search in match.mobile_name.lower():
+                name_matches.append(f'**{match.mobile_name}** (mobile)')
+            if search in match.steam_name.lower():
+                name_matches.append(f'**{match.steam_name}** (steam)')
+            names = ' or '.join(name_matches)
+            lines.append(
+                f'<@{match.discord_id}> - {names}')
+        await ctx.send(embed=discord.Embed(
+            title='Possible matches',
+            description='\n'.join(lines))
+        )

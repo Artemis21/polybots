@@ -16,12 +16,25 @@ class Games(commands.Cog):
         brief='Create a game.', name='new-game', aliases=['ng', 'new']
     )
     @checks.admin
-    async def new_game(self, ctx: commands.Context, limit: int = 14):
+    async def new_game(
+            self, ctx: commands.Context, platform: str, limit: int = 14):
         """Create a new game, with an optional player limit (default 14).
 
-        Example: `{{pre}}new-game 8`
+        Examples:
+        `{{pre}}new-game steam 8`
+        `{{pre}}new-game mobile`
         """
-        game = models.Game.create(limit=limit)
+        if 'steam'.startswith(platform.lower()):
+            is_steam = True
+        elif 'mobile'.startswith(platform.lower()):
+            is_steam = False
+        else:
+            await ctx.send(
+                f'`{platform}` is not a recognised platform - use `steam` '
+                'or `mobile`.'
+            )
+            return
+        game = models.Game.create(limit=limit, is_steam=is_steam)
         role = await ctx.guild.create_role(
             name=game.name, colour=0xe4b400, mentionable=True
         )
@@ -48,7 +61,7 @@ class Games(commands.Cog):
 
         Example: `{{pre}}join 30`
         """
-        if game.open:
+        if game.is_open:
             await game.add_player(ctx)
         else:
             await ctx.send(f'{game.name} is already closed, sorry.')
@@ -61,7 +74,7 @@ class Games(commands.Cog):
 
         Example: `{{pre}}leave 45`
         """
-        if game.open:
+        if game.is_open:
             await game.remove_player(ctx)
         else:
             await ctx.send(
@@ -79,7 +92,7 @@ class Games(commands.Cog):
 
         Example: `{{pre}}add @Artemis 35`
         """
-        if not game.open:
+        if not game.is_open:
             ctx.logger.log(f'Warning: {game.name} is closed.')
         await game.add_player(ctx, user)
 
@@ -95,7 +108,7 @@ class Games(commands.Cog):
 
         Example: `{{pre}}remove @Artemis 31`
         """
-        if not game.open:
+        if not game.is_open:
             ctx.logger.log(f'Warning: {game.name} is closed.')
         await game.remove_player(ctx, user)
 
@@ -109,10 +122,10 @@ class Games(commands.Cog):
 
         Example: `{{pre}}reopen 54`
         """
-        if game.open:
+        if game.is_open:
             await ctx.send(f'{game.name} is already open.')
         else:
-            game.open = True
+            game.is_open = True
             game.save()
             await ctx.send(f'Reopened game {game.id}.')
 
@@ -125,8 +138,8 @@ class Games(commands.Cog):
 
         Example: `{{pre}}close 29`
         """
-        if game.open:
-            game.open = False
+        if game.is_open:
+            game.is_open = False
             game.save()
             await ctx.send(f'Closed game {game.id}.')
         else:
@@ -150,20 +163,23 @@ class Games(commands.Cog):
                     'category.'
                 )
                 return
-        open_status = 'still open' if game.open else 'closed'
-        players = models.GameMember.select().join(models.Player).where(
+        open_status = 'still open' if game.is_open else 'closed'
+        platform = 'Steam' if game.is_steam else 'Mobile'
+        players = models.Player.select().join(models.GameMember).where(
             models.GameMember.game == game
         )
         player_lines = []
         for player in players:
+            ign = player.steam_name if game.is_steam else player.mobile_name
             player_lines.append(
-                f'<@{player.discord_id}> - `{player.in_game_name}`'
+                f'<@{player.discord_id}> - `{ign}`'
             )
         players = '\n'.join(player_lines) or '*No-one yet*'
         await ctx.send(embed=discord.Embed(
             title=game.name,
             description=(
-                f'{game.member_count}/{game.limit} players, {open_status}.'
+                f'{game.member_count}/{game.limit} players, {open_status}. '
+                f'{platform} game.'
             )
         ).add_field(name='players', value=players))
 
@@ -177,7 +193,7 @@ class Games(commands.Cog):
         """
         lines = []
         for game in models.Game.select().where(
-                models.Game.open == True):    # noqa:E712
+                models.Game.is_open == True):    # noqa:E712
             lines.append(
                 f'Game `{game.id:>3}`, `{game.member_count:>2}` players.'
             )
