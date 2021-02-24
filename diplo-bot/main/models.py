@@ -32,7 +32,8 @@ class Player(BaseModel):
 
     discord_id = peewee.IntegerField(primary_key=True)
     wins = peewee.IntegerField(default=0)
-    in_game_name = peewee.TextField(null=True)
+    mobile_name = peewee.TextField(null=True)
+    steam_name = peewee.TextField(null=True)
     utc_offset = timezones.TimezoneField(null=True)
     tribes = TribeListField(default=TribeList((
         Tribe.XIN_XI, Tribe.BARDUR, Tribe.OUMAJI, Tribe.IMPERIUS
@@ -71,7 +72,8 @@ class Game(BaseModel):
 
     role_id = peewee.IntegerField(null=True)
     category_id = peewee.IntegerField(null=True)
-    open = peewee.BooleanField(default=True)
+    is_open = peewee.BooleanField(default=True)
+    is_steam = peewee.BooleanField(default=False)
     limit = peewee.IntegerField(default=14)
 
     @classmethod
@@ -119,6 +121,22 @@ class Game(BaseModel):
         """Add a player to the game."""
         user = self.user_info(ctx, user)
         player = Player.get_player(user.user.id)
+        if self.is_steam:
+            if not player.steam_name:
+                ctx.logger.log(
+                    f'Error: {self.name} is a steam game, but you have not '
+                    f'set your steam name. Do `{ctx.prefix}steam-name` to '
+                    'set it.'
+                )
+                return
+        else:
+            if not player.mobile_name:
+                ctx.logger.log(
+                    f'Error {self.name} is a mobile game, but you have not '
+                    f'set your steam name. Do `{ctx.prefix}mobile-name` to '
+                    'set it.'
+                )
+                return
         if self.get_member(player):
             ctx.logger.log(
                 f'Error: {user.name} {user.to_be} already in game {self.id}.'
@@ -129,7 +147,7 @@ class Game(BaseModel):
             await user.user.add_roles(role)
             ctx.logger.log(f'Added {user.name} to game {self.id}.')
             if self.member_count >= self.limit:
-                self.open = False
+                self.is_open = False
                 self.save()
                 ctx.logger.log(f'{self.name} full. Game closed.')
 

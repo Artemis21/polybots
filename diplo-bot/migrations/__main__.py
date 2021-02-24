@@ -12,7 +12,8 @@ migrator = SqliteMigrator(db)
 
 MIGRATIONS = [
     '001_extend_profiles',
-    '002_add_member_limit'
+    '002_add_member_limit',
+    '003_add_steam'
 ]
 
 
