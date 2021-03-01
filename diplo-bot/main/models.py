@@ -133,7 +133,7 @@ class Game(BaseModel):
             if not player.mobile_name:
                 ctx.logger.log(
                     f'Error {self.name} is a mobile game, but you have not '
-                    f'set your steam name. Do `{ctx.prefix}mobile-name` to '
+                    f'set your mobile name. Do `{ctx.prefix}mobile-name` to '
                     'set it.'
                 )
                 return

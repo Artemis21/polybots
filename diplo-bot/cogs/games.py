@@ -180,8 +180,9 @@ class Games(commands.Cog):
             description=(
                 f'{game.member_count}/{game.limit} players, {open_status}. '
                 f'{platform} game.'
-            )
-        ).add_field(name='players', value=players))
+            ),
+            colour=0xF58F29
+        ).add_field(name='Players', value=players))
 
     @commands.command(
         brief='View open games.', name='open-games', aliases=['games', 'gs']
