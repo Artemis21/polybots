@@ -177,5 +177,6 @@ class Players(commands.Cog):
                 f'<@{match.discord_id}> - {names}')
         await ctx.send(embed=discord.Embed(
             title='Possible matches',
-            description='\n'.join(lines))
+            description='\n'.join(lines)),
+            colour=0xF58F29
         )
