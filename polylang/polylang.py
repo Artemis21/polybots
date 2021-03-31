@@ -8,7 +8,7 @@ with open('config/TOKEN') as f:
     key = f.read().strip()
 
 pre = ';'
-token = ''#key
+token = key
 test = False
 
 logging.basicConfig(level=logging.INFO)

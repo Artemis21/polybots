@@ -145,6 +145,8 @@ async def reset_guild(guild: discord.Guild) -> str:
     extra_roles = [685862261150973994, 754208236734906379, 751867341809254402]
     for role_id in extra_roles:
         role = guild.get_role(role_id)
+        if not role:
+            continue
         await mass_un_role(role)
     return (
         f'Reset {cat_count} division categories, {role_count} division '
