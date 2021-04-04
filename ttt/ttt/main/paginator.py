@@ -36,7 +36,7 @@ class Paginator:
 
     def forward(self):
         """Go to the next page."""
-        self.position = min(self.page_count - 1, self.position + 1)
+        self.position = min(self.page_count - 1, self.position)
 
     async def on_reaction_add(
             self, reaction: discord.Reaction, user: discord.User):
