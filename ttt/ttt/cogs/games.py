@@ -156,9 +156,7 @@ class Games(commands.Cog):
         Example:
         `{{pre}}create 5 @a @b @c @d @1 @2 @3 @4 @i @ii @iii @iv`
         """
-        print(users)
         groups = [users[start:start + 4] for start in range(0, len(users), 4)]
-        print(groups)
         if len(groups[-1]) != 4:
             await ctx.send('You must specify a multiple of four users.')
             return

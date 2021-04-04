@@ -80,7 +80,7 @@ class Game(BaseModel):
         """
         game_type = first_type_not_played(players)
         sides = [[player.discord_id] for player in players]
-        name = f'TT2 Friend Request {players[0].in_game_name}'
+        name = f'TTT Friend Request {players[0].in_game_name}'
         tribe = tribe_to_play(players, game_type)
         notes = (
             f'Tiny Tourney 2\n'
