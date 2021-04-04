@@ -32,11 +32,11 @@ class Paginator:
 
     def back(self):
         """Go to the previous page."""
-        self.page_count = max(0, self.position - 1)
+        self.position = max(0, self.position - 1)
 
     def forward(self):
         """Go to the next page."""
-        self.position = min(self.page_count - 1, self.position)
+        self.position = min(self.page_count - 1, self.position + 1)
 
     async def on_reaction_add(
             self, reaction: discord.Reaction, user: discord.User):
