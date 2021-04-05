@@ -103,7 +103,7 @@ async def process_response(
     if response.status == 500:
         raise EloApiError(500, 'Internal server error.')
     data = await response.json()
-    if response.ok:
+    if response.status < 400:
         return data
     else:
         raise EloApiError(response.status, data['detail'])
