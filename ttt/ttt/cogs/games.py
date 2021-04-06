@@ -129,7 +129,9 @@ class Games(commands.Cog):
         for member in game.members:
             discord_user = ctx.bot.get_user(member.player.discord_id)
             if not discord_user:
-                discord_user = await ctx.fetch_user(member.player.discord_id)
+                discord_user = await ctx.bot.fetch_user(
+                    member.player.discord_id
+                )
             await discord_user.send(f'Game {id} has been deleted.')
             member.delete_instance()
         game.delete_instance()
