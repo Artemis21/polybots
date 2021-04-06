@@ -1,10 +1,13 @@
 """Commands relating to players and their profiles."""
-from ttt.main.elo_api import EloApiError
+import csv
+import io
 from typing import Optional
 
+import discord
 from discord.ext import commands
 
 from ..main import checks, matchmaking
+from ..main.elo_api import EloApiError
 from ..main.paginator import CodeBlockPaginator, EmbedDescriptionPaginator
 from ..models import League, Player, TribeList
 
@@ -168,3 +171,27 @@ class Players(commands.Cog):
             ctx, title='', header=f'Players waiting on level {level}',
             lines=lines
         ).setup()
+
+    @commands.command(
+        brief='Export players to CSV.', name='export-players', aliases=['ep'])
+    @checks.manager()
+    async def export_players(self, ctx: commands.Context):
+        """Export a list of all players to CSV.
+
+        Includes: ID, mention, name, team, league and timezone.
+
+        Example: `{{pre}}ep`
+        """
+        file = io.StringIO()
+        writer = csv.writer(file)
+        writer.writerow([
+            'ID', 'Mention', 'Name', 'Team', 'League', 'UTC offset'
+        ])
+        for player in Player.select():
+            writer.writerow([
+                player.discord_id, f'<@{player.discord_id}>',
+                player.display_name, str(player.team), str(player.league),
+                float(player.timezone) if player.timezone else 'Unknown'
+            ])
+        file.seek(0)
+        await ctx.send(file=discord.File(file, filename='ttt_players.csv'))

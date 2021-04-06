@@ -64,6 +64,11 @@ class Timezone:
             tz += f':{self.minutes:>02}'
         return tz
 
+    def __float__(self) -> float:
+        """Get the time as a number representing a UTC offset, in hours."""
+        factor = -1 if self.negative else 1
+        return factor * (self.hours + self.minutes / 60)
+
     @property
     def timedelta(self) -> datetime.timedelta:
         """Get the offset as a timedelta, for easy comparison."""
