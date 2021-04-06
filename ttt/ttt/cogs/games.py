@@ -125,7 +125,7 @@ class Games(commands.Cog):
 
         Example: `{{pre}}unopen 63404`
         """
-        id = game.id
+        id = game.elo_bot_id
         for member in game.members:
             discord_user = ctx.bot.get_user(member.player.discord_id)
             if not discord_user:
