@@ -118,6 +118,18 @@ class Games(commands.Cog):
             game = await Game.create_game(players=users, guild=ctx.guild)
         await ctx.send(f'Created game (`{game.elo_bot_id}`).')
 
+    @commands.command(brief='Un-open a game.', aliases=['u', 'delete', 'd'])
+    @checks.manager()
+    async def unopen(self, ctx: Ctx, game: Game):
+        """Delete an opened game.
+
+        Example: `{{pre}}unopen 63404`
+        """
+        for member in game.members:
+            member.delete_instance()
+        game.delete_instance()
+        await ctx.send(f'Deleted game {game.id}.')
+
     @commands.command(
         brief='Check player compatibility.',
         name='check-players', aliases=['check', 'c']
