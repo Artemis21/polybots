@@ -185,13 +185,16 @@ class Players(commands.Cog):
         file = io.StringIO()
         writer = csv.writer(file)
         writer.writerow([
-            'ID', 'Mention', 'Name', 'Team', 'League', 'UTC offset'
+            'ID', 'Mention', 'Name', 'Team', 'League', 'UTC offset',
+            'Wins', 'Losses', 'Incomplete', 'Total Games'
         ])
-        for player in Player.select():
+        for player in Player.leaderboard():
             writer.writerow([
                 player.discord_id, f'<@{player.discord_id}>',
                 player.display_name, str(player.team), str(player.league),
-                float(player.timezone) if player.timezone else 'Unknown'
+                float(player.timezone) if player.timezone else 'Unknown',
+                player.wins, player.complete - player.wins,
+                player.total - player.complete, player.total
             ])
         file.seek(0)
         await ctx.send(file=discord.File(file, filename='ttt_players.csv'))
