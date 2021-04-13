@@ -57,6 +57,8 @@ class Player(BaseModel):
             Player,
             fn.COUNT(games.GamePlayer.id).filter(
                 games.GamePlayer.won).alias('wins'),
+            fn.COUNT(games.GamePlayer.id).filter(
+                games.GamePlayer.lost).alias('losses'),
             fn.COUNT(games.GamePlayer.id).alias('total'),
             fn.COUNT(games.GamePlayer.id).filter(
                 games.GamePlayer.won.is_null(False)).alias('complete')
@@ -123,7 +125,7 @@ class Player(BaseModel):
         )
         wins = sum(1 for member in members if member.won)
         completed = sum(1 for member in members if (member.won is not None))
-        losses = completed - wins
+        losses = sum(1 for member in members if member.lost)
         incomplete = len(members) - completed
         if self.team:
             team = f'{self.team} ({self.league})'

@@ -193,7 +193,7 @@ class Players(commands.Cog):
                 player.discord_id, f'<@{player.discord_id}>',
                 player.display_name, str(player.team), str(player.league),
                 float(player.timezone) if player.timezone else 'Unknown',
-                player.wins, player.complete - player.wins,
+                player.wins, player.losses,
                 player.total - player.complete, player.total
             ])
         file.seek(0)
