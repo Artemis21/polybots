@@ -1,11 +1,13 @@
 """Commands for viewing and managing games."""
+import csv
+import io
 from datetime import datetime
 
 import discord
 from discord.ext import commands, tasks
 
 from ..main import checks, config, many, matchmaking
-from ..models import Game, GameType, Player
+from ..models import Game, GamePlayer, GameType, Player
 
 
 Ctx = commands.Context
@@ -183,3 +185,55 @@ class Games(commands.Cog):
             for group in groups:
                 await Game.create_game(players=group, guild=ctx.guild)
         await ctx.send(f'Created {len(groups)} games.')
+
+    @commands.command(
+        brief='Export games to CSV.', name='export-games', aliases=['eg'])
+    @checks.manager()
+    async def export_games(self, ctx: commands.Context):
+        """Export a list of all games to CSV.
+
+        Includes: Game ID, Map type, Tribe, Alternative tribe, Game name,
+        End date.
+
+        Example: `{{pre}}eg`
+        """
+        file = io.StringIO()
+        writer = csv.writer(file)
+        writer.writerow([
+            'Game ID', 'Map type', 'Tribe', 'Alternative tribe', 'Game name',
+            'End date'
+        ])
+        for game in Game.select():
+            writer.writerow([
+                game.elo_bot_id, game.game_type.map_type,
+                str(game.game_type.tribe),
+                str(game.game_type.alternative_tribe), game.game_name,
+                game.won_at.isoformat() if game.won_at else '-'
+            ])
+        file.seek(0)
+        await ctx.send(file=discord.File(file, filename='ttt_games.csv'))
+
+    @commands.command(
+        brief='Export game sides to CSV.', name='export-sides', aliases=['es'])
+    @checks.manager()
+    async def export_sides(self, ctx: commands.Context):
+        """Export a list of all game sides to CSV.
+
+        Includes: Game ID, User ID, win/loss, position.
+
+        Example: `{{pre}}es`
+        """
+        file = io.StringIO()
+        writer = csv.writer(file)
+        writer.writerow([
+            'Game ID', 'Player Discord ID', 'State', 'Position'
+        ])
+        for side in GamePlayer.select():
+            state = (
+                'won' if side.won else ('lost' if side.lost else 'incomplete')
+            )
+            writer.writerow([
+                side.game_id, side.player_id, state, side.position
+            ])
+        file.seek(0)
+        await ctx.send(file=discord.File(file, filename='ttt_sides.csv'))
