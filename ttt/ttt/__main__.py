@@ -1,9 +1,8 @@
 """The main bot."""
 import logging
 
-from discord.ext import commands
-
-from .main import config, helpcmd
+from .bot import bot
+from .main import config
 
 
 LOGS = (
@@ -19,10 +18,5 @@ for log, level in LOGS:
     logger.addHandler(handler)
     logger.setLevel(level)
 
-
-bot = commands.Bot(
-    command_prefix=config.BOT_PREFIX, help_command=helpcmd.Help()
-)
-bot.load_extension('ttt.cogs')
 
 bot.run(config.BOT_TOKEN)
