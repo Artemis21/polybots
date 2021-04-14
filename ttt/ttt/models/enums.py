@@ -49,7 +49,7 @@ class EnumField(peewee.SmallIntegerField):
     """A field where each value is an integer representing an option."""
 
     def __init__(
-            self, options: Type[enum.Enum], **kwargs: dict[str, Any]):
+            self, options: Type[enum.Enum], **kwargs: Any):
         """Create a new enum field."""
         self.options = options
         super().__init__(**kwargs)

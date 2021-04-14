@@ -9,6 +9,7 @@ Configuration goes in `config.json`. It is a JSON file containing a single JSON 
 | `bot_prefix`            | `t!`           | The command prefix for the bot.       |
 | `bot_token`             | Required       | The auth token for the Discord bot.   |
 | `bot_admin_role_id`     | Required       | The ID of the tourney manager role.   |
+| `bot_log_channel_id`    | `null`         | The ID of the channel to send logs to.|
 | `bot_guild_id`          | Required       | The ID of the Discord server to use.  |
 | `bot_log_level`         | `INFO`         | The logging level for Discord.py.     |
 | `elo_base_url`          | Below <sup>*1</sup> | The address of the ELO bot API.  |
@@ -26,6 +27,7 @@ Configuration goes in `config.json`. It is a JSON file containing a single JSON 
 | `col_error`             | `#e94b3c`      | The error colour for the bot.         |
 | `col_help`              | `#50c878`      | The help colour for the bot.          |
 | `tt_game_types`         | See Appendix A | A list of game types.                 |
+| `tt_log_level`          | `INFO`         | Logging level for log channel.        |
 
 <sup>*1</sup> `https://elo-bot.polytopia.win`
 
