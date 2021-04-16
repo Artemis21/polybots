@@ -132,6 +132,19 @@ class Players(commands.Cog):
         await player.reload_elo_data()
         await ctx.send('Reloaded!')
 
+    @commands.command(brief='Quit the tournament.')
+    @checks.caution()
+    @checks.registered()
+    async def quit(self, ctx: Ctx):
+        """Quit the tournament.
+
+        This cannot be undone. Please use it with caution.
+
+        Example: `{{pre}}quit`
+        """
+        ctx.ttt_player.delete_instance()
+        await ctx.send('Unregistered you. Goodbye.')
+
     @commands.command(brief='List players waiting on a level.', aliases=['w'])
     @checks.manager()
     async def waiting(self, ctx: Ctx, level: int):
