@@ -20,4 +20,4 @@ async def on_command_error(ctx: Context, error: Exception):
     if hasattr(error, 'original'):
         err = error.original
         traceback.print_tb(err.__traceback__)
-        print(f'{type(err).__name__}: {err}.')
+        print(f'{type(err).__name__}: {err}')

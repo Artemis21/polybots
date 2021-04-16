@@ -18,8 +18,8 @@ class BaseEnum(enum.Enum):
         """Search for an option by name."""
         argument = re.sub('[^A-Z]', '', query.upper())
         matches = []
-        for option in cls:
-            if option.name.replace('_', '').startswith(argument):
+        for name, option in cls.__members__.items():
+            if name.replace('_', '').startswith(argument):
                 matches.append(option)
         return matches
 
@@ -83,14 +83,26 @@ class Team(BaseEnum):
     """A Polychampions team."""
 
     BOMBERS = 1
+    DYNAMITE = 1
     VIKINGS = 2
+    VALKYRIES = 2
     CRAWFISH = 3
+    SHRIMPS = 3
     DRAGONS = 4
+    NARWHALS = 4
     REAPERS = 5
+    JALAPENOS = 5
     JETS = 6
+    CROPDUSTERS = 6
     LIGHTNING = 7
+    PULSE = 7
     MALLARDS = 8
+    DRAKES = 8
     PLAGUE = 9
+    RATS = 9
     RONIN = 10
+    BANDITS = 10
     SPARKIES = 11
+    PUPS = 11
     WILDFIRE = 12
+    FLAMES = 12

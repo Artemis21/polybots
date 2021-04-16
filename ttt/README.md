@@ -17,6 +17,7 @@ Configuration goes in `config.json`. It is a JSON file containing a single JSON 
 | `elo_password`          | Required       | The password for the ELO bot API.     |
 | `elo_recheck_time`      | `13h`          | Time to wait before rechecking games. |
 | `elo_recheck_frequency` | `30m`          | Frequency to recheck pending games.   |
+| `elo_guild_id`          | Required       | The ID of the server teams are for.   |
 | `db_name`               | `ttt`          | The name of the PostgreSQL database.  |
 | `db_user`               | `ttt`          | The user to use for the database.     |
 | `db_host`               | `127.0.0.1`    | The host address of the database.     |

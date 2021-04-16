@@ -73,6 +73,7 @@ ELO_RECHECK_TIME = get_timedelta('elo_recheck_time', timedelta(hours=13))
 ELO_RECHECK_FREQUENCY = get_timedelta(
     'elo_recheck_frequency', timedelta(minutes=30)
 )
+ELO_GUILD_ID = config['elo_guild_id']
 
 DB_NAME = config.get('db_name', 'ttt')
 DB_USER = config.get('db_user', 'ttt')

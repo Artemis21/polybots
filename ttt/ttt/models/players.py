@@ -77,26 +77,25 @@ class Player(BaseModel):
         self.in_game_name = user_data.mobile_name
         if user_data.utc_offset is not None:
             self.timezone = Timezone.from_hours(user_data.utc_offset)
+        if team_data := user_data.teams.get(config.ELO_GUILD_ID):
+            if team_data.hidden:
+                self.league = League.NOVA
+                self.team = None
+            else:
+                if team_data.pro:
+                    self.league = League.PRO
+                else:
+                    self.league = League.JUNIOR
+                self.team = Team.search(team_data.name.lower().strip('the '))[0]
+        else:
+            self.league = None
+            self.team = None
         self.save()
 
     def reload_from_discord_member(self, member: discord.Member):
         """Reload data from a pre-fetched Discord member."""
         self.display_name = member.display_name
         self.avatar_url = str(member.avatar_url)
-        teams = {team.name.lower(): team for team in Team}
-        leagues = {
-            'pro player': League.PRO,
-            'junior player': League.JUNIOR,
-            'the novas': League.NOVA
-        }
-        self.team = None
-        self.league = None
-        for role in member.roles:
-            name = role.name.lower()
-            if name in teams:
-                self.team = teams[name]
-            elif name in leagues:
-                self.league = leagues[name]
         self.save()
 
     async def reload_discord_data(self, client: discord.Client):
