@@ -212,8 +212,8 @@ class Game(BaseModel):
 class GamePlayer(BaseModel):
     """Many-to-many field between games and players."""
 
-    game = peewee.ForeignKeyField(Game, backref='members')
-    player = peewee.ForeignKeyField(Player)
+    game = peewee.ForeignKeyField(Game, backref='members', on_delete='CASCADE')
+    player = peewee.ForeignKeyField(Player, on_delete='CASCADE')
     position = peewee.SmallIntegerField()
     won = peewee.BooleanField(null=True)
     lost = peewee.BooleanField(default=False)
