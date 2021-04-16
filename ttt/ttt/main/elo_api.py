@@ -48,6 +48,16 @@ class EloGame:
 
 @dataclasses_json.dataclass_json
 @dataclasses.dataclass(frozen=True)
+class EloUserTeam:
+    """A team of a user object returned from the API."""
+
+    name: str
+    pro: bool
+    hidden: bool
+
+
+@dataclasses_json.dataclass_json
+@dataclasses.dataclass(frozen=True)
 class EloUser:
     """A user object returned from the API."""
 
@@ -59,6 +69,7 @@ class EloUser:
     moonrise_elo: int
     is_banned: bool
     utc_offset: Optional[int]
+    teams: dict[int, EloUserTeam]
     games: Optional[dict[int, list[int]]] = dataclasses.field(
         default_factory=dict
     )
