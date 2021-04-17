@@ -33,8 +33,6 @@ class Tags(commands.Cog):
 
         Example: `{{pre}}tag tag name`
         """
-        a = Tag.names == 'foo'
-        b = Tag.uses == 1
         tag.uses += 1
         tag.save()
         await ctx.message.delete()
@@ -54,6 +52,18 @@ class Tags(commands.Cog):
             tag.names = [*tag.names, new_name]
             tag.save()
             await ctx.send(f'Added "{new_name}" as an alias of "{tag}".')
+
+    @commands.command(brief='Edit a tag.', name='edit-tag')
+    @checks.manager()
+    async def edit_tag(
+            self, ctx: commands.Context, tag: Tag, *, content: str):
+        """Edit an existing tag.
+
+        Example: `{{pre}}edit-tag example New tag content.`
+        """
+        tag.content = content
+        tag.save()
+        await ctx.send('Edited tag.')
 
     @commands.command(
         brief='Delete a tag.', name='delete-tag', aliases=['del-tag'])
