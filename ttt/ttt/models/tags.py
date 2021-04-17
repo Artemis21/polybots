@@ -57,4 +57,14 @@ class Tag(BaseModel):
         return self.names[0]
 
 
-db.create_tables([Tag])
+class TagQuery(BaseModel):
+    """A question that was asked prior to a tag being used.
+
+    Tracked for the possibility of automatic tags (!?!?).
+    """
+
+    tag = peewee.ForeignKeyField(Tag, on_delete='CASCADE')
+    message = peewee.CharField(max_length=2000)
+
+
+db.create_tables([Tag, TagQuery])

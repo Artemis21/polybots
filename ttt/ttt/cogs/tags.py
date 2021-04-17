@@ -4,7 +4,7 @@ from discord.ext import commands
 
 from ..main import checks, config
 from ..main.paginator import EmbedDescriptionPaginator
-from ..models.tags import Tag
+from ..models.tags import Tag, TagQuery
 
 
 class Tags(commands.Cog):
@@ -35,6 +35,9 @@ class Tags(commands.Cog):
         """
         tag.uses += 1
         tag.save()
+        async for message in ctx.channel.history(before=ctx.message, limit=1):
+            # Should only execute once.
+            TagQuery.create(tag=tag, message=message.content)
         await ctx.message.delete()
         await ctx.send(tag.content)
 
