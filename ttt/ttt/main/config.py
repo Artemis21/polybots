@@ -62,6 +62,7 @@ def get_timedelta(field: str, default: timedelta) -> timedelta:
 BOT_PREFIX = config.get('bot_prefix', 't!')
 BOT_TOKEN = config['bot_token']
 BOT_ADMIN_ROLE_ID = config['bot_admin_role_id']
+BOT_PLAYER_ROLE_ID = config['bot_player_role_id']
 BOT_LOG_CHANNEL_ID = config.get('bot_log_channel_id', None)
 BOT_GUILD_ID = config['bot_guild_id']
 BOT_LOG_LEVEL = get_log_level('bot_log_level', logging.INFO)

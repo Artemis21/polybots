@@ -7,6 +7,7 @@ import discord
 from discord.ext import commands
 
 from ..main import checks, matchmaking
+from ..main.config import BOT_PLAYER_ROLE_ID
 from ..main.elo_api import EloApiError
 from ..main.paginator import CodeBlockPaginator, EmbedDescriptionPaginator
 from ..models import League, Player, TribeList
@@ -63,6 +64,8 @@ class Players(commands.Cog):
                     '`$setname <mobile name>` to register, then '
                     f'`{ctx.prefix}update-profile` to update your profile.'
                 )
+            role = ctx.guild.get_role(BOT_PLAYER_ROLE_ID)
+            await ctx.author.add_roles(role)
             await ctx.send('Registered you!', embed=player.embed())
 
     @commands.command(brief='View the leaderboard.', aliases=['lb'])
@@ -143,6 +146,8 @@ class Players(commands.Cog):
         Example: `{{pre}}quit`
         """
         ctx.ttt_player.delete_instance()
+        role = ctx.guild.get_role(BOT_PLAYER_ROLE_ID)
+        await ctx.author.remove_roles(role)
         await ctx.send('Unregistered you. Goodbye.')
 
     @commands.command(brief='List players waiting on a level.', aliases=['w'])

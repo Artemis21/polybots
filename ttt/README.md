@@ -8,16 +8,17 @@ Configuration goes in `config.json`. It is a JSON file containing a single JSON 
 |:-----------------------:|:--------------:|:--------------------------------------|
 | `bot_prefix`            | `t!`           | The command prefix for the bot.       |
 | `bot_token`             | Required       | The auth token for the Discord bot.   |
-| `bot_admin_role_id`     | Required       | The ID of the tourney manager role.   |
-| `bot_log_channel_id`    | `null`         | The ID of the channel to send logs to.|
-| `bot_guild_id`          | Required       | The ID of the Discord server to use.  |
+| `bot_admin_role_id`     | Required       | The tourney manager role.             |
+| `bot_player_role_id`    | Required       | The role to assign on register.       |
+| `bot_log_channel_id`    | `null`         | The channel to send logs to.          |
+| `bot_guild_id`          | Required       | The Discord server to use.            |
 | `bot_log_level`         | `INFO`         | The logging level for Discord.py.     |
 | `elo_base_url`          | Below <sup>*1</sup> | The address of the ELO bot API.  |
 | `elo_username`          | Required       | The username for the ELO bot API.     |
 | `elo_password`          | Required       | The password for the ELO bot API.     |
 | `elo_recheck_time`      | `13h`          | Time to wait before rechecking games. |
 | `elo_recheck_frequency` | `30m`          | Frequency to recheck pending games.   |
-| `elo_guild_id`          | Required       | The ID of the server teams are for.   |
+| `elo_guild_id`          | Required       | The league server teams are for.      |
 | `db_name`               | `ttt`          | The name of the PostgreSQL database.  |
 | `db_user`               | `ttt`          | The user to use for the database.     |
 | `db_host`               | `127.0.0.1`    | The host address of the database.     |
