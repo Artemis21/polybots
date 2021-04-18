@@ -168,9 +168,9 @@ class Players(commands.Cog):
         lines = []
         for match in matches:
             name_matches = []
-            if search in match.mobile_name.lower():
+            if match.mobile_name and search in match.mobile_name.lower():
                 name_matches.append(f'**{match.mobile_name}** (mobile)')
-            if search in match.steam_name.lower():
+            if match.steam_name and search in match.steam_name.lower():
                 name_matches.append(f'**{match.steam_name}** (steam)')
             names = ' or '.join(name_matches)
             lines.append(
