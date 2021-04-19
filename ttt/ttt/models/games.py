@@ -129,6 +129,9 @@ class Game(BaseModel):
     def check_winner(self, game_data: elo_api.EloGame):
         """Check the winner of the game is up to date with the ELO bot."""
         if not game_data.winner:
+            GamePlayer.update(won=False).where(
+                GamePlayer.game == self
+            ).execute()
             return
         winner_id = None
         for side in game_data.sides:
