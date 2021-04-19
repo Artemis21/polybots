@@ -32,11 +32,11 @@ def first_type_not_played(players: list[Player]) -> Optional[GameType]:
     games = Game.select().join(GamePlayer).where(
         GamePlayer.player_id.in_(player_ids)
     )
-    game_type_id = -1
-    for game in games:
-        if game.game_type.id > game_type_id:
-            game_type_id = game.game_type.id
-    return GameType.from_id(game_type_id + 1)
+    game_types_played = [game.game_type.id for game in games]
+    type_id = 0
+    while type_id in game_types_played:
+        type_id += 1
+    return GameType.from_id(type_id)
 
 
 class Game(BaseModel):
