@@ -1,4 +1,5 @@
 """Commands for viewing and managing games."""
+import asyncio
 import csv
 import io
 from datetime import datetime
@@ -48,6 +49,8 @@ class Games(commands.Cog):
         game = Game.get_or_none(Game.elo_bot_id == game_id)
         if not game:
             return
+        # Wait 5 seconds because ELO bot can be slow.
+        await asyncio.sleep(5)
         await game.reload_from_elo_api()
         game.recheck_at = datetime.now() + config.ELO_RECHECK_TIME
         game.save()
