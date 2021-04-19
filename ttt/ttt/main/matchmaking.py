@@ -3,9 +3,14 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from peewee import JOIN, fn
+from peewee import JOIN, Expression, fn
 
 from ..models import Game, GamePlayer, Player
+
+
+def array_agg(expr: Expression) -> Expression:
+    """Do array aggregation and instruct Peewee not to coerce."""
+    return fn.ARRAY_AGG(expr, coerce=False)
 
 
 @dataclass
@@ -58,7 +63,7 @@ def _positions_played(players: list[Player]) -> list[list[int]]:
     """Get a list of positions played for each player."""
     player_ids = [player.discord_id for player in players]
     records = GamePlayer.select(
-        fn.ARRAY_AGG(GamePlayer.position).alias('positions')
+        array_agg(GamePlayer.position).alias('positions')
     ).group_by(GamePlayer.player_id).where(
         GamePlayer.player_id.in_(player_ids)
     )
@@ -147,11 +152,11 @@ def players_waiting_on_level(level: int) -> list[Player]:
         GamePlayer.won.is_null(True)).alias('in_progress')
     records = Player.select(
         Player,
-        fn.ARRAY_AGG(GamePlayer.game_id).order_by(
+        array_agg(GamePlayer.game_id).order_by(
             GamePlayer.ended_at).alias('game_ids'),
-        fn.ARRAY_AGG(GamePlayer.won).order_by(
+        array_agg(GamePlayer.won).order_by(
             GamePlayer.ended_at).alias('game_wins'),
-        fn.ARRAY_AGG(GamePlayer.position).order_by(
+        array_agg(GamePlayer.position).order_by(
             GamePlayer.ended_at).alias('game_positions'),
         total, complete, in_progress, wins, losses
     ).join(GamePlayer).group_by(Player).order_by(
