@@ -39,7 +39,7 @@ class Games(commands.Cog):
         if not message.content.startswith('$'):
             return
         command, *args = message.content[1:].split()
-        if command not in ('win', 'rename', 'confirm'):
+        if command not in ('win', 'unwin', 'rename', 'confirm'):
             return
         try:
             game_id = int(args[0])

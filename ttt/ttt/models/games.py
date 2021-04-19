@@ -128,8 +128,6 @@ class Game(BaseModel):
 
     def check_winner(self, game_data: elo_api.EloGame):
         """Check the winner of the game is up to date with the ELO bot."""
-        if self.won_at:
-            return
         if not game_data.winner:
             return
         winner_id = None
@@ -143,11 +141,15 @@ class Game(BaseModel):
         winner = GamePlayer.get_or_none(
             GamePlayer.player_id == winner_id, GamePlayer.game == self
         )
+        if winner.won:
+            # Win has already been processed.
+            return
         winner.lost = False
         winner.won = True
         winner.ended_at = game_data.win_claimed_at
         winner.save()
         GamePlayer.update(
+            won=False,
             lost=True,
             ended_at=fn.COALESCE(
                 GamePlayer.ended_at, game_data.win_claimed_at)
