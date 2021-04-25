@@ -145,11 +145,11 @@ def players_waiting_on_level(level: int) -> list[Player]:
     """Get all players that are waiting for games on a level."""
     total = fn.COUNT(GamePlayer.id).alias('total')
     complete = fn.COUNT(GamePlayer.id).filter(
-        GamePlayer.won.is_null(False)).alias('complete')
+        GamePlayer.won | GamePlayer.lost).alias('complete')
     wins = fn.COUNT(GamePlayer.id).filter(GamePlayer.won).alias('wins')
     losses = fn.COUNT(GamePlayer.id).filter(GamePlayer.lost).alias('losses')
     in_progress = fn.COUNT(GamePlayer.id).filter(
-        GamePlayer.won.is_null(True)).alias('in_progress')
+        (~GamePlayer.won) & (~GamePlayer.lost)).alias('in_progress')
     records = Player.select(
         Player,
         array_agg(GamePlayer.game_id).order_by(

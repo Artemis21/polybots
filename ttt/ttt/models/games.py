@@ -220,7 +220,7 @@ class GamePlayer(BaseModel):
     game = peewee.ForeignKeyField(Game, backref='members', on_delete='CASCADE')
     player = peewee.ForeignKeyField(Player, on_delete='CASCADE')
     position = peewee.SmallIntegerField()
-    won = peewee.BooleanField(null=True)
+    won = peewee.BooleanField(default=False)
     lost = peewee.BooleanField(default=False)
     ended_at = peewee.DateTimeField(null=True)
 
