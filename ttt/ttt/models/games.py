@@ -178,7 +178,7 @@ class Game(BaseModel):
         """Get the players in the game."""
         return Player.select().join(GamePlayer).where(
             GamePlayer.game == self
-        ).sort(GamePlayer.position)
+        ).order_by(GamePlayer.position)
 
     @property
     def tribe(self) -> Tribe:
@@ -196,7 +196,7 @@ class Game(BaseModel):
         roster = []
         members = GamePlayer.select().where(
             GamePlayer.game == self
-        ).sort(GamePlayer.position).join(Player)
+        ).order_by(GamePlayer.position).join(Player)
         for member in members:
             name = f'**{member.player.display_name}**'
             if member.lost:
