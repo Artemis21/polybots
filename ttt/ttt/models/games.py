@@ -176,7 +176,9 @@ class Game(BaseModel):
     @property
     def players(self) -> Iterable[Player]:
         """Get the players in the game."""
-        return Player.select().join(GamePlayer).where(GamePlayer.game == self)
+        return Player.select().join(GamePlayer).where(
+            GamePlayer.game == self
+        ).sort(GamePlayer.position)
 
     @property
     def tribe(self) -> Tribe:
@@ -193,7 +195,8 @@ class Game(BaseModel):
         """Get a summary of the game as a Discord embed."""
         roster = []
         members = GamePlayer.select().where(
-            GamePlayer.game == self).join(Player)
+            GamePlayer.game == self
+        ).sort(GamePlayer.position).join(Player)
         for member in members:
             name = f'**{member.player.display_name}**'
             if member.lost:
