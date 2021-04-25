@@ -61,14 +61,14 @@ class Player(BaseModel):
                 games.GamePlayer.lost).alias('losses'),
             fn.COUNT(games.GamePlayer.id).alias('total'),
             fn.COUNT(games.GamePlayer.id).filter(
-                games.GamePlayer.won.is_null(False)).alias('complete')
+                games.GamePlayer.won | games.GamePlayer.lost
+            ).alias('complete')
         ).join(games.GamePlayer, JOIN.LEFT_OUTER).order_by(
             -fn.COUNT(games.GamePlayer.id),
             -fn.COUNT(games.GamePlayer.id).filter(
-                games.GamePlayer.won.is_null(False)),
-            fn.COUNT(games.GamePlayer.id)
-            - fn.COUNT(games.GamePlayer.id).filter(
-                games.GamePlayer.won.is_null(False))
+                games.GamePlayer.won | games.GamePlayer.lost),
+            fn.COUNT(games.GamePlayer.id).filter(
+                (~games.GamePlayer.won) & (~games.GamePlayer.lost))
         ).group_by(Player)
 
     async def reload_elo_data(self):
@@ -123,8 +123,8 @@ class Player(BaseModel):
             ).join(games.Game)
         )
         wins = sum(1 for member in members if member.won)
-        completed = sum(1 for member in members if (member.won is not None))
         losses = sum(1 for member in members if member.lost)
+        completed = wins + losses
         incomplete = len(members) - completed
         if self.team:
             team = f'{self.team} ({self.league})'
