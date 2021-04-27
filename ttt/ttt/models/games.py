@@ -133,14 +133,14 @@ class Game(BaseModel):
                 GamePlayer.game == self
             ).execute()
             return
+        if not game_data.is_confirmed:
+            return
         winner_id = None
         for side in game_data.sides:
-            if side.win_confirmed:
+            if side.id == game_data.winner:
                 # Sides should only have one member.
                 winner_id = side.members[0]
-        if not winner_id:
-            # Win not confirmed yet.
-            return
+                break
         winner = GamePlayer.get_or_none(
             GamePlayer.player_id == winner_id, GamePlayer.game == self
         )
