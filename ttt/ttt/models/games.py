@@ -123,8 +123,11 @@ class Game(BaseModel):
                 guild.get_member(player.discord_id)
                 or await guild.fetch_member(player.discord_id)
             )
-            dm = await user.create_dm()
-            await dm.send(message, embed=embed)
+            try:
+                dm = await user.create_dm()
+                await dm.send(message, embed=embed)
+            except discord.HTTPException:
+                continue
 
     def check_winner(self, game_data: elo_api.EloGame):
         """Check the winner of the game is up to date with the ELO bot."""
