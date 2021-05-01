@@ -161,7 +161,7 @@ def players_waiting_on_level(level: int) -> list[Player]:
         array_agg(GamePlayer.position).order_by(
             GamePlayer.ended_at).alias('game_positions'),
         total, complete, in_progress, wins, losses
-    ).join(GamePlayer).group_by(Player).order_by(
+    ).join(GamePlayer, JOIN.LEFT_OUTER).group_by(Player).order_by(
         -total, -in_progress
     )
     waiting = []
