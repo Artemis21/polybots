@@ -94,7 +94,9 @@ class Player(BaseModel):
                     self.league = League.PRO
                 else:
                     self.league = League.JUNIOR
-                self.team = Team.search(team_data.name.lower().strip('the '))[0]
+                self.team = Team.search(
+                    team_data.name.lower().strip('the ')
+                )[0]
         else:
             self.league = None
             self.team = None

@@ -155,12 +155,12 @@ class Players(commands.Cog):
     async def waiting(self, ctx: Ctx, level: int):
         """List players waiting for games on a level.
 
-        `level` should be 0, 1, 2 or 3.
+        `level` should be -1, 0, 1, 2 or 3.
 
         Example: `{{pre}}waiting 2`
         """
-        if level < 0 or level > 3:
-            await ctx.send('Can only check for level 0, 1, 2 or 3.')
+        if level < -1 or level > 3:
+            await ctx.send('Can only check for level -1, 0, 1, 2 or 3.')
             return
         players = matchmaking.players_waiting_on_level(level)
         lines = []
