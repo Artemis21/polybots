@@ -77,7 +77,7 @@ class Players(commands.Cog):
         lines = []
         for n, player in enumerate(Player.leaderboard()):
             lines.append(
-                f'`{n + 1:>2} {player.wins:>2} {player.lossess:>2} '
+                f'`{n + 1:>2} {player.wins:>2} {player.losses:>2} '
                 f'{player.total - player.complete:>2}` '
                 f'{player.display_name}'
             )
