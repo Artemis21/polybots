@@ -18,7 +18,7 @@ class Log(BaseModel):
     created_at = peewee.DateTimeField(default=datetime.now)
 
     @classmethod
-    async def get_logs(
+    def get_logs(
             cls, start: Optional[datetime] = None,
             level: int = logging.INFO,
             max_logs: Optional[int] = 1000) -> list[Log]:
