@@ -90,6 +90,29 @@ class Games(commands.Cog):
             await ctx.send(f'You are not in game {game.elo_bot_id}.')
 
     @commands.command(
+        brief='Unmark a loss.', name='undo-loss', aliases=['unloss', 'ul']
+    )
+    @checks.manager()
+    async def undo_loss(self, ctx: Ctx, game: Game, *, player: Player):
+        """Undo a marked loss.
+
+        Example: `{{pre}}unloss 82419 Artemis`
+        """
+        member = game.get_member(player)
+        if member:
+            member.lost = False
+            member.save()
+            await ctx.send(
+                f'Set **{player.display_name}** as not having lost game '
+                f'**{game.elo_bot_id}**.'
+            )
+        else:
+            await ctx.send(
+                f'**{player.display_name}** is not in game '
+                f'**{game.elo_bot_id}**.'
+            )
+
+    @commands.command(
         brief='View a game type.', name='game-type', aliases=['gt', 'type']
     )
     async def game_type(self, ctx: Ctx, game_type_id: int):
