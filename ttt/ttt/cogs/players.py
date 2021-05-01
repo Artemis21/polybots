@@ -190,6 +190,30 @@ class Players(commands.Cog):
             lines=lines
         ).setup()
 
+    @commands.command(brief='Ping anyone without a timezone.', name='check-tz')
+    @checks.manager()
+    async def check_timezones(self, ctx: commands.Context):
+        """Ping every player who has not set their timezone.
+
+        Example: `{{pre}}check-tz`
+        """
+        players = list(
+            Player.select().where(Player.timezone.is_null(True))
+        )
+        if not players:
+            await ctx.send('All players set their timezone!')
+            return
+        mentions = [
+            ' '.join(f'<@{player.discord_id}>' for player in chunk)
+            for chunk in (
+                players[start:start + 90]
+                for start in range(0, len(players), 90)
+            )
+        ]
+        await ctx.send('The following players have not set their timezone:')
+        for chunk in mentions:
+            await ctx.send(chunk)
+
     @commands.command(
         brief='Export players to CSV.', name='export-players', aliases=['ep'])
     @checks.manager()
