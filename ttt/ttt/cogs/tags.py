@@ -35,9 +35,11 @@ class Tags(commands.Cog):
         """
         tag.uses += 1
         tag.save()
-        async for message in ctx.channel.history(before=ctx.message, limit=1):
-            # Should only execute once.
+        async for message in ctx.channel.history(before=ctx.message, limit=5):
+            if message.author.bot or message.author == ctx.author:
+                continue
             TagQuery.create(tag=tag, message=message.content)
+            break
         await ctx.message.delete()
         await ctx.send(tag.content)
 
