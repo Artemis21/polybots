@@ -24,7 +24,7 @@ async def log(message: str, level: int = logging.INFO):
 
 
 def get_logs(
-        start: Optional[datetime] = None,
+        start: Optional[datetime.datetime] = None,
         level: int = logging.INFO,
         max_logs: Optional[int] = 1000) -> discord.File:
     """Get a Discord attachment for a list of logs."""
