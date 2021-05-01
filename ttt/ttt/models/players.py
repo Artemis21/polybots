@@ -39,6 +39,14 @@ class Player(BaseModel):
     async def convert(
             cls, ctx: commands.Context, raw_argument: str) -> Player:
         """Convert a Discord.py argument to a player, via a member."""
+        # Search in DB first.
+        sql_search = f'%{raw_argument}%'
+        matches = list(cls.select().where(
+            (cls.display_name ** sql_search)
+            | (cls.in_game_name ** sql_search)
+        ))
+        if len(matches) == 1:
+            return matches[0]
         # Allow errors to be raised by member converter.
         member = await MemberConverter().convert(ctx, raw_argument)
         player = cls.get_or_none(cls.discord_id == member.id)
