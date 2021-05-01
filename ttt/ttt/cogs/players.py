@@ -171,7 +171,7 @@ class Players(commands.Cog):
                 team = 'NOVA'
             else:
                 league = 'JR' if player.league == League.JUNIOR else 'PRO'
-                team = str(player.team)[:4].upper() + league
+                team = str(player.team)[:4].upper() + ' ' + league
             game_summary = (
                 f'{player.total} games ({player.wins} W / {player.losses} '
                 f'L / {player.in_progress} IP)'
