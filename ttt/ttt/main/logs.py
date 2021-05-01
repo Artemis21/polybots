@@ -1,5 +1,10 @@
 """Tools for creating and viewing logs."""
+import datetime
+import io
 import logging
+from typing import Optional
+
+import discord
 
 from .config import BOT_LOG_CHANNEL_ID, TT_LOG_LEVEL
 from .. import bot
@@ -16,3 +21,18 @@ async def log(message: str, level: int = logging.INFO):
         return
     level_name = logging.getLevelName(level)
     await channel.send(f'**{level_name}:** {message}')
+
+
+def get_logs(
+        start: Optional[datetime] = None,
+        level: int = logging.INFO,
+        max_logs: Optional[int] = 1000) -> discord.File:
+    """Get a Discord attachment for a list of logs."""
+    logs = Log.get_logs(start, level, max_logs)
+    stream = io.StringIO()
+    for log in logs:
+        level = logging.getLevelName(log.level)
+        date = log.created_at.strftime('%H:%M:%S %d/%m/%y')
+        stream.write(f'{date} [{level}] {log.content}')
+    stream.seek(0)
+    return discord.File(stream, 'ttt_logs.txt')

@@ -20,14 +20,15 @@ class Log(BaseModel):
     @classmethod
     async def get_logs(
             cls, start: Optional[datetime] = None,
-            level: int = logging.INFO, max_logs: Optional[int] = 1000) -> str:
+            level: int = logging.INFO,
+            max_logs: Optional[int] = 1000) -> list[Log]:
         """Get logs of some level (or greater) from some date."""
         query = cls.select().where(cls.level >= level)
         if start:
             query = query.where(cls.created_at <= start)
         if max_logs:
             query = query.limit(max_logs)
-        return ''.join(query)
+        return list(query)
 
 
 db.create_tables([Log])

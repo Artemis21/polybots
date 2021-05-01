@@ -2,7 +2,7 @@
 import discord
 from discord.ext import commands
 
-from ..main import config, errors
+from ..main import checks, config, errors, logs
 
 
 ABOUT = 'This is a bot to help manage Tiny Tourney Two.'
@@ -39,3 +39,9 @@ class Meta(commands.Cog):
         embed.set_thumbnail(url=ctx.bot.user.avatar_url)
         embed.set_footer(text='By Artemis (artemisdev.xyz).')
         await ctx.send(embed=embed)
+
+    @commands.command(brief='Get tourney logs.')
+    @checks.manager()
+    async def logs(self, ctx: commands.Context):
+        """Get tournament logs."""
+        await ctx.send(file=logs.get_logs(max_logs=None))
