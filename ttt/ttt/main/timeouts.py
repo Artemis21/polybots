@@ -22,4 +22,4 @@ def report_timeout(
         is_timeout=is_timeout,
         reported_by=ctx.ttt_player
     )
-    return 'Done!'
+    return f'Reported timeout ({game.mention_all()}).'
