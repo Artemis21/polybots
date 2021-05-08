@@ -219,6 +219,10 @@ class Game(BaseModel):
             text=f'$game {self.elo_bot_id} for more info.'
         )
 
+    def mention_all(self) -> str:
+        """Get a string to mention all players in the game."""
+        return ' '.join(f'<@{player.discord_id}>' for player in self.players)
+
 
 class GamePlayer(BaseModel):
     """Many-to-many field between games and players."""
