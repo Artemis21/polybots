@@ -7,7 +7,7 @@ from datetime import datetime
 import discord
 from discord.ext import commands, tasks
 
-from ..main import checks, config, many, matchmaking
+from ..main import checks, config, many, matchmaking, timeouts
 from ..models import Game, GamePlayer, GameType, Player
 
 
@@ -128,6 +128,32 @@ class Games(commands.Cog):
             ))
         else:
             await ctx.send(f'No game type found by ID {game_type_id}.')
+
+    @commands.command(brief='Report a timeout.', aliases=['red'])
+    @checks.registered()
+    async def timeout(self, ctx: Ctx, game: Game, *, player: Player):
+        """Report a timeout for a player.
+
+        You should also upload a screenshot proving it.
+
+        Example: `{{pre}}timeout 849103 @Artemis` +1 attachment.
+        """
+        await ctx.send(timeouts.report_timeout(
+            ctx, game, player, is_timeout=True
+        ))
+
+    @commands.command(brief='Report a semi-timeout.')
+    @checks.registered()
+    async def yellow(self, ctx: Ctx, game: Game, *, player: Player):
+        """Report a player's timer going yellow.
+
+        You should also upload a screenshot proving it.
+
+        Example: `{{pre}}yellow 18345 @Ramano` +1 attachment.
+        """
+        await ctx.send(timeouts.report_timeout(
+            ctx, game, player, is_timeout=False
+        ))
 
     @commands.command(
         brief='Create a game.', name='open-game', aliases=['open', 'o']
