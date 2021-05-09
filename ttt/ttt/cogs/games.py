@@ -3,6 +3,7 @@ import asyncio
 import csv
 import io
 from datetime import datetime
+from ttt.models.timeouts import Timeout
 
 import discord
 from discord.ext import commands, tasks
@@ -119,6 +120,20 @@ class Games(commands.Cog):
                 f'**{player.display_name}** is not in game '
                 f'**{game.elo_bot_id}**.'
             )
+
+    @commands.command(
+        brief='Delete a timeout.',
+        name='delete-timeout', aliases=['del-to', 'dt']
+    )
+    @checks.manager()
+    async def delete_timeout(self, ctx: Ctx, timeout: Timeout):
+        """Delete a timeout by ID.
+
+        Example: `{{pre}}del-to 24`
+        """
+        summary = timeout.summary
+        timeout.delete_instance()
+        await ctx.send('Deleted timeout:\n> ' + summary)
 
     @commands.command(
         brief='View a game type.', name='game-type', aliases=['gt', 'type']

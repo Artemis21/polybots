@@ -54,14 +54,7 @@ def display_timeouts(game: Game) -> discord.Embed:
     for player in players:
         lines = []
         for timeout in player.timeouts:
-            emoji = 'red_circle' if timeout.is_timeout else 'yellow_circle'
-            line = f':{emoji}: <{timeout.screenshot_url}>'
-            if timeout.reported_by:
-                line += f' by **{timeout.reported_by.display_name}**'
-            # Remove milliseconds.
-            time = str(timeout.reported_at).split('.')[0]
-            line += f' at **{time}**'
-            lines.append(line)
+            lines.append(timeout.summary)
         embed.add_field(
             name=player.player.display_name,
             value='\n'.join(lines) or '*No timeouts yet!*',
