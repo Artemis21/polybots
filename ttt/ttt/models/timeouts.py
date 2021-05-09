@@ -36,11 +36,17 @@ class Timeout(BaseModel):
             raise commands.BadArgument(f'Timeout ID `{timeout_id}` not found.')
         return timeout
 
-    @property
-    def summary(self) -> str:
-        """Get a line to summarise the timeout."""
+    def get_summary(self, mask_link: bool = False) -> str:
+        """Get a line to summarise the timeout.
+
+        `mask_link` will only work in an embed.
+        """
         emoji = 'red_circle' if self.is_timeout else 'yellow_circle'
-        line = f':{emoji}: <{self.screenshot_url}>'
+        line = f':{emoji}: '
+        if mask_link:
+            line += f'[screenshot]({self.screenshot_url})'
+        else:
+            line += self.screenshot_url
         if self.reported_by:
             line += f' by **{self.reported_by.display_name}**'
         # Remove milliseconds.

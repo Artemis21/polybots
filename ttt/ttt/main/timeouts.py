@@ -54,7 +54,7 @@ def display_timeouts(game: Game) -> discord.Embed:
     for player in players:
         lines = []
         for timeout in player.timeouts:
-            lines.append(timeout.summary)
+            lines.append(timeout.get_summary(mask_link=True))
         embed.add_field(
             name=player.player.display_name,
             value='\n'.join(lines) or '*No timeouts yet!*',
