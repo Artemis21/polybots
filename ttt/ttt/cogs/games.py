@@ -131,7 +131,7 @@ class Games(commands.Cog):
 
         Example: `{{pre}}del-to 24`
         """
-        summary = timeout.summary
+        summary = timeout.get_summary()
         timeout.delete_instance()
         await ctx.send('Deleted timeout:\n> ' + summary)
 
