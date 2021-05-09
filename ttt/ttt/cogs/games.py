@@ -68,6 +68,14 @@ class Games(commands.Cog):
         """
         await ctx.send(embed=game.embed())
 
+    @commands.command(brief='View timeouts for a game.')
+    async def timeouts(self, ctx: Ctx, game: Game):
+        """View registered timeouts for a game.
+
+        Example: `{{pre}}timeouts 53591`
+        """
+        await ctx.send(embed=timeouts.display_timeouts(game))
+
     @commands.command(brief='Report your loss.', aliases=['resign', 'l'])
     @checks.registered()
     async def loss(self, ctx: Ctx, game: Game):
