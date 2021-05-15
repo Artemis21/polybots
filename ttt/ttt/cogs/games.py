@@ -3,13 +3,12 @@ import asyncio
 import csv
 import io
 from datetime import datetime
-from ttt.models.timeouts import Timeout
 
 import discord
 from discord.ext import commands, tasks
 
 from ..main import checks, config, many, matchmaking, timeouts
-from ..models import Game, GamePlayer, GameType, Player
+from ..models import Game, GamePlayer, GameType, Player, Timeout
 
 
 Ctx = commands.Context
@@ -219,7 +218,7 @@ class Games(commands.Cog):
         name='check-players', aliases=['check', 'c']
     )
     @checks.manager()
-    async def check(self, ctx: Ctx, *users: commands.Greedy[Player]):
+    async def check(self, ctx: Ctx, *, users: many.Many[Player]):
         """Check if some players can play together.
 
         Example:
