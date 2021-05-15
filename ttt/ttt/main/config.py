@@ -70,7 +70,7 @@ BOT_LOG_LEVEL = get_log_level('bot_log_level', logging.INFO)
 ELO_BASE_URL = config.get('elo_base_url', 'https://elo-bot.polytopia.win')
 ELO_USERNAME = config['elo_username']
 ELO_PASSWORD = config['elo_password']
-ELO_RECHECK_TIME = get_timedelta('elo_recheck_time', timedelta(hours=13))
+ELO_RECHECK_TIME = get_timedelta('elo_recheck_time', timedelta(hours=25))
 ELO_RECHECK_FREQUENCY = get_timedelta(
     'elo_recheck_frequency', timedelta(minutes=30)
 )
