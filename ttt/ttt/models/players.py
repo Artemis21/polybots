@@ -73,9 +73,8 @@ class Player(BaseModel):
             ).alias('complete')
         ).join(games.GamePlayer, JOIN.LEFT_OUTER).order_by(
             -fn.COUNT(games.GamePlayer.id).filter(games.GamePlayer.won),
+            fn.COUNT(games.GamePlayer.id).filter(games.GamePlayer.lost),
             -fn.COUNT(games.GamePlayer.id).filter(
-                games.GamePlayer.won | games.GamePlayer.lost),
-            fn.COUNT(games.GamePlayer.id).filter(
                 (~games.GamePlayer.won) & (~games.GamePlayer.lost))
         ).group_by(Player)
 
