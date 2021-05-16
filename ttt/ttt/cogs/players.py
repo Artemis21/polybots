@@ -16,6 +16,29 @@ from ..models import League, Player, TribeList
 Ctx = commands.Context
 
 
+def format_waiting_line(player: Player) -> str:
+    """Format a player for a line of &waiting."""
+    if not player.league:
+        team = 'NO TEAM'
+    elif player.league == League.NOVA:
+        team = 'NOVA'
+    else:
+        league = 'JR' if player.league == League.JUNIOR else 'PRO'
+        team = str(player.team)[:4].upper() + ' ' + league
+    game_summary = (
+        f'{player.wins} W / {player.losses} L / '
+        f'{player.in_progress} IP'
+    )
+    games = []
+    for game_id, position in zip(player.game_ids, player.game_positions):
+        games.append(f'{game_id} - {position}')
+    games = '; '.join(games)
+    return (
+        f'* {player.display_name} ({team}): {game_summary}\n'
+        f'> {games} \n'
+    )
+
+
 def optional_player_arg(ctx: Ctx, arg: Optional[Player]) -> Player:
     """Return the argument, defaulting to the author."""
     if player := arg or ctx.ttt_player:
@@ -164,27 +187,15 @@ class Players(commands.Cog):
             return
         players = matchmaking.players_waiting_on_level(level)
         lines = []
+        last_total = None
         for player in players:
-            if not player.league:
-                team = 'NO TEAM'
-            elif player.league == League.NOVA:
-                team = 'NOVA'
+            line = format_waiting_line(player)
+            if player.total != last_total:
+                header = f'## {player.total} games\n\n'
+                last_total = player.total
             else:
-                league = 'JR' if player.league == League.JUNIOR else 'PRO'
-                team = str(player.team)[:4].upper() + ' ' + league
-            game_summary = (
-                f'{player.total} games ({player.wins} W / {player.losses} '
-                f'L / {player.in_progress} IP)'
-            )
-            games = []
-            for game_id, position in zip(
-                    player.game_ids, player.game_positions):
-                games.append(f'{game_id} - {position}')
-            games = '; '.join(games)
-            lines.append(
-                f'* {player.display_name} ({team}): {game_summary}\n'
-                f'> {games} \n'
-            )
+                header = ''
+            lines.append(header + line)
         await CodeBlockPaginator(
             ctx, title='', header=f'Players waiting on level {level}',
             lines=lines
