@@ -1,5 +1,6 @@
 """Discord.py command checks."""
-from typing import Callable
+from datetime import datetime
+from typing import Callable, Optional
 
 from discord.ext import commands
 
@@ -80,3 +81,20 @@ def caution() -> Check:
         return True
 
     return commands.check(caution_check)
+
+
+def date_range(start: Optional[datetime], end: Optional[datetime]) -> Check:
+    """Create a check for a command available within a date range."""
+
+    def date_range_check(ctx: commands.Context) -> bool:
+        """Check if the current date is within the given range."""
+        now = datetime.now()
+        if start and start > now:
+            raise commands.CommandError('This command is not available yet.')
+        if end and end < now:
+            raise commands.CommandError(
+                'This command is no longer available.'
+            )
+        return True
+
+    return commands.check(date_range_check)

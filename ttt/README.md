@@ -29,9 +29,13 @@ Configuration goes in `config.json`. It is a JSON file containing a single JSON 
 | `col_error`             | `#e94b3c`      | The error colour for the bot.         |
 | `col_help`              | `#50c878`      | The help colour for the bot.          |
 | `tt_game_types`         | See Appendix A | A list of game types.                 |
+| `tt_registration_open`  | `null`         | When registration opens (date).      |
+| `tt_registration_close` | `null`         | When registration closes (date).      |
 | `tt_log_level`          | `INFO`         | Logging level for log channel.        |
 
 <sup>*1</sup> `https://elo-bot.polytopia.win`
+
+Dates should be given in ISO 8601 format, eg. `2011-11-04` or `2011-11-04T00:05:23`.
 
 ## Appendix A: Default Game Types
 

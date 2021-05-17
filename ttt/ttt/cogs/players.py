@@ -7,7 +7,9 @@ import discord
 from discord.ext import commands
 
 from ..main import checks, matchmaking
-from ..main.config import BOT_PLAYER_ROLE_ID
+from ..main.config import (
+    BOT_PLAYER_ROLE_ID, TT_REGISTRATION_CLOSE, TT_REGISTRATION_OPEN
+)
 from ..main.elo_api import EloApiError
 from ..main.paginator import CodeBlockPaginator, EmbedDescriptionPaginator
 from ..models import League, Player, TribeList
@@ -68,6 +70,7 @@ class Players(commands.Cog):
         await ctx.send(embed=player.embed())
 
     @commands.command(brief='Register yourself.', aliases=['r'])
+    @checks.date_range(TT_REGISTRATION_OPEN, TT_REGISTRATION_CLOSE)
     async def register(self, ctx: Ctx):
         """Sign up for the tournament.
 
