@@ -68,7 +68,7 @@ def caution() -> Check:
             return True
         await ctx.send(
             'Are you sure you want to procede? This cannot be undone. `Yes` '
-            'to  continue, anything else to cancel.'
+            'to continue, anything else to cancel.'
         )
         message = await ctx.bot.wait_for(
             'message', check=lambda m: (
