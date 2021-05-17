@@ -2,7 +2,8 @@
 import json
 import logging
 import pathlib
-from datetime import timedelta
+from datetime import datetime, timedelta
+from typing import Optional
 
 
 BASE_PATH = pathlib.Path(__file__).parent.parent.parent
@@ -59,6 +60,15 @@ def get_timedelta(field: str, default: timedelta) -> timedelta:
     return timedelta(seconds=seconds)
 
 
+def get_datetime(
+        field: str, default: Optional[datetime]) -> Optional[datetime]:
+    """Parse a datetime in config."""
+    raw = config.get(field)
+    if not raw:
+        return default
+    return datetime.fromisoformat(raw) if raw else None
+
+
 BOT_PREFIX = config.get('bot_prefix', 't!')
 BOT_TOKEN = config['bot_token']
 BOT_ADMIN_ROLE_ID = config['bot_admin_role_id']
@@ -88,6 +98,8 @@ COL_ERROR = get_colour('col_error', 0xe94b3c)
 COL_HELP = get_colour('col_help', 0x50c878)
 
 TT_LOG_LEVEL = get_log_level('tt_log_level', logging.INFO)
+TT_REGISTRATION_OPEN = get_datetime('tt_registration_open', None)
+TT_REGISTRATION_CLOSE = get_datetime('tt_registration_close', None)
 TT_GAME_TYPES = config.get('tt_game_types', [
     {
         'map': 'Dryland',
