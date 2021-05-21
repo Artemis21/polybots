@@ -6,6 +6,7 @@ from ..main import config
 
 db = peewee.PostgresqlDatabase(
     config.DB_NAME,
+    autorollback=True,
     user=config.DB_USER,
     password=config.DB_PASSWORD,
     host=config.DB_HOST,
