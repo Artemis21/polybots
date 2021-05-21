@@ -20,7 +20,9 @@ class Timeout(BaseModel):
     )
     screenshot_url = peewee.CharField(max_length=2047)
     is_timeout = peewee.BooleanField()    # True=red, False=yellow
-    reported_by = peewee.ForeignKeyField(Player, on_delete='SET NULL')
+    reported_by = peewee.ForeignKeyField(
+        Player, on_delete='SET NULL', null=True
+    )
     reported_at = peewee.DateTimeField(default=datetime.now)
 
     @classmethod
