@@ -59,7 +59,7 @@ def manager() -> Check:
     return commands.check(is_manager)
 
 
-def caution() -> Check:
+def caution(action='procede') -> Check:
     """Create a check that asks users to confirm."""
 
     async def caution_check(ctx: commands.Context) -> bool:
@@ -67,8 +67,8 @@ def caution() -> Check:
         if getattr(ctx, 'help_command_check', False):
             return True
         await ctx.send(
-            'Are you sure you want to procede? This cannot be undone. `Yes` '
-            'to continue, anything else to cancel.'
+            f'Are you sure you want to {action}? This cannot be undone. '
+            '`Yes` to continue, anything else to cancel.'
         )
         message = await ctx.bot.wait_for(
             'message', check=lambda m: (
