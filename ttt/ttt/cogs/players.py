@@ -162,7 +162,7 @@ class Players(commands.Cog):
         await ctx.send('Reloaded!')
 
     @commands.command(brief='Quit the tournament.')
-    @checks.caution()
+    @checks.caution('quit the tournament')
     @checks.registered()
     async def quit(self, ctx: Ctx):
         """Quit the tournament.
