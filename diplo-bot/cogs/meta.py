@@ -67,7 +67,9 @@ class Meta(commands.Cog):
     @commands.command(brief='Try out the archer.', hidden=True)
     async def pong(self, ctx: commands.Context):
         """See how fast Archer can respond."""
-        prompt = await ctx.send('Waiting for Archer to respond...')
+        prompt = await ctx.send(
+            'Waiting for <@390869068510658560> to respond...'
+        )
         response = await self.bot.wait_for(
             'message',
             check=lambda m: (
