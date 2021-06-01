@@ -63,3 +63,17 @@ class Meta(commands.Cog):
             f'\nResponse time: `{response_time}ms`'
             f'\nResponse roundtrip: `{roundtrip_time}ms`'
         ))
+
+    @commands.command(brief='Try out the archer.', hidden=True)
+    async def pong(self, ctx: commands.Context):
+        """See how fast Archer can respond."""
+        prompt = await ctx.send('Waiting for Archer to respond...')
+        response = await self.bot.wait_for(
+            'message',
+            check=lambda m: (
+                m.author.id == 390869068510658560
+                and m.channel.id == ctx.channel.id
+            )
+        )
+        latency = timedelta_to_ms(response.created_at - prompt.created_at)
+        await ctx.send(f'Archer took `{latency}ms` to respond!')
