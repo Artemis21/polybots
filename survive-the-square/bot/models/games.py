@@ -14,7 +14,9 @@ from .database import db, BaseModel
 from .players import Player
 
 
-UserData = namedtuple('UserData', ['name', 'to_be', 'user'])
+UserData = namedtuple('UserData', [
+    'name', 'possesive', 'to_be', 'to_have', 'user'
+])
 
 NO_PERMS = discord.PermissionOverwrite(
     read_messages=False, send_messages=False
@@ -143,9 +145,21 @@ class Game(BaseModel):
             user: discord.Member = None) -> UserData:
         """Get the name, ID and conjugation of 'to be' to refer to a user."""
         if user:
-            return UserData(user.display_name, 'is', user)
+            return UserData(
+                name=user.display_name,
+                possesive='their',
+                to_be='is',
+                to_have='has',
+                user=user
+            )
         else:
-            return UserData('you', 'are', ctx.author)
+            return UserData(
+                name='you',
+                possesive='your',
+                to_be='are',
+                to_have='have',
+                user=ctx.author
+            )
 
     def player_can_join(
             self,
@@ -154,26 +168,28 @@ class Game(BaseModel):
             player: Player) -> bool:
         """Check if a player can join this game (with logging)."""
         wrong_game_type = (
-            f'Error: {self.name} is a {{0}} game, but you have not set your '
-            f'steam name. Do `{ctx.prefix}{{0}}-name` to set it.'
+            f'Error: {self.name} is a {{0}} game, but {user.name} '
+            f'{user.to_have} not set {user.possesive} {{0}} name. '
+            f'Do `{ctx.prefix}{{0}}-name` to set it.'
         )
         if self.is_steam:
             if not player.steam_name:
                 ctx.logger.log(wrong_game_type.format('steam'))
-                return
+                return False
         else:
             if not player.mobile_name:
                 ctx.logger.log(wrong_game_type.format('mobile'))
-                return
+                return False
         if self.get_member(player):
             ctx.logger.log(
                 f'Error: {user.name} {user.to_be} already in game {self.id}.'
             )
+            return False
+        return True
 
     async def add_player(
             self, ctx: commands.Context, user: discord.Member = None):
         """Add a player to the game."""
-        user = user or ctx.author
         user = self.user_info(ctx, user)
         player = Player.get_player(user.user.id)
         if not self.player_can_join(ctx, user, player):
