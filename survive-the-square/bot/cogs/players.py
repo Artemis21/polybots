@@ -4,8 +4,7 @@ import typing
 import discord
 from discord.ext import commands
 
-from ..main import timezones
-from ..models import GameMember, Player, TribeList
+from ..models import GameMember, Player, Timezone, TribeList
 
 
 class Players(commands.Cog):
@@ -107,7 +106,7 @@ class Players(commands.Cog):
         aliases=['timezone', 'set-tz', 'tz']
     )
     async def set_timezone(
-            self, ctx: commands.Context, timezone: timezones.Timezone):
+            self, ctx: commands.Context, timezone: Timezone):
         """Set your timezone as a UTC offset.
 
         Examples:

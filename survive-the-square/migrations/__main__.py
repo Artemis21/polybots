@@ -5,7 +5,7 @@ import sys
 
 from playhouse.migrate import SqliteMigrator
 
-from ..models.database import db
+from bot.models.database import db
 
 
 migrator = SqliteMigrator(db)
