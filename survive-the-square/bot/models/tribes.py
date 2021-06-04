@@ -58,7 +58,7 @@ class Tribe(enum.Enum):
 
     def __str__(self) -> str:
         """Get the name of the tribe."""
-        return self.name.lower().replace('_', '-')
+        return self.name.title().replace('_', '-')
 
 
 class TribeList:
@@ -88,7 +88,7 @@ class TribeList:
 
     def __str__(self) -> str:
         """Represent the list as a human-readable string."""
-        return ' '.join(map(str, self.tribes))
+        return ', '.join(map(str, self.tribes))
 
     def __iadd__(self, other: Union[Tribe, Iterable[Tribe]]) -> TribeList:
         """Add a tribe or tribes to the list."""
