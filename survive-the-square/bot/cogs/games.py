@@ -1,7 +1,7 @@
 """Commands for manging an in progress game."""
 from discord.ext import commands
 
-from ..models import GameMember
+from ..models import Game, GameMember
 
 
 class Games(commands.Cog):
@@ -33,3 +33,20 @@ class Games(commands.Cog):
                 for attachment in ctx.message.attachments
             ]
         )
+
+    @commands.command(brief='Observe a game.', aliases=['o'])
+    async def observe(self, ctx: commands.Context, game: Game):
+        """Get the observer role for a game.
+
+        Example: `{{pre}}observe 12`
+        """
+        member = GameMember.get_or_none(
+            GameMember.game_id == game.id,
+            GameMember.player_id == ctx.author.id
+        )
+        if member:
+            await ctx.send('You cannot observer a game you are in.')
+            return
+        role = ctx.get_role(game.observer_role_id)
+        await ctx.author.add_roles(role)
+        await ctx.send('Gave you the role.')
