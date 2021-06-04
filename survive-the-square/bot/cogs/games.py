@@ -71,6 +71,8 @@ class Games(commands.Cog):
                         )
                     }
                 )
+            category = ctx.guild.get_channel(game.category_id)
+            await category.edit(name=category.name + ' - Archived')
             GameMember.delete().where(GameMember.game == game).execute()
             game.delete_instance()
         await ctx.send('Game archived.')
