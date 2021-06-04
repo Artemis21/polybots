@@ -202,7 +202,7 @@ class Game(BaseModel):
         player_role = ctx.guild.get_role(self.player_role_id)
         channel_id = (await side_channel.category.create_text_channel(
             user.user.display_name,
-            position=side_channel.position + 1,
+            position=side_channel.position,
             overwrites={
                 ctx.guild.default_role: NO_PERMS,
                 observer_role: READ_PERMS,

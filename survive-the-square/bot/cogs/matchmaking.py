@@ -36,7 +36,7 @@ class Matchmaking(commands.Cog):
             )
             return
         async with ctx.typing():
-            game = models.Game.create(team_size=size, is_steam=is_steam)
+            game = models.Game.create(size=size, is_steam=is_steam)
             await game.setup(ctx.guild)
         await ctx.send(f'Created game {game.id}.')
 
