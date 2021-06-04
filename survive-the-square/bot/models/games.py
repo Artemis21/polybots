@@ -276,7 +276,7 @@ class GameMember(BaseModel):
         """Choose the side of a game with fewer members."""
         side_1, side_2 = cls.select(
             fn.COUNT(cls.id).filter(cls.side == 1),
-            fn.COINT(cls.id).filter(cls.side == 2)
+            fn.COUNT(cls.id).filter(cls.side == 2)
         ).where(cls.game == game).scalar(as_tuple=True)
         return 1 if side_1 <= side_2 else 2
 
