@@ -88,7 +88,7 @@ class TribeList:
 
     def __str__(self) -> str:
         """Represent the list as a human-readable string."""
-        return ' '.join(tribe.emoji for tribe in self.tribes)
+        return ' '.join(map(str, self.tribes))
 
     def __iadd__(self, other: Union[Tribe, Iterable[Tribe]]) -> TribeList:
         """Add a tribe or tribes to the list."""
