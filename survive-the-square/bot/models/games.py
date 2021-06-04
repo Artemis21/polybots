@@ -199,7 +199,7 @@ class Game(BaseModel):
             self.side_1_channel_id if side == 1 else self.side_2_channel_id
         )
         channel_id = (await side_channel.category.create_text_channel(
-            user.display_name, position=side_channel.position + 1
+            user.user.display_name, position=side_channel.position + 1
         )).id
         GameMember.create(
             player=player, game=self, side=side, channel_id=channel_id
