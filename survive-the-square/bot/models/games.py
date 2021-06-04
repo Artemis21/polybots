@@ -198,8 +198,17 @@ class Game(BaseModel):
         side_channel = ctx.guild.get_channel(
             self.side_1_channel_id if side == 1 else self.side_2_channel_id
         )
+        observer_role = ctx.guild.get_role(self.observer_role_id)
+        player_role = ctx.guild.get_role(self.player_role_id)
         channel_id = (await side_channel.category.create_text_channel(
-            user.user.display_name, position=side_channel.position + 1
+            user.user.display_name,
+            position=side_channel.position + 1,
+            overwrites={
+                ctx.guild.default_role: NO_PERMS,
+                observer_role: READ_PERMS,
+                player_role: NO_PERMS,
+                user.user: WRITE_PERMS
+            }
         )).id
         GameMember.create(
             player=player, game=self, side=side, channel_id=channel_id
@@ -227,7 +236,7 @@ class Game(BaseModel):
             )
             player_role = ctx.guild.get_role(self.player_role_id)
             await user.user.remove_roles(player_role, side_role)
-            await ctx.guild.get_channel(player.channel_id).delete()
+            await ctx.guild.get_channel(member.channel_id).delete()
             member.delete_instance()
             ctx.logger.log(f'Removed {user.name} from game {self.id}.')
         else:
