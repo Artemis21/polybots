@@ -45,8 +45,8 @@ class Games(commands.Cog):
             GameMember.player_id == ctx.author.id
         )
         if member:
-            await ctx.send('You cannot observer a game you are in.')
+            await ctx.send('You cannot observe a game you are in.')
             return
-        role = ctx.get_role(game.observer_role_id)
+        role = ctx.guild.get_role(game.observer_role_id)
         await ctx.author.add_roles(role)
         await ctx.send('Gave you the role.')
