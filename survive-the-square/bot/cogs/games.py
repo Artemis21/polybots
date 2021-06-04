@@ -53,7 +53,7 @@ class Games(commands.Cog):
         await ctx.author.add_roles(role)
         await ctx.send('Gave you the role.')
 
-    @commands.command(brief='Archive a game.', aliases=['d'])
+    @commands.command(brief='Archive a game.')
     @checks.admin
     async def archive(self, ctx: commands.Context, game: Game):
         """Archive a game's channels.
@@ -75,7 +75,7 @@ class Games(commands.Cog):
             game.delete_instance()
         await ctx.send('Game archived.')
 
-    @commands.command(brief='Delete a game.', aliases=['d'])
+    @commands.command(brief='Delete a game.')
     @checks.admin
     async def delete(self, ctx: commands.Context, game: Game):
         """Delete a game and it's channels.
