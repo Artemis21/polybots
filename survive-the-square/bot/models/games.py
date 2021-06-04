@@ -218,6 +218,7 @@ class Game(BaseModel):
         )
         player_role = ctx.guild.get_role(self.player_role_id)
         await user.user.add_roles(player_role, side_role)
+        await user.user.remove_roles(observer_role)
         ctx.logger.log(f'Added {user.name} to game {self.id}.')
         if self.member_count >= self.space_count:
             self.is_open = False
