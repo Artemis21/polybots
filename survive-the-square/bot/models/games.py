@@ -95,6 +95,30 @@ class Game(BaseModel):
                 lines.append('*No-one yet*')
         return '\n'.join(lines)
 
+    @property
+    def channel_ids(self) -> list[int]:
+        """Get a list of all channel IDs related to the game."""
+        channels = [
+            self.category_id,
+            self.observer_channel_id,
+            self.player_channel_id,
+            self.side_1_channel_id,
+            self.side_2_channel_id
+        ]
+        for member in GameMember.select().where(GameMember.game == self):
+            channels.append(member.channel_id)
+        return channels
+
+    @property
+    def role_ids(self) -> list[int]:
+        """Get a list of all role IDs related to the game."""
+        return [
+            self.observer_role_id,
+            self.player_role_id,
+            self.side_1_role_id,
+            self.side_2_role_id
+        ]
+
     async def new_role(self, guild: discord.Guild, name: str) -> discord.Role:
         """Make a Discord role for this game."""
         return await guild.create_role(
