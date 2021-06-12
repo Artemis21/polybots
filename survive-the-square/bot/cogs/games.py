@@ -35,6 +35,7 @@ class Games(commands.Cog):
                 for attachment in ctx.message.attachments
             ]
         )
+        await ctx.message.add_reaction(u'\u2705')    # Check mark.
 
     @commands.command(brief='Observe a game.', aliases=['o'])
     async def observe(self, ctx: commands.Context, game: Game):
