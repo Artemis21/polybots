@@ -154,6 +154,8 @@ class Game(BaseModel):
         winner.won = True
         winner.ended_at = game_data.win_claimed_at
         winner.save()
+        self.won_at = game_data.win_claimed_at
+        self.save()
         GamePlayer.update(
             won=False,
             lost=True,

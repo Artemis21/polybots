@@ -1,3 +1,4 @@
+dateutil
 discord.py
 peewee
 psycopg2-binary
