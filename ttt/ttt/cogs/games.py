@@ -8,6 +8,8 @@ from datetime import datetime
 import discord
 from discord.ext import commands, tasks
 
+from dateutil.parser import parse as parse_dt
+
 from ..main import checks, config, logs, many, matchmaking, timeouts
 from ..models import Game, GamePlayer, GameType, Player, Timeout
 
@@ -264,6 +266,26 @@ class Games(commands.Cog):
             for group in groups:
                 await Game.create_game(players=group, guild=ctx.guild)
         await ctx.send(f'Created {len(groups)} games.')
+
+    @commands.command(brief='Set a game end date.', name='end-date')
+    @checks.manager()
+    async def end_date(self, ctx: Ctx, game: Game, *, date: parse_dt = None):
+        """Set the end date for a game.
+
+        This should not usually be necessary as it will be done when a game is
+        autoconfirmed. Defaults to the current date.
+
+        Example:
+        `{{pre}}end-date 58183`
+        `{{pre}}end-date 83914 20th June 2021 12:30`
+        """
+        date = date or datetime.now()
+        game.won_at = date
+        game.save()
+        GamePlayer.update(ended_at=date).where(
+            GamePlayer.game_id == game.elo_bot_id
+        ).execute()
+        await ctx.send(f'Set end date for {game.elo_bot_id} to {date}.')
 
     @commands.command(
         brief='Export games to CSV.', name='export-games', aliases=['eg'])
