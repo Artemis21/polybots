@@ -74,7 +74,7 @@ def _unique_positions_possible(
         played_positions: list[list[int]], max_repeats: int = 1) -> bool:
     """Check if players can play in unique positions."""
     available_positions = [
-        [pos for pos in range(1, 5) if played.count(pos) < max_repeats]
+        [pos for pos in range(4) if played.count(pos) < max_repeats]
         for played in played_positions
     ]
     combinations = [[]]
