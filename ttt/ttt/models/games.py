@@ -1,6 +1,7 @@
 """The game model."""
 from __future__ import annotations
 
+import logging
 from datetime import datetime
 from typing import Iterable, Optional
 
@@ -14,7 +15,7 @@ from .database import BaseModel, db
 from .game_types import GameType, GameTypeField
 from .players import Player
 from .tribes import Tribe
-from ..main import config, elo_api
+from ..main import config, elo_api, logs
 
 
 def tribe_to_play(players: list[Player], game_type: GameType) -> Tribe:
@@ -129,15 +130,15 @@ class Game(BaseModel):
             except discord.HTTPException:
                 continue
 
-    def check_winner(self, game_data: elo_api.EloGame):
+    def check_winner(self, game_data: elo_api.EloGame) -> str:
         """Check the winner of the game is up to date with the ELO bot."""
         if not game_data.winner:
             GamePlayer.update(won=False).where(
                 GamePlayer.game == self
             ).execute()
-            return
+            return 'No winner - clearing wins.'
         if not game_data.is_confirmed:
-            return
+            return 'Not confirmed - doing nothing.'
         winner_id = None
         for side in game_data.sides:
             if side.id == game_data.winner:
@@ -148,8 +149,7 @@ class Game(BaseModel):
             GamePlayer.player_id == winner_id, GamePlayer.game == self
         )
         if winner.won:
-            # Win has already been processed.
-            return
+            return 'Win already processed - doing nothing.'
         winner.lost = False
         winner.won = True
         winner.ended_at = game_data.win_claimed_at
@@ -163,11 +163,16 @@ class Game(BaseModel):
             GamePlayer.game == self,
             GamePlayer.player_id != winner_id
         ).execute()
+        return (
+            f'Logged win for {winner.player.display_name} at '
+            f'{winner.ended_at}.'
+        )
 
     async def reload_from_elo_api(self):
         """Reload the game from the ELO bot API."""
         game_data = await elo_api.get_game(self.elo_bot_id)
-        self.check_winner(game_data)
+        message = self.check_winner(game_data)
+        await logs.log(f'Reloaded game {self.id}: {message}', logging.INFO)
         self.game_name = game_data.name
         self.save()
 

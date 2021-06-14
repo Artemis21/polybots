@@ -2,12 +2,13 @@
 import asyncio
 import csv
 import io
+import logging
 from datetime import datetime
 
 import discord
 from discord.ext import commands, tasks
 
-from ..main import checks, config, many, matchmaking, timeouts
+from ..main import checks, config, logs, many, matchmaking, timeouts
 from ..models import Game, GamePlayer, GameType, Player, Timeout
 
 
@@ -49,6 +50,10 @@ class Games(commands.Cog):
         game = Game.get_or_none(Game.elo_bot_id == game_id)
         if not game:
             return
+        await logs.log(
+            f'Game {game_id} mentioned, preparing to reload... '
+            f'({message.jump_url})', logging.DEBUG
+        )
         # Wait 5 seconds because ELO bot can be slow.
         await asyncio.sleep(5)
         await game.reload_from_elo_api()
