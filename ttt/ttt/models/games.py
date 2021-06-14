@@ -172,7 +172,9 @@ class Game(BaseModel):
         """Reload the game from the ELO bot API."""
         game_data = await elo_api.get_game(self.elo_bot_id)
         message = self.check_winner(game_data)
-        await logs.log(f'Reloaded game {self.id}: {message}', logging.INFO)
+        await logs.log(
+            f'Reloaded game {self.elo_bot_id}: {message}', logging.INFO
+        )
         self.game_name = game_data.name
         self.save()
 
