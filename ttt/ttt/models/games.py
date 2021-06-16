@@ -58,7 +58,7 @@ class Game(BaseModel):
         games = cls.select().where(cls.recheck_at >= now)
         for game in games:
             await game.reload_from_elo_api()
-        cls.update(recheck_at=None).where(cls.recheck_at >= now)
+        cls.update(recheck_at=None).where(cls.recheck_at >= now).execute()
 
     @classmethod
     async def convert(cls, ctx: commands.Context, raw_argument: str) -> Game:
