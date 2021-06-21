@@ -129,6 +129,8 @@ def _player_is_waiting(player: Player, level: int) -> bool:
     """Check if a player is waiting for a game on a level."""
     if level == -1:
         return player.total < 2
+    if level == 3:
+        return player.wins >= 3 and player.in_progress < 2
     series = None
     if player.total in (2, 3) and player.complete in (2, 3):
         series, series_wins = 1, _player_wins_after(player, 2)
@@ -136,11 +138,7 @@ def _player_is_waiting(player: Player, level: int) -> bool:
         series, series_wins = 2, _player_wins_after(player, 4)
     if not series:
         return False
-    if level < 3:
-        return series_wins == level
-    if player.complete == player.wins == 3:
-        return True
-    return series_wins > 2 and series == 2
+    return series_wins == level
 
 
 def players_waiting_on_level(level: int) -> list[Player]:
