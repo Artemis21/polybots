@@ -55,10 +55,10 @@ class Game(BaseModel):
     async def recheck_games(cls):
         """Check any games due for rechecking."""
         now = datetime.now()
-        games = cls.select().where(cls.recheck_at >= now)
+        games = cls.select().where(cls.recheck_at <= now)
         for game in games:
             await game.reload_from_elo_api()
-        cls.update(recheck_at=None).where(cls.recheck_at >= now).execute()
+        cls.update(recheck_at=None).where(cls.recheck_at <= now).execute()
 
     @classmethod
     async def convert(cls, ctx: commands.Context, raw_argument: str) -> Game:
