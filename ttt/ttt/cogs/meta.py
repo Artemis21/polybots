@@ -44,12 +44,8 @@ class Meta(commands.Cog):
 
     @commands.command(brief='Get tourney logs.')
     @checks.manager()
-    async def logs(
-            self,
-            ctx: commands.Context,
-            level: int = logging.INFO,
-            limit: int = 1000):
+    async def logs(self, ctx: commands.Context, level: int = logging.INFO):
         """Get tournament logs."""
         await ctx.send(
-            file=logs.get_logs(max_logs=None, level=level, max_logs=limit)
+            file=logs.get_logs(max_logs=None, level=level)
         )
