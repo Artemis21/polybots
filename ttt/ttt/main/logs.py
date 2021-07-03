@@ -33,6 +33,6 @@ def get_logs(
     for log in logs:
         level = logging.getLevelName(log.level)
         date = log.created_at.strftime('%H:%M:%S %d/%m/%y')
-        stream.write(f'{date} [{level}] {log.content}')
+        stream.write(f'{date} [{level}] {log.content}\n')
     stream.seek(0)
     return discord.File(stream, 'ttt_logs.txt')
