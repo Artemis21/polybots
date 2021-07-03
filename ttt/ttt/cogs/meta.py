@@ -51,5 +51,5 @@ class Meta(commands.Cog):
             limit: int = 1000):
         """Get tournament logs."""
         await ctx.send(
-            file=logs.get_logs(max_logs=None), level=level, limit=limit
+            file=logs.get_logs(max_logs=None, level=level, limit=limit)
         )
