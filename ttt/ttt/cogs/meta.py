@@ -1,4 +1,6 @@
 """The meta cog."""
+import logging
+
 import discord
 from discord.ext import commands
 
@@ -42,6 +44,12 @@ class Meta(commands.Cog):
 
     @commands.command(brief='Get tourney logs.')
     @checks.manager()
-    async def logs(self, ctx: commands.Context):
+    async def logs(
+            self,
+            ctx: commands.Context,
+            level: int = logging.INFO,
+            limit: int = 1000):
         """Get tournament logs."""
-        await ctx.send(file=logs.get_logs(max_logs=None))
+        await ctx.send(
+            file=logs.get_logs(max_logs=None), level=level, limit=limit
+        )
