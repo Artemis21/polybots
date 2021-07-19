@@ -131,7 +131,7 @@ TT_GAME_TYPES = config.get('tt_game_types', [
         'alt_tribe': 'Oumaji'
     }, {
         'map': 'Lakes',
-        'tribe': 'Queztali',
+        'tribe': 'Quetzali',
         'alt_tribe': 'Xin-xi'
     }, {
         'map': 'Dryland',
