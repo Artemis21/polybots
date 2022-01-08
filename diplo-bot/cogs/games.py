@@ -50,6 +50,7 @@ class Games(commands.Cog):
             await category.create_text_channel(name=channel)
         game.role_id = role.id
         game.category_id = category.id
+        game.save()
         await ctx.send(
             f'Created game {game.id} (<@&{config.WAITLIST_ROLE_ID}>).'
         )
