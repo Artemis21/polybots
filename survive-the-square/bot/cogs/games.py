@@ -51,6 +51,9 @@ class Games(commands.Cog):
             await ctx.send('You cannot observe a game you are in.')
             return
         role = ctx.guild.get_role(game.observer_role_id)
+        if not role:
+            await ctx.send('The observer role for this game has been deleted :(')
+            return
         await ctx.author.add_roles(role)
         await ctx.send('Gave you the role.')
 
@@ -63,15 +66,19 @@ class Games(commands.Cog):
         """
         async with ctx.typing():
             for role_id in game.role_ids:
-                await ctx.guild.get_role(role_id).delete()
+                role = ctx.guild.get_role(role_id)
+                if role:
+                    await role.delete()
             for channel_id in game.channel_ids:
-                await ctx.guild.get_channel(channel_id).edit(
-                    overwrites={
-                        ctx.guild.default_role: discord.PermissionOverwrite(
-                            read_messages=False, send_messages=False
-                        )
-                    }
-                )
+                channel = ctx.guild.get_channel(channel_id)
+                if channel:
+                    await channel.edit(
+                        overwrites={
+                            ctx.guild.default_role: discord.PermissionOverwrite(
+                                read_messages=False, send_messages=False
+                            )
+                        }
+                    )
             category = ctx.guild.get_channel(game.category_id)
             await category.edit(name=category.name + ' - Archived')
             GameMember.delete().where(GameMember.game == game).execute()
@@ -87,9 +94,13 @@ class Games(commands.Cog):
         """
         async with ctx.typing():
             for channel_id in game.channel_ids:
-                await ctx.guild.get_channel(channel_id).delete()
+                channel = ctx.guild.get_channel(channel_id)
+                if channel:
+                    await channel.delete()
             for role_id in game.role_ids:
-                await ctx.guild.get_role(role_id).delete()
+                role = ctx.guild.get_role(role_id)
+                if role:
+                    await role.delete()
             GameMember.delete().where(GameMember.game == game).execute()
             game.delete_instance()
         await ctx.send('Game deleted.')
