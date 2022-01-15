@@ -67,7 +67,18 @@ class Meta(commands.Cog):
     @commands.command(brief='Try out the archer.', hidden=True)
     async def pong(self, ctx: commands.Context):
         """See how fast Archer can respond."""
-        await ctx.send('You have been indefinitely banned from the bot for abuse. Please contact Artemis to appeal.')
+        if isinstance(ctx.channel, discord.TextChannel):
+            existing = await ctx.channel.webhooks()
+            if existing:
+                hook = existing[0]
+            else:
+                hook = await ctx.channel.create_webhook(name='Diplo Dumbassery')
+            await hook.send(
+                'You have been indefinitely banned from the bot for abuse. '
+                'Please [click here](https://youtu.be/dQw4w9WgXcQ) to appeal.',
+                username='Diplotopia',
+                avatar_url=ctx.bot.user.avatar_url
+            )
         return
         prompt = await ctx.send(
             'Waiting for <@390869068510658560> to respond...'
