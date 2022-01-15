@@ -75,7 +75,7 @@ class Meta(commands.Cog):
                 hook = await ctx.channel.create_webhook(name='Diplo Dumbassery')
             await hook.send(
                 'You have been indefinitely banned from the bot for abuse. '
-                'Please [click here](https://youtu.be/dQw4w9WgXcQ) to appeal.',
+                'Please [click here](<https://youtu.be/dQw4w9WgXcQ>) to appeal.',
                 username='Diplotopia',
                 avatar_url=ctx.bot.user.avatar_url
             )
