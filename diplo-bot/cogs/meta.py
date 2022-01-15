@@ -69,15 +69,20 @@ class Meta(commands.Cog):
         """See how fast Archer can respond."""
         if isinstance(ctx.channel, discord.TextChannel):
             existing = await ctx.channel.webhooks()
+            webhook = None
             if existing:
-                hook = existing[0]
-            else:
-                hook = await ctx.channel.create_webhook(name='Diplo Dumbassery')
-            await hook.send(
+                for hook in existing:
+                    if hook.token:
+                        webhook = hook
+                        break
+            if not webhook:
+                webhook = await ctx.channel.create_webhook(name='Diplo Dumbassery')
+            await webhook.send(
                 'You have been indefinitely banned from the bot for abuse. '
                 'Please [click here](<https://youtu.be/dQw4w9WgXcQ>) to appeal.',
                 username='Diplotopia',
-                avatar_url=ctx.bot.user.avatar_url
+                avatar_url=ctx.bot.user.avatar_url,
+                wait=True
             )
         return
         prompt = await ctx.send(
