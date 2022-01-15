@@ -67,6 +67,8 @@ class Meta(commands.Cog):
     @commands.command(brief='Try out the archer.', hidden=True)
     async def pong(self, ctx: commands.Context):
         """See how fast Archer can respond."""
+        await ctx.send('You have been indefinitely banned from the bot for abuse. Please contact Artemis to appeal.')
+        return
         prompt = await ctx.send(
             'Waiting for <@390869068510658560> to respond...'
         )
