@@ -131,6 +131,8 @@ def _player_is_waiting(player: Player, level: int) -> bool:
         return player.total < 2
     if level == 3:
         return player.wins >= 3
+    if level > 3:
+        return player.wins == level - 3
     series = None
     if player.total in (2, 3) and player.complete in (2, 3):
         series, series_wins = 1, _player_wins_after(player, 2)
