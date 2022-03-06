@@ -43,19 +43,19 @@ class Meta(commands.Cog):
             description=ABOUT,
             colour=0x45b3e0
         )
-        embed.set_thumbnail(url=ctx.bot.user.avatar_url)
+        embed.set_thumbnail(url=str(ctx.bot.user.avatar))
         await ctx.send(embed=embed)
 
     @commands.command(brief='Get a pong.')
     async def ping(self, ctx: commands.Context):
         """See how fast the bot can respond."""
-        now = datetime.datetime.now()
+        now = datetime.datetime.now(datetime.timezone.utc)
         recieve_time = timedelta_to_ms(now - ctx.message.created_at)
         response = await ctx.send(
             f'Pong!\nRecieve time: `{recieve_time}ms`'
         )
         initial_recieve = now
-        now = datetime.datetime.now()
+        now = datetime.datetime.now(datetime.timezone.utc)
         roundtrip_time = timedelta_to_ms(now - initial_recieve)
         response_time = timedelta_to_ms(response.created_at - initial_recieve)
         await response.edit(content=(
@@ -81,7 +81,7 @@ class Meta(commands.Cog):
                 'You have been indefinitely banned from the bot for abuse. '
                 'Please [click here](<https://youtu.be/dQw4w9WgXcQ>) to appeal.',
                 username='Diplotopia',
-                avatar_url=ctx.bot.user.avatar_url,
+                avatar_url=str(ctx.bot.user.avatar),
                 wait=True
             )
         return

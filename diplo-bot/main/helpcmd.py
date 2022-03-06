@@ -34,7 +34,7 @@ class Help(commands.DefaultHelpCommand):
             name = command.name
         if command.parent:
             name = f'{command.full_parent_name} {name}'
-        return f'{self.clean_prefix}{name} {command.signature}'
+        return f'{self.context.clean_prefix}{name} {command.signature}'
 
     async def send_bot_help(self, cogs: typing.Dict[
             commands.Cog, typing.Iterable[
