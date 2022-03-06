@@ -1,5 +1,0 @@
-python-dateutil
-discord.py
-peewee
-psycopg2-binary
-dataclasses_json
