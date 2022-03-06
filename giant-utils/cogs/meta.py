@@ -47,9 +47,6 @@ class Meta(commands.Cog):
             description=ABOUT,
             colour=colours.theme()
         )
-        embed.set_footer(
-            text='artybot.xyz',
-            icon_url='https://artybot.xyz/static/icon.png'
-        )
-        embed.set_thumbnail(url=ctx.bot.user.avatar_url)
+        embed.set_footer(text='By Artemis (arty.li)')
+        embed.set_thumbnail(url=str(ctx.bot.user.avatar))
         await ctx.send(embed=embed)
