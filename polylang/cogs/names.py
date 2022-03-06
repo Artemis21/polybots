@@ -13,14 +13,14 @@ async def imitate(ctx, text, original):
         else:
             wh = await ctx.channel.create_webhook(name='Toolkit')
         m = await wh.send(
-            text, username=ctx.author.display_name, 
-            avatar_url=str(ctx.author.avatar_url), wait=True
+            text, username=ctx.author.display_name,
+            avatar_url=str(ctx.author.avatar), wait=True
         )
     except discord.Forbidden:
         e = discord.Embed(description=text)
         e.set_author(
-            name=ctx.author.display_name, 
-            icon_url=str(ctx.author.avatar_url)
+            name=ctx.author.display_name,
+            icon_url=str(ctx.author.avatar)
         )
         e.set_footer(
             text='For full fuctionality, please give the bot the manage webhooks '

@@ -6,7 +6,7 @@ from utils.paginator import FieldPaginator as Paginator
 import json
 
 
-AUTHOR = 'Artemis#8799'
+AUTHOR = '[Artemis](https://arty.li)'
 OTHER = (
     'PolyLang is a Discord bot made to generate words and phrases in the '
     'languages of Polytopia.'
@@ -70,7 +70,7 @@ class Meta(commands.Cog):
         embed = discord.Embed(
             color=colours['purple'], description=OTHER, title='About'
         )
-        embed.set_thumbnail(url=bot.user.avatar_url)
+        embed.set_thumbnail(url=str(bot.user.avatar))
         embed.add_field(name='Author', value=AUTHOR)
         embed.add_field(
             name='Invite',
@@ -91,7 +91,7 @@ class Meta(commands.Cog):
     )
     async def stats(self, ctx):
         embed = discord.Embed(color=colours['lightblue'], title='Statistics')
-        embed.set_thumbnail(url=bot.user.avatar_url)
+        embed.set_thumbnail(url=str(bot.user.avatar))
         embed.add_field(
             name='Shard',
             value=f'#{bot.shard_id or 1} of {bot.shard_count or 1}'

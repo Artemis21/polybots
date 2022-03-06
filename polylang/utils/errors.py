@@ -134,5 +134,5 @@ async def handle(error, ctx):
     desc = '**' + desc
     title = 'Error: ' + title
     embed = discord.Embed(colour=colours['red'], description=desc)
-    embed.set_author(name=title, icon_url=ctx.bot.user.avatar_url)
+    embed.set_author(name=title, icon_url=str(ctx.bot.user.avatar))
     await ctx.send(embed=embed)
