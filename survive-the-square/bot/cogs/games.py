@@ -29,7 +29,7 @@ class Games(commands.Cog):
         await webhook.send(
             content=message,
             username=ctx.author.display_name,
-            avatar_url=ctx.author.avatar_url,
+            avatar_url=str(ctx.author.avatar),
             files=[
                 await attachment.to_file()
                 for attachment in ctx.message.attachments

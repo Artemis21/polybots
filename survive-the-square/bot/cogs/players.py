@@ -40,7 +40,7 @@ class Players(commands.Cog):
             ),
             colour=0xF58F29
         )
-        embed.set_thumbnail(url=user.avatar_url)
+        embed.set_thumbnail(url=str(user.avatar))
         await ctx.send(embed=embed)
 
     @commands.command(
