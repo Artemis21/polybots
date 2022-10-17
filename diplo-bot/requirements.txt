@@ -1,2 +1,2 @@
-discord.py
+discord.py @ git+https://github.com/rapptz/discord.py.git@45d498c1b76deaf3b394d17ccf56112fa691d160
 peewee
