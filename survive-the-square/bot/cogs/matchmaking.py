@@ -29,8 +29,7 @@ class Matchmaking(commands.Cog):
             is_steam = False
         else:
             await ctx.send(
-                f"`{platform}` is not a recognised platform - use `steam` "
-                "or `mobile`."
+                f"`{platform}` is not a recognised platform - use `steam` or `mobile`."
             )
             return
         async with ctx.typing():
@@ -107,7 +106,7 @@ class Matchmaking(commands.Cog):
             )
             if not game:
                 await ctx.send(
-                    "No game specified and command not used in a game " "category."
+                    "No game specified and command not used in a game category."
                 )
                 return
         platform = "Steam" if game.is_steam else "Mobile"
@@ -115,8 +114,7 @@ class Matchmaking(commands.Cog):
             embed=discord.Embed(
                 title=game.name,
                 description=(
-                    f"{game.member_count}/{game.space_count} players. "
-                    f"{platform} game."
+                    f"{game.member_count}/{game.space_count} players. {platform} game."
                 ),
                 colour=0xF58F29,
             ).add_field(name="Players", value=game.player_list)

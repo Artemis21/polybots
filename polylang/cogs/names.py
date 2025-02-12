@@ -30,8 +30,7 @@ async def imitate(ctx, text, original):
         await ctx.message.delete()
     except discord.Forbidden:
         await ctx.send(
-            "For full fuctionality, please give the bot the manage messages "
-            "permission."
+            "For full fuctionality, please give the bot the manage messages permission."
         )
     await m.add_reaction("❓")
 

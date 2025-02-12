@@ -1,5 +1,4 @@
 import logging
-import platform
 import sys
 
 from bot import PolyLang

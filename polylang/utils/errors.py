@@ -41,19 +41,18 @@ def get_error(error):
             if isinstance(error, commands.UnexpectedQuoteError):
                 return (
                     errtype,
-                    f"You put a `{error.quote}` character where it shouldn't " "be.",
+                    f"You put a `{error.quote}` character where it shouldn't be.",
                 )
             elif isinstance(error, commands.InvalidEndOfQuotedStringError):
                 return (
                     errtype,
-                    f"You must put a space after a quoted value (instead "
+                    "You must put a space after a quoted value (instead "
                     "found `{error.char}`).",
                 )
             elif isinstance(error, commands.ExpectedClosingQuoteError):
                 return (
                     errtype,
-                    f"You didn't add the end `{error.close_quote}` to a "
-                    "quoted value.",
+                    f"You didn't add the end `{error.close_quote}` to a quoted value.",
                 )
             else:
                 return errtype, "You did something wrong with a quoted value."
@@ -92,8 +91,7 @@ def get_error(error):
         elif isinstance(error, commands.MissingRole):
             return (
                 errtype,
-                f"You must have the `{error.missing_role}` role to run this "
-                "command.",
+                f"You must have the `{error.missing_role}` role to run this command.",
             )
         elif isinstance(error, commands.BotMissingRole):
             return (
@@ -105,13 +103,13 @@ def get_error(error):
             return (
                 errtype,
                 "You must have one of the following roles to run this "
-                f'command: `{", ".join(error.missing_roles)}`.',
+                f"command: `{', '.join(error.missing_roles)}`.",
             )
         elif isinstance(error, commands.BotMissingAnyRole):
             return (
                 errtype,
                 f"The bot must have one of the following roles to run this "
-                f'command: `{", ".join(error.missing_roles)}`.',
+                f"command: `{', '.join(error.missing_roles)}`.",
             )
         elif isinstance(error, commands.NSFWChannelRequired):
             return errtype, "This command may only be run in an NSFW channel."

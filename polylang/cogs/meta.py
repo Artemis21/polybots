@@ -8,8 +8,7 @@ OTHER = (
     "languages of Polytopia."
 )
 INVITE = (
-    "https://discordapp.com/api/oauth2/authorize?client_id={}&permissions=8"
-    "&scope=bot"
+    "https://discordapp.com/api/oauth2/authorize?client_id={}&permissions=8&scope=bot"
 )
 SOURCE = "https://github.com/Artemis21/Polybots"
 

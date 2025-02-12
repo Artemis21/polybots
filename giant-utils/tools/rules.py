@@ -4,10 +4,7 @@ import json
 import re
 import typing
 
-import discord
-from discord.ext import commands
 
-from . import menus
 
 
 def load_data() -> tuple[dict[str, str], dict[str, str], dict[str, str]]:

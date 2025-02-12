@@ -27,8 +27,7 @@ class Games(commands.Cog):
             is_steam = False
         else:
             await ctx.send(
-                f"`{platform}` is not a recognised platform - use `steam` "
-                "or `mobile`."
+                f"`{platform}` is not a recognised platform - use `steam` or `mobile`."
             )
             return
         game = models.Game.create(limit=limit, is_steam=is_steam)
@@ -155,7 +154,7 @@ class Games(commands.Cog):
             )
             if not game:
                 await ctx.send(
-                    "No game specified and command not used in a game " "category."
+                    "No game specified and command not used in a game category."
                 )
                 return
         open_status = "still open" if game.is_open else "closed"
@@ -190,9 +189,7 @@ class Games(commands.Cog):
         Example: `{{pre}}games`
         """
         lines = []
-        for game in models.Game.select().where(
-            models.Game.is_open == True
-        ):  # noqa:E712
+        for game in models.Game.select().where(models.Game.is_open == True):  # noqa:E712
             lines.append(f"Game `{game.id:>3}`, `{game.member_count:>2}` players.")
         await ctx.send("\n".join(lines) or "*There's nothing here.*")
 
