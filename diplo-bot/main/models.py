@@ -1,4 +1,5 @@
 """Peewee ORM models."""
+
 from __future__ import annotations
 
 from collections import namedtuple
@@ -12,9 +13,9 @@ from . import config, timezones
 from .tribes import Tribe, TribeList, TribeListField
 
 
-UserData = namedtuple('UserData', ['name', 'to_be', 'user'])
+UserData = namedtuple("UserData", ["name", "to_be", "user"])
 
-db = peewee.SqliteDatabase(str(config.BASE_PATH / 'db.sqlite3'))
+db = peewee.SqliteDatabase(str(config.BASE_PATH / "db.sqlite3"))
 
 
 class BaseModel(peewee.Model):
@@ -35,9 +36,9 @@ class Player(BaseModel):
     mobile_name = peewee.TextField(null=True)
     steam_name = peewee.TextField(null=True)
     utc_offset = timezones.TimezoneField(null=True)
-    tribes = TribeListField(default=TribeList((
-        Tribe.XIN_XI, Tribe.BARDUR, Tribe.OUMAJI, Tribe.IMPERIUS
-    )))
+    tribes = TribeListField(
+        default=TribeList((Tribe.XIN_XI, Tribe.BARDUR, Tribe.OUMAJI, Tribe.IMPERIUS))
+    )
 
     @classmethod
     def get_player(cls, discord_id: int) -> Player:
@@ -83,17 +84,17 @@ class Game(BaseModel):
             game_id = int(raw_argument)
         except ValueError:
             raise commands.BadArgument(
-                f'Invalid game ID `{raw_argument}` (not a number).'
+                f"Invalid game ID `{raw_argument}` (not a number)."
             )
         game = cls.get_or_none(cls.id == game_id)
         if not game:
-            raise commands.BadArgument(f'Game {game_id} not found.')
+            raise commands.BadArgument(f"Game {game_id} not found.")
         return game
 
     @property
     def name(self) -> str:
         """Get the game's displayable name."""
-        return f'Game {self.id}'
+        return f"Game {self.id}"
 
     @property
     def member_count(self) -> int:
@@ -103,56 +104,51 @@ class Game(BaseModel):
     def get_member(self, player: Player) -> GameMember:
         """Get the GameMember record associated with this game and a player."""
         return GameMember.get_or_none(
-            GameMember.game == self,
-            GameMember.player == player
+            GameMember.game == self, GameMember.player == player
         )
 
-    def user_info(
-            self, ctx: commands.Context,
-            user: discord.Member = None) -> UserData:
+    def user_info(self, ctx: commands.Context, user: discord.Member = None) -> UserData:
         """Get the name, ID and conjugation of 'to be' to refer to a user."""
         if user:
-            return UserData(user.display_name, 'is', user)
+            return UserData(user.display_name, "is", user)
         else:
-            return UserData('you', 'are', ctx.author)
+            return UserData("you", "are", ctx.author)
 
-    async def add_player(
-            self, ctx: commands.Context, user: discord.Member = None):
+    async def add_player(self, ctx: commands.Context, user: discord.Member = None):
         """Add a player to the game."""
         user = self.user_info(ctx, user)
         player = Player.get_player(user.user.id)
         if self.is_steam:
             if not player.steam_name:
                 ctx.logger.log(
-                    f'Error: {self.name} is a steam game, but you have not '
-                    f'set your steam name. Do `{ctx.prefix}steam-name` to '
-                    'set it.'
+                    f"Error: {self.name} is a steam game, but you have not "
+                    f"set your steam name. Do `{ctx.prefix}steam-name` to "
+                    "set it."
                 )
                 return
         else:
             if not player.mobile_name:
                 ctx.logger.log(
-                    f'Error {self.name} is a mobile game, but you have not '
-                    f'set your mobile name. Do `{ctx.prefix}mobile-name` to '
-                    'set it.'
+                    f"Error {self.name} is a mobile game, but you have not "
+                    f"set your mobile name. Do `{ctx.prefix}mobile-name` to "
+                    "set it."
                 )
                 return
         if self.get_member(player):
             ctx.logger.log(
-                f'Error: {user.name} {user.to_be} already in game {self.id}.'
+                f"Error: {user.name} {user.to_be} already in game {self.id}."
             )
         else:
             GameMember.create(player=player, game=self)
             role = ctx.guild.get_role(self.role_id)
             await user.user.add_roles(role)
-            ctx.logger.log(f'Added {user.name} to game {self.id}.')
+            ctx.logger.log(f"Added {user.name} to game {self.id}.")
             if self.member_count >= self.limit:
                 self.is_open = False
                 self.save()
-                ctx.logger.log(f'{self.name} full. Game closed.')
+                ctx.logger.log(f"{self.name} full. Game closed.")
 
-    async def remove_player(
-            self, ctx: commands.Context, user: discord.Member = None):
+    async def remove_player(self, ctx: commands.Context, user: discord.Member = None):
         """Remove a player from the game."""
         user = self.user_info(ctx, user)
         player = Player.get_player(user.user.id)
@@ -160,11 +156,9 @@ class Game(BaseModel):
             member.delete_instance()
             role = ctx.guild.get_role(self.role_id)
             await user.user.remove_roles(role)
-            ctx.logger.log(f'Removed {user.name} from game {self.id}.')
+            ctx.logger.log(f"Removed {user.name} from game {self.id}.")
         else:
-            ctx.logger.log(
-                f'Error: {user.name} {user.to_be} not in game {self.id}.'
-            )
+            ctx.logger.log(f"Error: {user.name} {user.to_be} not in game {self.id}.")
 
 
 class GameMember(BaseModel):

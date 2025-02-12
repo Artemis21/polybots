@@ -1,4 +1,5 @@
 """Tools for storing, displaying and parsing lists of tribes."""
+
 from __future__ import annotations
 
 import enum
@@ -35,38 +36,34 @@ class Tribe(enum.Enum):
     @classmethod
     async def convert(cls, ctx: commands.Context, raw_argument: str) -> Tribe:
         """Convert a Discord.py argument to a tribe."""
-        for from_, to in zip('∑∫ỹȱŋă', 'elyrna'):
+        for from_, to in zip("∑∫ỹȱŋă", "elyrna"):
             raw_argument = raw_argument.replace(from_, to)
-        argument = re.sub('[^A-Z]', '', raw_argument.upper())
+        argument = re.sub("[^A-Z]", "", raw_argument.upper())
         if not argument:
             raise commands.BadArgument(
-                'Please use latin characters to specify a tribe.'
+                "Please use latin characters to specify a tribe."
             )
         matches = []
         for tribe in cls:
-            tribe_name = tribe.name.replace('_', '')
+            tribe_name = tribe.name.replace("_", "")
             if tribe_name.startswith(argument):
                 matches.append(tribe)
         if len(matches) == 1:
             return matches[0]
         if matches:
             raise commands.BadArgument(
-                f'Multiple tribes found matching `{raw_argument}`, try using '
-                'more letters.'
+                f"Multiple tribes found matching `{raw_argument}`, try using "
+                "more letters."
             )
-        raise commands.BadArgument(
-            f'No tribe found matching `{raw_argument}`.'
-        )
+        raise commands.BadArgument(f"No tribe found matching `{raw_argument}`.")
 
     @property
     def emoji(self) -> str:
         """Get the emoji representing the tribe."""
-        emoji_id = config.TRIBE_EMOJI_IDS.get(
-            self.name.lower().replace('_', '-')
-        )
+        emoji_id = config.TRIBE_EMOJI_IDS.get(self.name.lower().replace("_", "-"))
         if emoji_id:
-            return f'<:{self.name}:{emoji_id}>'
-        return ':interrobang:'
+            return f"<:{self.name}:{emoji_id}>"
+        return ":interrobang:"
 
 
 class TribeList:
@@ -78,13 +75,12 @@ class TribeList:
     """
 
     @classmethod
-    async def convert(
-            cls, ctx: commands.Context, raw_argument: str) -> TribeList:
+    async def convert(cls, ctx: commands.Context, raw_argument: str) -> TribeList:
         """Convert a Discord.py argument to a TribeList."""
         tribes = []
-        raw_tribes = raw_argument.split(' ')
+        raw_tribes = raw_argument.split(" ")
         for raw_tribe in raw_tribes:
-            if raw_tribe.lower() == 'all':
+            if raw_tribe.lower() == "all":
                 return cls(Tribe)
             tribe = await Tribe.convert(ctx, raw_tribe)
             tribes.append(tribe)
@@ -96,7 +92,7 @@ class TribeList:
 
     def __str__(self) -> str:
         """Represent the list as a human-readable string."""
-        return ' '.join(tribe.emoji for tribe in self.tribes)
+        return " ".join(tribe.emoji for tribe in self.tribes)
 
     def __iadd__(self, other: Union[Tribe, Iterable[Tribe]]) -> TribeList:
         """Add a tribe or tribes to the list."""
@@ -122,7 +118,7 @@ class TribeList:
 class TribeListField(peewee.Field):
     """A field to store a list of tribes."""
 
-    field_type = 'smallint'    # 2 bytes
+    field_type = "smallint"  # 2 bytes
 
     def db_value(self, tribes: TribeList) -> int:
         """Convert a list of tribe enum instances to a series of bit flags."""

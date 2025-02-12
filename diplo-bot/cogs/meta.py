@@ -1,4 +1,5 @@
 """The meta cog."""
+
 import datetime
 
 import discord
@@ -7,7 +8,7 @@ from discord.ext import commands
 from main import config, errors
 
 
-ABOUT = 'A simple bot for tracking Diplotopia wins.'
+ABOUT = "A simple bot for tracking Diplotopia wins."
 
 
 def timedelta_to_ms(time: datetime.timedelta) -> int:
@@ -28,43 +29,39 @@ class Meta(commands.Cog):
         """Send prefix if bot is mentioned."""
         me = message.guild.me if message.guild else self.bot.user
         if me in message.mentions:
-            await message.channel.send(f'My prefix is `{config.PREFIX}`.')
+            await message.channel.send(f"My prefix is `{config.PREFIX}`.")
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx: commands.Context, error: Exception):
         """Handle an error."""
         await errors.on_command_error(ctx, error)
 
-    @commands.command(brief='About the bot.')
+    @commands.command(brief="About the bot.")
     async def about(self, ctx: commands.Context):
         """Get some information about the bot."""
-        embed = discord.Embed(
-            title='About',
-            description=ABOUT,
-            colour=0x45b3e0
-        )
+        embed = discord.Embed(title="About", description=ABOUT, colour=0x45B3E0)
         embed.set_thumbnail(url=str(ctx.bot.user.avatar))
         await ctx.send(embed=embed)
 
-    @commands.command(brief='Get a pong.')
+    @commands.command(brief="Get a pong.")
     async def ping(self, ctx: commands.Context):
         """See how fast the bot can respond."""
         now = datetime.datetime.now(datetime.timezone.utc)
         recieve_time = timedelta_to_ms(now - ctx.message.created_at)
-        response = await ctx.send(
-            f'Pong!\nRecieve time: `{recieve_time}ms`'
-        )
+        response = await ctx.send(f"Pong!\nRecieve time: `{recieve_time}ms`")
         initial_recieve = now
         now = datetime.datetime.now(datetime.timezone.utc)
         roundtrip_time = timedelta_to_ms(now - initial_recieve)
         response_time = timedelta_to_ms(response.created_at - initial_recieve)
-        await response.edit(content=(
-            f'Pong!\nRecieve time: `{recieve_time}ms`'
-            f'\nResponse time: `{response_time}ms`'
-            f'\nResponse roundtrip: `{roundtrip_time}ms`'
-        ))
+        await response.edit(
+            content=(
+                f"Pong!\nRecieve time: `{recieve_time}ms`"
+                f"\nResponse time: `{response_time}ms`"
+                f"\nResponse roundtrip: `{roundtrip_time}ms`"
+            )
+        )
 
-    @commands.command(brief='Try out the archer.', hidden=True)
+    @commands.command(brief="Try out the archer.", hidden=True)
     async def pong(self, ctx: commands.Context):
         """See how fast Archer can respond."""
         if isinstance(ctx.channel, discord.TextChannel):
@@ -76,24 +73,21 @@ class Meta(commands.Cog):
                         webhook = hook
                         break
             if not webhook:
-                webhook = await ctx.channel.create_webhook(name='Diplo Dumbassery')
+                webhook = await ctx.channel.create_webhook(name="Diplo Dumbassery")
             await webhook.send(
-                'You have been indefinitely banned from the bot for abuse. '
-                'Please [click here](<https://youtu.be/dQw4w9WgXcQ>) to appeal.',
-                username='Diplotopia',
+                "You have been indefinitely banned from the bot for abuse. "
+                "Please [click here](<https://youtu.be/dQw4w9WgXcQ>) to appeal.",
+                username="Diplotopia",
                 avatar_url=str(ctx.bot.user.avatar),
-                wait=True
+                wait=True,
             )
         return
-        prompt = await ctx.send(
-            'Waiting for <@390869068510658560> to respond...'
-        )
+        prompt = await ctx.send("Waiting for <@390869068510658560> to respond...")
         response = await self.bot.wait_for(
-            'message',
+            "message",
             check=lambda m: (
-                m.author.id == 390869068510658560
-                and m.channel.id == ctx.channel.id
-            )
+                m.author.id == 390869068510658560 and m.channel.id == ctx.channel.id
+            ),
         )
         latency = timedelta_to_ms(response.created_at - prompt.created_at)
-        await ctx.send(f'Archer took `{latency}ms` to respond!')
+        await ctx.send(f"Archer took `{latency}ms` to respond!")

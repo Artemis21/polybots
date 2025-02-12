@@ -3,6 +3,7 @@
 Messages can be added to the log with a function, and are all sent once
 the command has finished executing.
 """
+
 from discord.ext import commands
 
 
@@ -21,7 +22,7 @@ class Logger:
     async def send(self):
         """Send all messages remaining in the logs."""
         if self.messages:
-            await self.ctx.send('\n'.join(self.messages))
+            await self.ctx.send("\n".join(self.messages))
             self.messages = []
 
 

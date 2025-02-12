@@ -1,4 +1,5 @@
 """Utility for mass adding of roles."""
+
 import discord
 
 import typing

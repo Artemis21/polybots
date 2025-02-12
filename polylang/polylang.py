@@ -4,10 +4,10 @@ from bot import PolyLang
 import sys
 
 
-with open('config/TOKEN') as f:
+with open("config/TOKEN") as f:
     key = f.read().strip()
 
-pre = ';'
+pre = ";"
 token = key
 test = False
 
@@ -19,5 +19,5 @@ def run(cogs=[]):
     bot.run(token)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     run(sys.argv[1:])

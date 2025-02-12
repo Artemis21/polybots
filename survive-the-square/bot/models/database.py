@@ -1,10 +1,11 @@
 """Setup Peewee's connection to the database."""
+
 import peewee
 
 from ..main import config
 
 
-db = peewee.SqliteDatabase(str(config.BASE_PATH / 'db.sqlite3'))
+db = peewee.SqliteDatabase(str(config.BASE_PATH / "db.sqlite3"))
 
 
 class BaseModel(peewee.Model):

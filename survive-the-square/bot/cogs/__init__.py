@@ -1,4 +1,5 @@
 """Load the cogs."""
+
 import discord
 
 from .games import Games

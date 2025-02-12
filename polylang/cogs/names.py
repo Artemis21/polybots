@@ -11,50 +11,47 @@ async def imitate(ctx, text, original):
         if whs:
             wh = whs[0]
         else:
-            wh = await ctx.channel.create_webhook(name='Toolkit')
+            wh = await ctx.channel.create_webhook(name="Toolkit")
         m = await wh.send(
-            text, username=ctx.author.display_name,
-            avatar_url=str(ctx.author.avatar), wait=True
+            text,
+            username=ctx.author.display_name,
+            avatar_url=str(ctx.author.avatar),
+            wait=True,
         )
     except discord.Forbidden:
         e = discord.Embed(description=text)
-        e.set_author(
-            name=ctx.author.display_name,
-            icon_url=str(ctx.author.avatar)
-        )
+        e.set_author(name=ctx.author.display_name, icon_url=str(ctx.author.avatar))
         e.set_footer(
-            text='For full fuctionality, please give the bot the manage webhooks '
-                 'permission.'
+            text="For full fuctionality, please give the bot the manage webhooks "
+            "permission."
         )
         m = await ctx.send(embed=e)
     try:
         await ctx.message.delete()
     except discord.Forbidden:
         await ctx.send(
-            'For full fuctionality, please give the bot the manage messages '
-            'permission.'
+            "For full fuctionality, please give the bot the manage messages "
+            "permission."
         )
-    await m.add_reaction('❓')
+    await m.add_reaction("❓")
+
     def check(reaction, user):
-        return (
-            reaction.emoji == '❓' and reaction.message.id == m.id 
-            and not user.bot
-        )
+        return reaction.emoji == "❓" and reaction.message.id == m.id and not user.bot
 
     while True:
-        _, user = await ctx.bot.wait_for('reaction_add', check=check)
+        _, user = await ctx.bot.wait_for("reaction_add", check=check)
         await user.create_dm()
         await user.dm_channel.send(original)
 
 
 class Names(commands.Cog):
-    """Generate names for cities and games. Copies original game logic.
-    """
+    """Generate names for cities and games. Copies original game logic."""
+
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(brief='Get a city name.')
-    async def city(self, ctx, tribe='', number: int = 1):
+    @commands.command(brief="Get a city name.")
+    async def city(self, ctx, tribe="", number: int = 1):
         """
         Generate a city name. You may provide a tribe to search for. If no \
         tribe is provided, a random one will be chosen.
@@ -65,7 +62,7 @@ class Names(commands.Cog):
         """
         await ctx.send(city(tribe, number))
 
-    @commands.command(brief='Get a game name.')
+    @commands.command(brief="Get a game name.")
     async def game(self, ctx, crazy: bool = False, number: int = 1):
         """
         Generate a game name. Set crazy to true for crazy game names. As \
@@ -78,8 +75,8 @@ class Names(commands.Cog):
         """
         await ctx.send(game(crazy, number))
 
-    @commands.command(brief='Get an alphabet.')
-    async def letters(self, ctx, tribe=''):
+    @commands.command(brief="Get an alphabet.")
+    async def letters(self, ctx, tribe=""):
         """
         Get a tribe's alphabet. You may provide a tribe to search for. If \
         no tribe is provided, a random one will be chosen.
@@ -89,7 +86,7 @@ class Names(commands.Cog):
         """
         await ctx.send(alphabet(tribe))
 
-    @commands.command(brief='Translate to Elyrion.')
+    @commands.command(brief="Translate to Elyrion.")
     async def elyrion(self, ctx, *, english):
         """
         Translate text to elyrion.
@@ -103,7 +100,7 @@ class Names(commands.Cog):
         else:
             await ctx.send(text)
 
-    @commands.command(brief='Translate from Elyrion.')
+    @commands.command(brief="Translate from Elyrion.")
     async def english(self, ctx, *, elyrion):
         """
         Translate text from elyrion.

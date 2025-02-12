@@ -1,4 +1,5 @@
 """Peewee model for a player."""
+
 from __future__ import annotations
 
 from peewee import IntegerField, TextField
@@ -15,9 +16,9 @@ class Player(BaseModel):
     mobile_name = TextField(null=True)
     steam_name = TextField(null=True)
     utc_offset = timezones.TimezoneField(null=True)
-    tribes = TribeListField(default=TribeList((
-        Tribe.XIN_XI, Tribe.BARDUR, Tribe.OUMAJI, Tribe.IMPERIUS
-    )))
+    tribes = TribeListField(
+        default=TribeList((Tribe.XIN_XI, Tribe.BARDUR, Tribe.OUMAJI, Tribe.IMPERIUS))
+    )
 
     @classmethod
     def get_player(cls, discord_id: int) -> Player:

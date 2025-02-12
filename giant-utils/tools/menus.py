@@ -3,30 +3,32 @@
 This is not suitable for permanent menus (eg. reaction roles) because it
 only works while the original message is in the menu cache.
 """
+
 from collections import namedtuple
 import typing
 
 import discord
 
 
-MenuEvent = namedtuple('MenuEvent', ['user', 'option', 'menu'])
-NUMBER_EMOJIS = [
-    *(f'{n}\N{COMBINING ENCLOSING KEYCAP}' for n in range(1, 10)), '🔟'
-]
+MenuEvent = namedtuple("MenuEvent", ["user", "option", "menu"])
+NUMBER_EMOJIS = [*(f"{n}\N{COMBINING ENCLOSING KEYCAP}" for n in range(1, 10)), "🔟"]
 
 
-class Menu():
+class Menu:
     """A reaction-based menu."""
 
-    def __init__(self,
-            client: discord.Client, title: str,
-            callback: typing.Coroutine,
-            options: dict[typing.Any, str],
-            channel: typing.Optional[discord.abc.Messageable] = None,
-            message: typing.Optional[discord.Message] = None,
-            show_emojis: bool = True,
-            user: typing.Optional[discord.User] = None,
-            emojis: typing.Optional[list[str]] = None):
+    def __init__(
+        self,
+        client: discord.Client,
+        title: str,
+        callback: typing.Coroutine,
+        options: dict[typing.Any, str],
+        channel: typing.Optional[discord.abc.Messageable] = None,
+        message: typing.Optional[discord.Message] = None,
+        show_emojis: bool = True,
+        user: typing.Optional[discord.User] = None,
+        emojis: typing.Optional[list[str]] = None,
+    ):
         """Create a new menu.
 
         If `message` is provided, the menu will re-use that message by editing
@@ -49,13 +51,16 @@ class Menu():
         self.message = message
         self.user = user
         self.option_ids = list(options)
-        self.emojis = (emojis or NUMBER_EMOJIS)[:len(options)]
-        self.embed = discord.Embed(title=title, description='\n'.join(
-            '{emoji} {description}'.format(
-                emoji=(f'{emoji} ' if show_emojis else ''),
-                description=description
-            ) for emoji, description in zip(self.emojis, options.values())
-        ))
+        self.emojis = (emojis or NUMBER_EMOJIS)[: len(options)]
+        self.embed = discord.Embed(
+            title=title,
+            description="\n".join(
+                "{emoji} {description}".format(
+                    emoji=(f"{emoji} " if show_emojis else ""), description=description
+                )
+                for emoji, description in zip(self.emojis, options.values())
+            ),
+        )
 
     async def send(self):
         """Send the menu so that it can be used."""
@@ -69,8 +74,7 @@ class Menu():
 
     async def ensure_correct_reactions(self):
         """Find the shortest way to switch to some set of reactions."""
-        self.message = await self.message.channel.fetch_message(
-            self.message.id)
+        self.message = await self.message.channel.fetch_message(self.message.id)
         current = {i.emoji for i in self.message.reactions if i.me}
         target = set(self.emojis)
         to_remove = current - target
@@ -90,8 +94,7 @@ class Menu():
         for emoji in sorted(to_add):
             await self.message.add_reaction(emoji)
 
-    async def on_reaction_add(self,
-            reaction: discord.Reaction, user: discord.User):
+    async def on_reaction_add(self, reaction: discord.Reaction, user: discord.User):
         """Process a reaction being added."""
         if self.user and user != self.user:
             return

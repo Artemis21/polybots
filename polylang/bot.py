@@ -11,21 +11,17 @@ class PolyLang(commands.Bot):
         self.pre = prefix
         self.test = test
         self.use_cogs = cogs
-        self.load_extension('cogs')
+        self.load_extension("cogs")
 
     async def on_ready(self):
         act1 = discord.Activity(
-            name=f'{self.command_prefix}help.',
-            type=discord.ActivityType.listening
+            name=f"{self.command_prefix}help.", type=discord.ActivityType.listening
         )
-        act2 = discord.Activity(
-            name='Polytopia.',
-            type=discord.ActivityType.playing
-        )
+        act2 = discord.Activity(name="Polytopia.", type=discord.ActivityType.playing)
         acts = ((act1, 6), (act2, 6))
         n = 0
         while True:
-            act1.name = f'{self.command_prefix}help.'
+            act1.name = f"{self.command_prefix}help."
             await self.change_presence(activity=acts[n][0])
             n += 1
             n %= len(acts)

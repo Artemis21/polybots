@@ -1,4 +1,5 @@
 """Commands for manging an in progress game."""
+
 import discord
 from discord.ext import commands
 
@@ -13,9 +14,8 @@ class Games(commands.Cog):
         """Store a reference to the bot."""
         self.bot = bot
 
-    @commands.command(brief='Message another player.', aliases=['m'])
-    async def message(
-            self, ctx: commands.Context, player: GameMember, *, message: str):
+    @commands.command(brief="Message another player.", aliases=["m"])
+    async def message(self, ctx: commands.Context, player: GameMember, *, message: str):
         """Message another player from your game.
 
         Example: `{{pre}}m artemis This is my message.`
@@ -25,39 +25,37 @@ class Games(commands.Cog):
         for existing_webhook in await dest.webhooks():
             if existing_webhook.user.id == self.bot.user.id:
                 webhook = existing_webhook
-        webhook = webhook or await dest.create_webhook(name='Messaging System')
+        webhook = webhook or await dest.create_webhook(name="Messaging System")
         await webhook.send(
             content=message,
             username=ctx.author.display_name,
             avatar_url=str(ctx.author.avatar),
             files=[
-                await attachment.to_file()
-                for attachment in ctx.message.attachments
-            ]
+                await attachment.to_file() for attachment in ctx.message.attachments
+            ],
         )
-        await ctx.message.add_reaction(u'\u2705')    # Check mark.
+        await ctx.message.add_reaction("\u2705")  # Check mark.
 
-    @commands.command(brief='Observe a game.', aliases=['o'])
+    @commands.command(brief="Observe a game.", aliases=["o"])
     async def observe(self, ctx: commands.Context, game: Game):
         """Get the observer role for a game.
 
         Example: `{{pre}}observe 12`
         """
         member = GameMember.get_or_none(
-            GameMember.game_id == game.id,
-            GameMember.player_id == ctx.author.id
+            GameMember.game_id == game.id, GameMember.player_id == ctx.author.id
         )
         if member:
-            await ctx.send('You cannot observe a game you are in.')
+            await ctx.send("You cannot observe a game you are in.")
             return
         role = ctx.guild.get_role(game.observer_role_id)
         if not role:
-            await ctx.send('The observer role for this game has been deleted :(')
+            await ctx.send("The observer role for this game has been deleted :(")
             return
         await ctx.author.add_roles(role)
-        await ctx.send('Gave you the role.')
+        await ctx.send("Gave you the role.")
 
-    @commands.command(brief='Archive a game.')
+    @commands.command(brief="Archive a game.")
     @checks.admin
     async def archive(self, ctx: commands.Context, game: Game):
         """Archive a game's channels.
@@ -80,12 +78,12 @@ class Games(commands.Cog):
                         }
                     )
             category = ctx.guild.get_channel(game.category_id)
-            await category.edit(name=category.name + ' - Archived')
+            await category.edit(name=category.name + " - Archived")
             GameMember.delete().where(GameMember.game == game).execute()
             game.delete_instance()
-        await ctx.send('Game archived.')
+        await ctx.send("Game archived.")
 
-    @commands.command(brief='Delete a game.')
+    @commands.command(brief="Delete a game.")
     @checks.admin
     async def delete(self, ctx: commands.Context, game: Game):
         """Delete a game and it's channels.
@@ -103,4 +101,4 @@ class Games(commands.Cog):
                     await role.delete()
             GameMember.delete().where(GameMember.game == game).execute()
             game.delete_instance()
-        await ctx.send('Game deleted.')
+        await ctx.send("Game deleted.")

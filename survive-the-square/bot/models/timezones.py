@@ -1,4 +1,5 @@
 """Tool for parsing, displaying and storing timezones."""
+
 from __future__ import annotations
 
 import datetime
@@ -16,31 +17,29 @@ class Timezone:
     async def convert(cls, ctx: commands.Context, argument: str) -> Timezone:
         """Parse a Discord.py argument as a UTC offset."""
         argument = argument.upper()
-        if argument in ('GMT', 'UTC'):
+        if argument in ("GMT", "UTC"):
             return cls(False, 0, 0)
-        argument = argument.removeprefix('UTC').removeprefix(
-            'GMT'
-        ).removeprefix('+')
-        negative = argument.startswith('-')
-        argument = argument.removeprefix('-')
-        if re.match('[0-9]+$', argument):
+        argument = argument.removeprefix("UTC").removeprefix("GMT").removeprefix("+")
+        negative = argument.startswith("-")
+        argument = argument.removeprefix("-")
+        if re.match("[0-9]+$", argument):
             hours = int(argument)
             minutes = 0
-        elif match := re.match('([0-9]+):([0-5][0-9])$', argument):
+        elif match := re.match("([0-9]+):([0-5][0-9])$", argument):
             hours = int(match.group(1))
             minutes = int(match.group(2))
-        elif match := re.match(r'([0-9]+)\.([0-9]+)$', argument):
+        elif match := re.match(r"([0-9]+)\.([0-9]+)$", argument):
             hours = int(match.group(1))
-            minutes = round(float('0.' + match.group(2)) * 60)
+            minutes = round(float("0." + match.group(2)) * 60)
         else:
-            raise commands.BadArgument('Unrecognised timezone format.')
+            raise commands.BadArgument("Unrecognised timezone format.")
         if hours > 24:
-            raise commands.BadArgument('Offset more than UTC+24.')
+            raise commands.BadArgument("Offset more than UTC+24.")
         if hours < -24:
-            raise commands.BadArgument('Offset less than UTC-24.')
+            raise commands.BadArgument("Offset less than UTC-24.")
         if minutes % 15:
             raise commands.BadArgument(
-                'Offset minute part must be a multiple of 15 minutes.'
+                "Offset minute part must be a multiple of 15 minutes."
             )
         return cls(negative, hours, minutes)
 
@@ -52,8 +51,8 @@ class Timezone:
 
     def __str__(self) -> str:
         """Display the offset in a human-readable format."""
-        sign = '-' if self.negative else '+'
-        return f'UTC{sign}{self.hours}:{self.minutes:>02}'
+        sign = "-" if self.negative else "+"
+        return f"UTC{sign}{self.hours}:{self.minutes:>02}"
 
     @property
     def timedelta(self) -> datetime.timedelta:
@@ -76,7 +75,7 @@ class TimezoneField(peewee.Field):
     7      - If high, add 15 minutes to the offset.
     """
 
-    field_type = 'tinyint'    # 1 byte
+    field_type = "tinyint"  # 1 byte
 
     def db_value(self, timezone: Timezone) -> int:
         """Convert a timezone to a 7 bit number."""

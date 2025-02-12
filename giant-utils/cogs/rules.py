@@ -1,4 +1,5 @@
 """Commands to view and search for rules."""
+
 import typing
 
 import discord
@@ -14,7 +15,7 @@ class Rules(commands.Cog):
         """Store a reference to the bot."""
         self.bot = bot
 
-    @commands.command(brief='Get a rule by number.')
+    @commands.command(brief="Get a rule by number.")
     async def rule(self, ctx: commands.Context, number: str):
         """Get a rule by its number.
 
@@ -25,9 +26,8 @@ class Rules(commands.Cog):
         else:
             await ctx.send(f'Could not find rule "{number}".')
 
-    @commands.command(brief='See all rules.')
-    async def rules(self,
-            ctx: commands.Context, *, category: typing.Optional[str]):
+    @commands.command(brief="See all rules.")
+    async def rules(self, ctx: commands.Context, *, category: typing.Optional[str]):
         """Get a list of all the rule categories, or the rules in a category.
 
         Examples:
@@ -38,10 +38,8 @@ class Rules(commands.Cog):
         if not category:
             await self.full_rule_list(channel=ctx, user=ctx.author)
         else:
-            if (category_id := rules.get_category(category)):
-                await self.category_index(
-                    category_id, channel=ctx, user=ctx.author
-                )
+            if category_id := rules.get_category(category):
+                await self.category_index(category_id, channel=ctx, user=ctx.author)
             else:
                 await ctx.send(f'Could not find rule category "{category}".')
 
@@ -50,11 +48,11 @@ class Rules(commands.Cog):
         options = rules.get_all_categories_index()
         await menus.Menu(
             client=self.bot,
-            title='Giants League Rules',
+            title="Giants League Rules",
             options=options,
             callback=self.on_category_select,
             show_emojis=False,
-            **menu_options
+            **menu_options,
         ).send()
 
     async def on_category_select(self, event: menus.MenuEvent):
@@ -64,14 +62,15 @@ class Rules(commands.Cog):
             event.option, message=event.menu.message, user=event.user
         )
 
-    async def category_index(self,
-            category_id: str, **menu_options: dict[str, typing.Any]):
+    async def category_index(
+        self, category_id: str, **menu_options: dict[str, typing.Any]
+    ):
         """Display a category selected by command or menu."""
         title = rules.get_all_categories_index()[category_id]
         options = rules.get_category_index(category_id)
-        options['back'] = '◀️ Back'
+        options["back"] = "◀️ Back"
         emojis = list(menus.NUMBER_EMOJIS)
-        emojis[len(options) - 1] = '◀️'
+        emojis[len(options) - 1] = "◀️"
         await menus.Menu(
             client=self.bot,
             title=title,
@@ -79,35 +78,31 @@ class Rules(commands.Cog):
             callback=self.on_rule_select,
             show_emojis=False,
             emojis=emojis,
-            **menu_options
+            **menu_options,
         ).send()
 
     async def on_rule_select(self, event: menus.MenuEvent):
         """Display a selected rule."""
         event.menu.stop_listening()
-        if event.option == 'back':
-            await self.full_rule_list(
-                message=event.menu.message, user=event.user
-            )
+        if event.option == "back":
+            await self.full_rule_list(message=event.menu.message, user=event.user)
             return
         await self.display_rule(
             event.option, message=event.menu.message, user=event.user
         )
 
-    async def display_rule(self,
-            rule_id: str, **menu_options: dict[str, typing.Any]):
+    async def display_rule(self, rule_id: str, **menu_options: dict[str, typing.Any]):
         """Display a rule selected by command or menu."""
-        options = {rule_id.split('.')[0]: rules.get_rule(rule_id)}
+        options = {rule_id.split(".")[0]: rules.get_rule(rule_id)}
         await menus.Menu(
             client=self.bot,
             title=rule_id,
             options=options,
             callback=self.on_rule_back,
             show_emojis=False,
-            emojis=['◀️'],
-            **menu_options
+            emojis=["◀️"],
+            **menu_options,
         ).send()
-
 
     async def on_rule_back(self, event: menus.MenuEvent):
         """Go back to a category index."""

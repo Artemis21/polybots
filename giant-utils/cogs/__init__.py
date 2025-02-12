@@ -1,4 +1,5 @@
 """Load the cogs."""
+
 from cogs.meta import Meta
 from cogs.rules import Rules
 from cogs.utils import Utils
