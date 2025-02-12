@@ -80,13 +80,13 @@ def get_error(error):
         elif isinstance(error, commands.MissingPermissions):
             return (
                 errtype,
-                'You must have the following permission\s to run this command:'
+                'You must have the following permission/s to run this command:'
                 f'{list_perms(error)}.'
             )
         elif isinstance(error, commands.BotMissingPermissions):
             return (
                 errtype,
-                'The bot must have the following permission\s to run this '
+                'The bot must have the following permission/s to run this '
                 f'command: {list_perms(error)}.'
             )
         elif isinstance(error, commands.MissingRole):
@@ -129,7 +129,7 @@ async def handle(error, ctx):
     desc += (
         f'** ({error})'
         f'\n\nUse `{ctx.prefix}help [command]` for more information on how to '
-        'use a command.'
+        f'use a command, or `{ctx.prefix}help` for a list of commands.'
     )
     desc = '**' + desc
     title = 'Error: ' + title

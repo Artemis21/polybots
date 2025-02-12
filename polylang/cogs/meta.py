@@ -1,9 +1,6 @@
 import discord.ext.commands as commands
 import discord
-import os
 from utils.colours import colours
-from utils.paginator import FieldPaginator as Paginator
-import json
 
 
 AUTHOR = '[Artemis](https://arty.li)'
@@ -58,7 +55,7 @@ class Meta(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, mes):
-        if bot.user in mes.mentions:
+        if bot.user.id in mes.raw_mentions:
             pre = bot.command_prefix
             await mes.channel.send(f'My prefix is `{pre}`.')
 
