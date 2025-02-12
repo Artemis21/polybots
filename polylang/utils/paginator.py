@@ -1,6 +1,7 @@
-from utils.colours import colours
 import random
+
 import discord
+from utils.colours import colours
 
 
 class Paginator:

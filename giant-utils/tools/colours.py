@@ -1,6 +1,5 @@
 import random
 
-
 ERROR = 0xFF2A2A
 SUCCESS = 0x00F42F
 HELP = 0x2AAF21

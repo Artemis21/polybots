@@ -1,8 +1,7 @@
 """Migration to add extra fields to user profiles (07/02/21)."""
 
-from playhouse.migrate import migrate, SqliteMigrator
-
 from main.models import Player
+from playhouse.migrate import SqliteMigrator, migrate
 
 
 def apply(migrator: SqliteMigrator):

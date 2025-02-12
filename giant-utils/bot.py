@@ -5,9 +5,7 @@ import logging
 
 import discord
 from discord.ext import commands
-
 from tools.helpcmd import Help
-
 
 logging.basicConfig(level=logging.INFO)
 

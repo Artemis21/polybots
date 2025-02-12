@@ -6,7 +6,6 @@ from .games import Games
 from .meta import Meta
 from .players import Players
 
-
 COGS = [Players, Games, Meta]
 
 

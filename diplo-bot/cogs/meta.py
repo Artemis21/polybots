@@ -4,9 +4,7 @@ import datetime
 
 import discord
 from discord.ext import commands
-
 from main import config, errors
-
 
 ABOUT = "A simple bot for tracking Diplotopia wins."
 

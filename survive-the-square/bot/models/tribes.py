@@ -6,9 +6,8 @@ import enum
 import re
 from typing import Iterable, Iterator, Union
 
-from discord.ext import commands
-
 import peewee
+from discord.ext import commands
 
 
 class Tribe(enum.Enum):

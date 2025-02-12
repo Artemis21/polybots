@@ -6,7 +6,6 @@ import discord
 
 from .roles import mass_un_role
 
-
 LANGUAGE = [
     "po",
     "ly",

@@ -6,7 +6,6 @@ import traceback
 
 import discord
 from discord.ext.commands import Context
-
 from tools import colours
 
 

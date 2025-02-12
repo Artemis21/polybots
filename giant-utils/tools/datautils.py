@@ -4,7 +4,6 @@ import json
 import sqlite3
 import typing
 
-
 client = None  # should be set externally
 
 

@@ -5,13 +5,11 @@ from __future__ import annotations
 from collections import namedtuple
 
 import discord
-from discord.ext import commands
-
 import peewee
+from discord.ext import commands
 
 from . import config, timezones
 from .tribes import Tribe, TribeList, TribeListField
-
 
 UserData = namedtuple("UserData", ["name", "to_be", "user"])
 

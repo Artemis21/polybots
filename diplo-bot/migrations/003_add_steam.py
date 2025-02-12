@@ -1,8 +1,7 @@
 """Migration to add support for steam games."""
 
-from playhouse.migrate import migrate, SqliteMigrator
-
 from main.models import Game, Player
+from playhouse.migrate import SqliteMigrator, migrate
 
 
 def apply(migrator: SqliteMigrator):

@@ -1,8 +1,9 @@
-from discord.ext import commands
-import discord
-from utils import errors
-import traceback as tb
 import asyncio
+import traceback as tb
+
+import discord
+from discord.ext import commands
+from utils import errors
 
 
 class PolyLang(commands.Bot):

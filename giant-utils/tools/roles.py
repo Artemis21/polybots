@@ -1,8 +1,8 @@
 """Utility for mass adding of roles."""
 
-import discord
-
 import typing
+
+import discord
 
 
 async def mass_role(role: discord.Role, members: typing.List[discord.Member]):

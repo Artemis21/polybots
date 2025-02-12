@@ -1,8 +1,8 @@
 import logging
 import platform
-from bot import PolyLang
 import sys
 
+from bot import PolyLang
 
 with open("config/TOKEN") as f:
     key = f.read().strip()

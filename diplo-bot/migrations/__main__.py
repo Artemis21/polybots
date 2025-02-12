@@ -4,10 +4,8 @@ import argparse
 import importlib
 import sys
 
-from playhouse.migrate import SqliteMigrator
-
 from main.models import db
-
+from playhouse.migrate import SqliteMigrator
 
 migrator = SqliteMigrator(db)
 

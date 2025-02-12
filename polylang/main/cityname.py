@@ -1,6 +1,5 @@
 import random
 
-
 LANGS = {
     "xinxi": ("xi", "bu", "li", "yo", "-", "sha", "cha", "szu", "gu", "po"),
     "imperius": (

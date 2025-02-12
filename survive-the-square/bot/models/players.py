@@ -5,7 +5,7 @@ from __future__ import annotations
 from peewee import IntegerField, TextField
 
 from . import timezones
-from .database import db, BaseModel
+from .database import BaseModel, db
 from .tribes import Tribe, TribeList, TribeListField
 
 

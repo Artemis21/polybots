@@ -2,10 +2,8 @@
 
 import discord
 from discord.ext import commands
-
-from tools.errors import on_command_error
 from tools import colours
-
+from tools.errors import on_command_error
 
 ABOUT = (
     "GiantBot is a utility bot for the Discord Polytopia Giants League. "

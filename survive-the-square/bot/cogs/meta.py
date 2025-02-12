@@ -7,7 +7,6 @@ from discord.ext import commands
 
 from ..main import config, errors
 
-
 ABOUT = "A bot to manage Survive the Square games."
 
 

@@ -3,7 +3,6 @@
 import json
 import pathlib
 
-
 BASE_PATH = pathlib.Path(__file__).parent.parent.parent
 
 with open(str(BASE_PATH / "config.json")) as f:

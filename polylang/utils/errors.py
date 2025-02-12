@@ -1,7 +1,8 @@
+import datetime as dt
+
 import discord
 from discord.ext import commands
 from utils.colours import colours
-import datetime as dt
 
 
 def list_perms(error):

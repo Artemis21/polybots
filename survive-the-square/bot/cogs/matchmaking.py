@@ -3,8 +3,8 @@
 import discord
 from discord.ext import commands
 
-from ..main import checks
 from .. import models
+from ..main import checks
 
 
 class Matchmaking(commands.Cog):

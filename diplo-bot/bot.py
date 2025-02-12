@@ -3,9 +3,7 @@
 import logging
 
 from discord.ext import commands
-
 from main import config, ctx_logs, helpcmd
-
 
 logging.basicConfig(level=logging.INFO)
 

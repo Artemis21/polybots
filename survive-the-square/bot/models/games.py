@@ -8,12 +8,10 @@ from typing import Optional
 
 import discord
 from discord.ext import commands
+from peewee import BooleanField, ForeignKeyField, IntegerField, fn
 
-from peewee import fn, BooleanField, ForeignKeyField, IntegerField
-
-from .database import db, BaseModel
+from .database import BaseModel, db
 from .players import Player
-
 
 UserData = namedtuple("UserData", ["name", "possesive", "to_be", "to_have", "user"])
 

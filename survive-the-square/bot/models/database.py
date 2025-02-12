@@ -4,7 +4,6 @@ import peewee
 
 from ..main import config
 
-
 db = peewee.SqliteDatabase(str(config.BASE_PATH / "db.sqlite3"))
 
 

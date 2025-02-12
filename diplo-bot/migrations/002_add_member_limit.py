@@ -1,8 +1,7 @@
 """Migration to add a member limit field to games."""
 
-from playhouse.migrate import migrate, SqliteMigrator
-
 from main.models import Game
+from playhouse.migrate import SqliteMigrator, migrate
 
 
 def apply(migrator: SqliteMigrator):

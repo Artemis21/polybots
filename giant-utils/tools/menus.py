@@ -4,11 +4,10 @@ This is not suitable for permanent menus (eg. reaction roles) because it
 only works while the original message is in the menu cache.
 """
 
-from collections import namedtuple
 import typing
+from collections import namedtuple
 
 import discord
-
 
 MenuEvent = namedtuple("MenuEvent", ["user", "option", "menu"])
 NUMBER_EMOJIS = [*(f"{n}\N{COMBINING ENCLOSING KEYCAP}" for n in range(1, 10)), "🔟"]

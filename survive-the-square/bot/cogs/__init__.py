@@ -7,7 +7,6 @@ from .matchmaking import Matchmaking
 from .meta import Meta
 from .players import Players
 
-
 COGS = [Players, Matchmaking, Games, Meta]
 
 

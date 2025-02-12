@@ -1,7 +1,6 @@
-import discord.ext.commands as commands
 import discord
+import discord.ext.commands as commands
 from utils.colours import colours
-
 
 AUTHOR = "[Artemis](https://arty.li)"
 OTHER = (

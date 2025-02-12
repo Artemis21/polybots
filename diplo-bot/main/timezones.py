@@ -5,9 +5,8 @@ from __future__ import annotations
 import datetime
 import re
 
-from discord.ext import commands
-
 import peewee
+from discord.ext import commands
 
 
 class Timezone:

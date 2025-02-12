@@ -1,12 +1,10 @@
 """Utility commands cog."""
 
-from discord.ext import commands
-import discord
-
 import typing
 
+import discord
+from discord.ext import commands
 from tools import nameedit, roles
-
 
 Ctx = commands.Context
 

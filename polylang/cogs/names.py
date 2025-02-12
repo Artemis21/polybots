@@ -1,8 +1,8 @@
-from main.gamename import game
-from main.cityname import city, alphabet
-from main.elyrion import ely_to_eng, eng_to_ely
-from discord.ext import commands
 import discord
+from discord.ext import commands
+from main.cityname import alphabet, city
+from main.elyrion import ely_to_eng, eng_to_ely
+from main.gamename import game
 
 
 async def imitate(ctx, text, original):
